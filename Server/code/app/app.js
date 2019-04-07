@@ -7,9 +7,7 @@ const router = express.Router();
 /**PÁGINA PRINCIPAL */
 
 const index = router.get('/', (req,res,next) =>{
-    res.status(200).send({
-        title:"Projeto Final: Portal para interação com serviço de reconhecimento emocional em música"
-    });
+   res.send("Projeto Final: Portal para interação com serviço de reconhecimento emocional em música");
 });
 
 app.use('/',index);
