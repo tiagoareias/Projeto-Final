@@ -1,7 +1,8 @@
 var Sequelize = require('sequelize')
 var sequelize = new Sequelize('database_projetoFinal','root','root', {
     host: 'localhost',
-    dialect: 'mysql'
+    dialect: 'mysql',
+    timezone:"+01:00"
 })
 
 const db = {

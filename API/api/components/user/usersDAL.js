@@ -8,10 +8,24 @@ exports.createUser = async (user) => {
 
 exports.getUserByUsername =  (username) => {
   var user =  db.User.findOne( {where: {username:username}})
-    console.log(user)
     return user
 }
 
 exports.deleteUser =  () => {
    
+}
+
+exports.getAllUsers =() =>{
+  var users = db.User.findAll();
+  return users;
+}
+
+exports.editUser = async (user,username) =>{
+  var update = await db.User.update(user,{where:{username:username}});
+  return update;
+}
+
+exports.deleteUser = async (username) =>{
+  var deletedUser = await db.User.destroy({where:{username:username}})
+  return deletedUser;
 }
