@@ -6,7 +6,8 @@ var sequelize = new Sequelize('database_projetoFinal','root','root', {
 })
 
 const db = {
-    'User': require('../user/userModel')(sequelize, Sequelize),'Music': require('../music/music')(sequelize, Sequelize)
+    'User': require('../user/userModel')(sequelize, Sequelize),
+    'Music': require('../music/music')(sequelize, Sequelize)
 }
 db.sequelize = sequelize;
 

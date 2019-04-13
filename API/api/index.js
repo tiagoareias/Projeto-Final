@@ -15,6 +15,7 @@ app.use((req,res,next) => {
 
 require('./components/database/index')
 require('./components/user/index')(app)
+require('./components/music/index')(app)
 
 var port = 8000
 app.listen(port, () => {

@@ -1,4 +1,6 @@
 module.exports = (app) => {
-    var musicsAPI = require('./musicsAPI')
-    app.post('/postvideourl', musicsAPI.uploadVideo)
+    var musicsController = require('./musicsController');
+    app.post('/music/upload',musicsController.uploadVideo);
+    //var musicsAPI = require('./musicsAPI')
+   //app.post('/postvideourl', musicsAPI.uploadVideo);
 }
