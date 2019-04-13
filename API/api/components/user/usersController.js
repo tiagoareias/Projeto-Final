@@ -1,8 +1,21 @@
+
 //funções que retorna a resposta
 
 var usersService = require('./usersService')
-exports.createUser = async () => {
-    await usersService.createUser().then().catch(ex => console.log(ex));
+exports.createUser = async (req,res) => {
+    //resposta por defeito do servidor
+    let serverResponse = {status:"Not Created", response:{}}
+    //criação de um novo user de acordo com os parâmetros recebidos
+    const novoUser = await usersService.createUser(req.body);
+    
+    //**FALTA VERIFICAR O ESTADO  */
+    serverResponse = {status:"Created", response:novoUser};
+
+    res.send(serverResponse);
+
+    
+     
+  
 }
 
 exports.getUser = async (req, res) => {
@@ -10,5 +23,5 @@ exports.getUser = async (req, res) => {
     //ERRO TA AQUI A RETORNAR
     
     await usersService.getUser(req.params.username).then(user => user=user)
-    return res.send(user)
+    return res.send("Ola")
 }

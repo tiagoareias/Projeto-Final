@@ -2,9 +2,10 @@
 
 var usersDAL = require('./usersDAL');
 
-exports.createUser = async () => {
+exports.createUser = async (user) => {
 
-    await usersDAL.createUser();
+    await usersDAL.createUser(user);
+    return user;
 }
 
 exports.createToken = async () => {

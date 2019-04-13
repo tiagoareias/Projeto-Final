@@ -1,8 +1,8 @@
 
 var db = require('../database/index')
 
-exports.createUser =  () => {
-    db.User.create();
+exports.createUser = async (user) => {
+    await db.User.create(user);
 }
 
 
