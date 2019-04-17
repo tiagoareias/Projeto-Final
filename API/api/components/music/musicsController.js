@@ -9,10 +9,11 @@ exports.uploadVideo = async (req,res) => {
     const idVideo = url.substring(32);
     if(url !=null){
     getYoutubeTitle(idVideo, async function (err, title) {
+        var newUpload;
         const nome = title;
         const dadosMusica = {url:url,name:nome}
-        const createMusic = await musicsService.uploadVideo(dadosMusica);
-        serverResponse = {status:"Upload",response:createMusic}
+        await musicsService.uploadVideo(dadosMusica);
+        serverResponse = {status:"Upload",response:title}
         res.send(serverResponse);
       });
     }

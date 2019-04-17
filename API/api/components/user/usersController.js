@@ -7,21 +7,21 @@ var usersService = require('./usersService')
 exports.createUser = async (req,res) => {
     //resposta por defeito do servidor
     let serverResponse = {status:"Not Created", response:{}}
+    var createUser;
     //criação de um novo user de acordo com os parâmetros recebidos
-    const novoUser = await usersService.createUser(req.body);
-    
-    //**FALTA VERIFICAR O ESTADO  */
-    serverResponse = {status:"Created", response:novoUser};
-
+    await usersService.createUser(req.body).then(user => createUser=user).catch(err => console.log(err));
+    //**FALTA VERIFICAR O ESTADO */
+    serverResponse = {status:"Created", response:createUser};
     res.send(serverResponse);
 }
 //request a um utilizador de acordo com o seu username
 exports.getUser = async (req, res) => {
     let serverResponse = {status:"Não existe na base de dados",response:{}}
+    var getUser;
     const userName = req.params.username;
-    const user = await usersService.getUser(userName).then().catch(err => console.log(err));
-    if(user !=null){
-        serverResponse = {status:"Utilizador existe na Base de Dados",response:user}
+    await usersService.getUser(userName).then(user => getUser=user).catch(err => console.log(err));
+    if(getUser !=null){
+        serverResponse = {status:"Utilizador existe na Base de Dados",response:getUser}
     }
     
     res.send(serverResponse);
@@ -29,21 +29,21 @@ exports.getUser = async (req, res) => {
 
 //request a todos os utilizadores
 exports.getAllUsers = async(req,res) =>{
-
-    const allUsers = await usersService.getAllUsers().then().catch(err => console.log(err));
+    var allUsers;
+    await usersService.getAllUsers().then(user => allUsers=user).catch(err => console.log(err));
     res.send(allUsers);
 }
 
 //editar um utilizador
 exports.editUser = async(req,res) =>{
+    var userUpdate;
     let serverResponse = {status:"Not Updated | Utilizador não está na base de dados",response:{}}
     //username inserido no URL
     const userName = req.params.username;
-    const userUpdate = await usersService.editUser(req.body,userName).then().catch();
+    await usersService.editUser(req.body,userName).then(user => userUpdate=user).catch(err => console.log(err));
 
     if(userUpdate != 0){
         serverResponse = {status:"Updated",response:userUpdate}
-        
     }
    
     res.send(serverResponse);
@@ -52,9 +52,10 @@ exports.editUser = async(req,res) =>{
 //eliminar utilizador
 exports.deleteUser = async(req,res) =>{
     let serverResponse = {status:"Not Deleted | Utilizador não está na base de dados",response:{}}
+    var userDelete;
     //username inserido no URL
     const userName = req.params.username;
-    const userDelete = await usersService.deleteUser(userName).then().catch();
+    await usersService.deleteUser(userName).then(user => userDelete=user).catch(err => console.log(err));
     if(userDelete != 0){
         serverResponse = {status:"Deleted",response:userDelete}
     }
