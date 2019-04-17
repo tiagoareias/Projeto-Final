@@ -21,6 +21,11 @@ exports.getUser = async (username) => {
     return usersDAL.getUserByUsername(username);
 }
 
+//obter utilizador pelo seu email 
+exports.getUserByEmail = async (email) => {
+    return usersDAL.getUserByEmail(email);
+}
+
 //editar dados de um utilizador
 exports.editUser = async(user, username) =>{
     return usersDAL.editUser(user,username);

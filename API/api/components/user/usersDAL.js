@@ -11,6 +11,11 @@ exports.getUserByUsername =  (username) => {
     return user
 }
 
+exports.getUserByEmail = async (email) =>{
+  var user = await db.User.findOne( {where: {email:email}})
+  return user;
+}
+
 exports.deleteUser =  () => {
    
 }
@@ -29,3 +34,4 @@ exports.deleteUser = async (username) =>{
   var deletedUser = await db.User.destroy({where:{username:username}})
   return deletedUser;
 }
+

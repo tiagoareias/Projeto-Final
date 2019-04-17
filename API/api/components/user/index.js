@@ -11,4 +11,6 @@ module.exports = (app) => {
     app.post('/user/:username/edit',usersController.editUser);
     //eliminar utilizador
     app.post('/user/:username/delete',usersController.deleteUser);
+
+      
 }
