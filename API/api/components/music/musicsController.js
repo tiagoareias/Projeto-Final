@@ -1,5 +1,5 @@
 var musicsService = require('./musicsService');
-var getYoutubeTitle = require('get-youtube-title')
+var fetchVideoInfo = require('youtube-info');   
 const { check, validationResult } = require('express-validator/check');
 
 
@@ -30,19 +30,23 @@ exports.uploadVideo = async (req, res) => {
         //id do vídeo
         const idVideo = url.substring(32);
         if (url != null) {
-            getYoutubeTitle(idVideo, async function (err, title) {
+            fetchVideoInfo(idVideo, async function (err, videoInfo) {
+                if (err) throw new Error(err);
+                //console.log(videoInfo);
+                const nome = videoInfo.title;
+                const autor = videoInfo.owner;
+                const dataPublicacao = videoInfo.datePublished;
+                const numViews = videoInfo.views;
+                const numDislikes = videoInfo.dislikeCount;
+                const numLikes = videoInfo.likeCount;
+                const numComentarios = videoInfo.commentCount;
 
-                if (title == null) {
-                    serverResponse = { status: "URL Inválido ou inexistente", response: url }
-                    return res.send(serverResponse)
-                }
-                var newUpload;
-                const nome = title;
-                console.log(nome);
-                const dadosMusica = { url: url, name: nome, idVideo:idVideo}
+                const dadosMusica = { idVideo: idVideo, url: url, name: nome, autor: autor, 
+                                      dataPublicacao: dataPublicacao, numViews: numViews,
+                                      numDislikes: numDislikes, numLikes: numLikes, numComentarios }
 
                 await musicsService.uploadVideo(dadosMusica);
-                serverResponse = { status: "Upload", response: title }
+                serverResponse = { status: "Upload", response: dadosMusica }
                 res.send(serverResponse);
             });
         }

@@ -18,6 +18,30 @@ module.exports = (sequelize, DataTypes) => {
         name:{
             type: DataTypes.STRING,
             allownull: false
+        },
+        autor:{
+            type: DataTypes.STRING,
+            allownull: false  
+        },
+        dataPublicacao:{
+            type: DataTypes.DATE,
+            allownull: false  
+        },
+        numViews:{
+            type: DataTypes.INTEGER,
+            allownull: false  
+        },
+        numDislikes:{
+            type: DataTypes.INTEGER,
+            allownull: false  
+        },
+        numLikes:{
+            type: DataTypes.INTEGER,
+            allownull: false  
+        },
+        numComentarios:{
+            type: DataTypes.INTEGER,
+            allownull: false  
         }
     })
     Music.sync({ force: false }).then(() => {
