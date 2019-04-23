@@ -63,7 +63,7 @@ exports.getVideo = async(req,res) =>{
     await musicsService.getVideo(idVideo).then(url => urlBD = url).catch(err => console.log(err));
 
     if(urlBD != null){
-        serverResponse = {status: "URL com o id " + idVideo + "já está na base de dados",response:urlBD}
+        serverResponse = {status: "URL com o id " + idVideo + " está na base de dados",response:urlBD}
     }
     res.send(serverResponse);
 }

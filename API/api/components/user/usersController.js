@@ -3,6 +3,7 @@
 const { check, validationResult } = require('express-validator/check');
 
 var usersService = require('./usersService')
+var bcrypt = require('bcryptjs');
 
 //criação de um novo utilizador
 exports.createUser = async (req, res) => {
@@ -42,9 +43,16 @@ exports.createUser = async (req, res) => {
     }
     //caso contrário, cria o utilizador
     else {
+        var hash = bcrypt.hashSync(req.body.hashPassword,8);
+        var newUser = {
+            email:req.body.email,
+            username:req.body.username,
+            nome:req.body.nome,
+            hashPassword:hash
+        }
         var createUser;
         //criação de um novo user de acordo com os parâmetros recebidos
-        await usersService.createUser(req.body).then(user => createUser = user).catch(err => console.log(err));
+        await usersService.createUser(newUser).then(user => createUser = user).catch(err => console.log(err));
         if (createUser != null) {
             serverResponse = { status: "Utilizador Criado com Sucesso", response: createUser };
         }
