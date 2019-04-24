@@ -9,7 +9,6 @@ exports.uploadVideo = async (req, res) => {
     var existsURL;
     //validar url
     req.checkBody('url', 'URL is required or is not valid').isURL().notEmpty();
-
     //verificar se o url já existe na base de dados
     await musicsService.getVideoByURL(req.body.url).then(url => existsURL = url).catch(err => console.log(err));
     if(existsURL !=null){

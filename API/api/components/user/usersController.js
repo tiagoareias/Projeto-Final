@@ -16,7 +16,6 @@ exports.createUser = async (req, res) => {
     var existsUserName;
 
     //***Validação do Email***/
-
     //verificar se o campo email está vazio e se é realmente um email
     req.checkBody('email', 'Email is required or is not valid').notEmpty().isEmail();
 
@@ -28,19 +27,23 @@ exports.createUser = async (req, res) => {
 
     //verificar se o email inserido existe na base de dados
     await usersService.getUserByEmail(req.body.email).then(user => existsEmail = user).catch(err => console.log(err));
+
     //verificar se o username inserido existe na base de dados
     await usersService.getUser(req.body.username).then(user => existsUserName = user).catch(err => console.log(err));
+
     //se o email existe
     if (existsEmail != null || existsUserName != null) {
+
         serverResponse = { status: "Email e/ou username já existe(m) na base de dados", response: {} }
         return res.send(serverResponse);
     }
+
     //verificar erros 
     var errors = req.validationErrors();
     //se existir erros de validação
     if (errors) {
         serverResponse = { status: "Erros na validação", response: errors }
-        return res.send(errors)
+        return res.send(serverResponse)
     }
     //caso contrário, cria o utilizador
     else {
@@ -57,11 +60,13 @@ exports.createUser = async (req, res) => {
         if (createUser != null) {
             serverResponse = { status: "Utilizador Criado com Sucesso", response: createUser };
         }
-        res.send(serverResponse);
+        return res.send(serverResponse);
     }
 }
+
 //request a um utilizador de acordo com o seu username
 exports.getUser = async (req, res) => {
+    //resposta por defeito do servidor
     let serverResponse = { status: "Não existe na base de dados", response: {} }
     var getUser;
     const userName = req.params.username;
@@ -71,7 +76,7 @@ exports.getUser = async (req, res) => {
     if (!token) {
         return res.status(401).send({ auth: false, message: 'No token provided.' });
     }
-    //se existir 
+    //se existir token
     try {
         //validar
         jwt.verify(token, 'secret');
@@ -79,9 +84,9 @@ exports.getUser = async (req, res) => {
         if (getUser != null) {
             serverResponse = { status: "Utilizador está na base de dados", response: getUser }
         }
-        res.send(serverResponse);
+        return res.send(serverResponse);
     } catch (err) {
-        res.status(500).send({ auth: false, message: 'Failed to authenticate token.' });
+        return res.status(500).send({ auth: false, message: 'Failed to authenticate token.' });
     }
 
 }
@@ -103,13 +108,12 @@ exports.getAllUsers = async (req, res) => {
         jwt.verify(token, 'secret');
         await usersService.getAllUsers().then(user => allUsers = user).catch(err => console.log(err));
         if (allUsers != null) {
-            serverResponse = { status: "Existem utilizadores na Base de Dados", response: allUsers }
-            res.send(serverResponse);
+            serverResponse = { status: "Utilizadores na Base de Dados", response: allUsers }
+            return res.send(serverResponse);
         }
 
     } catch (err) {
         res.status(500).send({ auth: false, message: 'Failed to authenticate token.' });
-
     }
 }
 
@@ -143,9 +147,9 @@ exports.editUser = async (req, res) => {
         if (userUpdate != 0) {
             serverResponse = { status: "Updated", response: userUpdate }
         }
-        res.send(serverResponse);
+        return res.send(serverResponse);
     } catch (err) {
-        res.status(500).send({ auth: false, message: 'Failed to authenticate token.' });
+        return res.status(500).send({ auth: false, message: 'Failed to authenticate token.' });
     }
 }
 
@@ -170,9 +174,9 @@ exports.deleteUser = async (req, res) => {
         if (userDelete != 0) {
             serverResponse = { status: "Deleted", response: userDelete }
         }
-        res.send(serverResponse);
+        return res.send(serverResponse);
     } catch (err) {
-        res.status(500).send({ auth: false, message: 'Failed to authenticate token.' });
+        return res.status(500).send({ auth: false, message: 'Failed to authenticate token.' });
     }
 }
 
@@ -191,11 +195,11 @@ exports.login = async (req, res) => {
     else {
         // create a token
         var token = jwt.sign({ id: username }, 'secret', {
-            expiresIn: 120 // expires in 2 minutos ***PARA TESTES****
+            expiresIn: 600 // expires in 10 minutos ***PARA TESTES****
 
         });
         serverResponse = { status: "Autenticado", response: existsUserName, token: token }
 
     }
-    res.send(serverResponse);
+    return res.send(serverResponse);
 }
