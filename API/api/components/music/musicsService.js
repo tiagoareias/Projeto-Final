@@ -11,3 +11,7 @@ exports.getVideo = async(idVideo) =>{
 exports.getVideoByURL = async(url) =>{
     return await musicsDal.getVideoByURL(url);
 }
+
+exports.getLastVideos = async() =>{
+    return await musicsDal.getLastVideos();
+}

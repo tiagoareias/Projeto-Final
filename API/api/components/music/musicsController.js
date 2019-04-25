@@ -46,11 +46,11 @@ exports.uploadVideo = async (req, res) => {
 
                 await musicsService.uploadVideo(dadosMusica);
                 serverResponse = { status: "Upload", response: dadosMusica }
-                res.send(serverResponse);
+                return res.send(serverResponse);
             });
         }
         else {
-            res.send(serverResponse);
+            return res.send(serverResponse);
         }
     }
 
@@ -62,11 +62,21 @@ exports.getVideo = async(req,res) =>{
     var urlBD;
     //variável que recolhe o parâmetro enviado na request
     var idVideo = req.params.idVideo;
-    
     await musicsService.getVideo(idVideo).then(url => urlBD = url).catch(err => console.log(err));
 
     if(urlBD != null){
         serverResponse = {status: "URL com o id " + idVideo + " está na base de dados",response:urlBD}
     }
-    res.send(serverResponse);
+    return res.send(serverResponse);
+}
+
+exports.getLastVideos = async(req,res) =>{
+    let serverResponse = { status: "Ainda não existem músicas na Base de Dados", response: {} }
+    //variável que guarda a query à base de dados
+    var musicas;
+    await musicsService.getLastVideos().then(mus => musicas = mus).catch(err => console.log(err))
+    if(musicas != null ){
+        serverResponse = {status: "Últimas músicas classificadas", response:musicas}
+    }
+    return res.send(serverResponse);
 }
