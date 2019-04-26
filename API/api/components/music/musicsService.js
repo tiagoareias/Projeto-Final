@@ -15,3 +15,7 @@ exports.getVideoByURL = async(url) =>{
 exports.getLastVideos = async() =>{
     return await musicsDal.getLastVideos();
 }
+
+exports.deleteMusic = async(idVideo) => {
+    return await musicsDal.deleteMusic(idVideo);
+}

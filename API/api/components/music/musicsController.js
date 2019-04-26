@@ -1,6 +1,7 @@
 var musicsService = require('./musicsService');
 var fetchVideoInfo = require('youtube-info');   
 const { check, validationResult } = require('express-validator/check');
+var jwt = require('jsonwebtoken');
 
 
 exports.uploadVideo = async (req, res) => {
@@ -27,7 +28,7 @@ exports.uploadVideo = async (req, res) => {
         //endereço do vídeo do youtube
         const url = req.body.url + "";
         //id do vídeo
-        const idVideo = url.substring(32);
+        const idVideo = url.substring(32,43);
         if (url != null) {
             fetchVideoInfo(idVideo, async function (err, videoInfo) {
                 if (err) throw new Error(err);
@@ -75,8 +76,35 @@ exports.getLastVideos = async(req,res) =>{
     //variável que guarda a query à base de dados
     var musicas;
     await musicsService.getLastVideos().then(mus => musicas = mus).catch(err => console.log(err))
-    if(musicas != null ){
+    if(musicas.length > 0 ){
         serverResponse = {status: "Últimas músicas classificadas", response:musicas}
     }
     return res.send(serverResponse);
+}
+
+exports.deleteMusic = async (req, res) => {
+    let serverResponse = { status: "Not Deleted | Música não está na base de dados", response: {} }
+    var musicaDelete;
+    //musica a apagar
+    var musicaApagar = req.params.idVideo;
+
+    var token = req.headers['x-access-token'];
+    //se o token não existir
+    if (!token) {
+        return res.status(401).send({ auth: false, message: 'No token provided.' });
+    }
+    //se existir
+    try {
+        //validar
+        jwt.verify(token, 'secret');
+        console.log("nao validou")
+        //apagar música
+        await musicsService.deleteMusic(musicaApagar).then(mus => musicaDelete = mus).catch(err => console.log(err));
+        if (musicaDelete != 0) {
+            serverResponse = { status: "Deleted", response: musicaDelete }
+        }
+        return res.send(serverResponse);
+    } catch (err) {
+        return res.status(500).send({ auth: false, message: 'Failed to authenticate token.' });
+    }
 }

@@ -7,14 +7,10 @@ exports.getAllUsers = async(users) =>{
 }
 //criar novo utilizador
 exports.createUser = async (user) => {
-
     await usersDAL.createUser(user);
     return user;
 }
 
-exports.createToken = async () => {
-    
-}
 
 //obter utilizador pelo seu username
 exports.getUser = async (username) => {

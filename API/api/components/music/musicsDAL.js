@@ -22,3 +22,9 @@ exports.getLastVideos = async () =>{
         .then(mus => musicas = mus).catch(err => console.log(err));
     return musicas;
 }
+
+exports.deleteMusic = async (idVideo) => {
+    var musica
+    await db.Music.destroy( {where: {idVideo:idVideo}}).then(mus => musica = mus).catch(err => console.log(err))
+    return musica;
+}
