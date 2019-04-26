@@ -10,12 +10,6 @@ exports.getVideo = async (idVideo) => {
     return musica;
 }
 
-exports.getVideoByURL = async (url) => {
-    var musica;
-    await db.Music.findOne( {where: {url:url}}).then(music => musica = music).catch(err => console.log(err))
-    return musica;
-}
-
 exports.getLastVideos = async () =>{
     var musicas;
     await db.Music.findAll({ order: [['createdAt', 'DESC']], limit:4 })

@@ -3,17 +3,25 @@ var fetchVideoInfo = require('youtube-info');
 const { check, validationResult } = require('express-validator/check');
 var jwt = require('jsonwebtoken');
 
+const ytdl = require('ytdl-core');
+
 
 exports.uploadVideo = async (req, res) => {
     let serverResponse = { status: "Not Uploaded", response: {} }
     //variável que guarda a query à base de dados
-    var existsURL;
+    var existsMusica;
     //validar url
     req.checkBody('url', 'URL is required or is not valid').isURL().notEmpty();
-    //verificar se o url já existe na base de dados
-    await musicsService.getVideoByURL(req.body.url).then(url => existsURL = url).catch(err => console.log(err));
-    if(existsURL !=null){
-        serverResponse = {status:"URL já existe na base de dados",response:existsURL}
+    //endereço do vídeo do youtube
+    const url = req.body.url + "";
+    //Returns a video ID from a YouTube URL.
+    const idVideo = ytdl.getURLVideoID(url);
+
+    //verificar se a música já existe na base de dados
+    await musicsService.getVideo(idVideo).then(mus => existsMusica = mus).catch(err => console.log(err));
+
+    if(existsMusica !=null){
+        serverResponse = {status:"URL já existe na base de dados",response:existsMusica}
         return res.send(serverResponse)
     }
 
@@ -25,10 +33,6 @@ exports.uploadVideo = async (req, res) => {
         return res.send(errors)
     }
     else {
-        //endereço do vídeo do youtube
-        const url = req.body.url + "";
-        //id do vídeo
-        const idVideo = url.substring(32,43);
         if (url != null) {
             fetchVideoInfo(idVideo, async function (err, videoInfo) {
                 if (err) throw new Error(err);
