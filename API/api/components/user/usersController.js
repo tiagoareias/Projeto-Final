@@ -120,7 +120,7 @@ exports.getAllUsers = async (req, res) => {
 //editar um utilizador
 exports.editUser = async (req, res) => {
     var userUpdate;
-    let serverResponse = { status: "Not Updated | Utilizador não está na base de dados", response: {} }
+    let serverResponse = { status: "Not Updated | Utilizador não está na base de dados | Username ou email já existem", response: {} }
     //username inserido no URL
     const userName = req.params.username;
     //hash da nova password inserida
@@ -132,6 +132,41 @@ exports.editUser = async (req, res) => {
         nome: req.body.nome,
         hashPassword: hash
     }
+    //variável que recebe a query da base de dados sobre o username do URL
+    var existsUserNameURL;
+    //variável que recebe a query da base de dados sobre o email
+    var existsEmail;
+    //variável que recebe a query da base de dados sobre o username
+    var existsUserName;
+
+    //***Validação do Email***/
+
+    //verificar se o campo email está vazio e se é realmente um email
+    req.checkBody('email', 'Email is required or is not valid').notEmpty().isEmail();
+
+    //***Validação do Username***/
+    req.checkBody('username', 'Username is required').notEmpty();
+
+    //***Validação do Nome***/
+    req.checkBody('nome', 'Nome is required').notEmpty();
+
+    //verificar erros de validação
+    var errors = req.validationErrors();
+    //se existir erros de validação
+    if (errors) {
+        serverResponse = { status: "Erros na validação", response: errors }
+        return res.send(serverResponse)
+    }
+
+    //verificar se o email inserido existe na base de dados
+    await usersService.getUserByEmail(req.body.email).then(user => existsEmail = user).catch(err => console.log(err));
+
+    //verificar se o username inserido existe na base de dados
+    await usersService.getUser(req.body.username).then(user => existsUserName = user).catch(err => console.log(err));
+
+    //verificar se o username inserido existe na base de dados
+    await usersService.getUser(req.params.username).then(user => existsUserNameURL = user).catch(err => console.log(err));
+
     //token
     var token = req.headers['x-access-token'];
     //se o token não existir
@@ -142,10 +177,22 @@ exports.editUser = async (req, res) => {
     try {
         //verificar
         jwt.verify(token, 'secret');
-        //update à base de dados
-        await usersService.editUser(updateUser, userName).then(user => userUpdate = user).catch(err => console.log(err));
-        if (userUpdate != 0) {
-            serverResponse = { status: "Updated", response: userUpdate }
+        //verificar se o username do URL não existe
+        if (existsUserNameURL == null) {
+            serverResponse = { status: "Not Updated | Username no URL é inválido ou não existe", response: userUpdate }
+        }
+        else {
+            //verificar se email e username já estão na base de dados
+            if (existsEmail == null && existsUserName == null) {
+                //update à base de dados
+                await usersService.editUser(updateUser, userName).then(user => userUpdate = user).catch(err => console.log(err));
+                if (userUpdate != 0) {
+                    serverResponse = { status: "Updated", response: userUpdate }
+                }
+            }
+            else {
+                serverResponse = { status: "Not Updated | Username ou email já existem" }
+            }
         }
         return res.send(serverResponse);
     } catch (err) {
