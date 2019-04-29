@@ -71,10 +71,18 @@ Vagrant.configure("2") do |config|
     debconf-set-selections <<< "mysql-server mysql-server/root_password_again password 123qwe"
     sudo apt-get install -y --allow-unauthenticated mysql-server
     sudo service mysql restart
-    mysql -u root -p123qwe -h localhost -e "CREATE DATABASE IF NOT EXISTS database_projetoFinal;GRANT ALL PRIVILEGES ON *.* TO 'user'@'localhost' IDENTIFIED BY '123qwe'; FLUSH PRIVILEGES;"
-    mysql -u user -p123qwe 
+
+    FLUSH PRIVILEGES
     SHELL
 end
+# sudo nano /etc/mysql/mysql.conf.d/mysqld.cnf --> colocar bind-address            = 0.0.0.0
+# sudo service mysql restart
+# ----------CRIAR USER ----------------
+#CREATE USER 'user'@'localhost' IDENTIFIED BY '123qwe';
+#GRANT ALL PRIVILEGES ON *.* TO 'user'@'localhost' WITH GRANT OPTION;
+#CREATE USER 'user'@'%' IDENTIFIED BY '123qwe';
+#GRANT ALL PRIVILEGES ON *.* TO 'user'@'%' WITH GRANT OPTION;
+#FLUSH PRIVILEGES;
 
-
-#LOGIN
+# LOGIN
+# mysql -u user -p123qwe
