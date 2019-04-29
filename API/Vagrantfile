@@ -65,18 +65,16 @@ Vagrant.configure("2") do |config|
   # Puppet, Chef, Ansible, Salt, and Docker are also available. Please see the
   # documentation for more information about their specific syntax and use.
    config.vm.provision "shell", inline: <<-SHELL
-    #install mysql
+    install mysql
     sudo apt-get update -q
     debconf-set-selections <<< "mysql-server mysql-server/root_password password 123qwe"
     debconf-set-selections <<< "mysql-server mysql-server/root_password_again password 123qwe"
     sudo apt-get install -y --allow-unauthenticated mysql-server
     sudo service mysql restart
-    FLUSH PRIVILEGES;
-  #   apt-get update
-  #   apt-get install -y apache2
-   SHELL
+    mysql -u root -p123qwe -h localhost -e "CREATE DATABASE IF NOT EXISTS database_projetoFinal;GRANT ALL PRIVILEGES ON *.* TO 'user'@'localhost' IDENTIFIED BY '123qwe'; FLUSH PRIVILEGES;"
+    mysql -u user -p123qwe 
+    SHELL
 end
 
 
 #LOGIN
-# mysql -u user -p123qwe 

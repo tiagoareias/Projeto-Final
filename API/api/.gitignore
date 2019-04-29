@@ -125,3 +125,11 @@ $RECYCLE.BIN/
 *.lnk
 
 # End of https://www.gitignore.io/api/node,windows,visualstudiocode
+
+
+### Vagrant ###
+# General
+.vagrant/
+
+
+# End of https://www.gitignore.io/api/vagrant
