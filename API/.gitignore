@@ -129,7 +129,7 @@ $RECYCLE.BIN/
 
 ### Vagrant ###
 # General
-.vagrant/
+.vagrant
 
 
 # End of https://www.gitignore.io/api/vagrant
