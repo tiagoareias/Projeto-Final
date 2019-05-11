@@ -127,8 +127,8 @@ exports.editUser = async (req, res) => {
     var hash = bcrypt.hashSync(req.body.hashPassword, 8);
     //user a atualizar
     var updateUser = {
-        email: req.body.email,
-        username: req.body.username,
+        //email: req.body.email,
+        //username: req.body.username,
         nome: req.body.nome,
         hashPassword: hash
     }
@@ -141,14 +141,17 @@ exports.editUser = async (req, res) => {
 
     //***Validação do Email***/
 
-    //verificar se o campo email está vazio e se é realmente um email
-    req.checkBody('email', 'Email is required or is not valid').notEmpty().isEmail();
+    // //verificar se o campo email está vazio e se é realmente um email
+    // req.checkBody('email', 'Email is required or is not valid').notEmpty().isEmail();
 
-    //***Validação do Username***/
-    req.checkBody('username', 'Username is required').notEmpty();
+    // //***Validação do Username***/
+    // req.checkBody('username', 'Username is required').notEmpty();
 
     //***Validação do Nome***/
     req.checkBody('nome', 'Nome is required').notEmpty();
+
+     //***Validação da passord***/
+     req.checkBody('hashPassword', 'Password is required').notEmpty();
 
     //verificar erros de validação
     var errors = req.validationErrors();
