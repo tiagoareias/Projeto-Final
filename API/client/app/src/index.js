@@ -1,0 +1,16 @@
+import React from 'react';
+import ReactDOM from 'react-dom';
+import * as serviceWorker from './serviceWorker';
+import { BrowserRouter, Switch, Route } from 'react-router-dom'
+import IndexPage from '../src/MasterComponents/IndexPage';
+
+ReactDOM.render(
+    <BrowserRouter>
+        <Switch>
+            <Route path="/" exact={true} component={IndexPage} />
+        </Switch>
+    </ BrowserRouter>
+    , document.getElementById('root')
+);
+
+serviceWorker.unregister();
