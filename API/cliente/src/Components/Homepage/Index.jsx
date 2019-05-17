@@ -19,12 +19,12 @@ class Index extends Component {
     //Objeto URL
     const urlInput = document.getElementById("urlInput").value;
 
-    const response = await fetch('/music/upload', {
+    const response = await fetch('http://localhost:8000/music/upload', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify(urlInput)
+      body: JSON.stringify({"url" :urlInput})
 
     }
     );
@@ -35,9 +35,14 @@ class Index extends Component {
       switch (status) {
         case "Upload":
           this.setState({ data: resp.response });
+          alert("Adicionada")
+          break;
+          case "URL já existe na base de dados":
+          this.setState({data: resp.response});
+          alert("Já existe na base de dados")
           break;
         default:
-          console.log(this.alertText);
+          alert(this.state.alertText);
       }
     });
   }
