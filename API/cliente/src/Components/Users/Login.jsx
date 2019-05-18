@@ -25,7 +25,7 @@ class Login extends Component {
           username: document.getElementById('username').value,
           hashPassword: document.getElementById('password').value
         };
-        console.log(loginData);
+       
         //Enviar pedidos
         const response = await fetch('/auth/login', {
           method: 'POST',
@@ -38,13 +38,17 @@ class Login extends Component {
         await response.json().then(resp => {
           //Verificar o estado da resposta da API
           let status = resp.status;
-          
-          if(status == 'Autenticado'){
-            alert("Utilizador Autenticado")
-          }
-          else{
+          if(status == 'Username ou password errados'){
             alert("Utilizador Não Autenticado")
           }
+          
+          if(status == 'Autenticado'){
+            //console.log(resp);
+            sessionStorage.setItem('token', resp.token);
+            sessionStorage.setItem('nome', resp.response.nome);
+            window.location = '/';
+          }
+            
               //sessionStorage.setItem('nome', resp.resposta.username);
               //sessionStorage.setItem('id', resp.resposta.userID);
         });
@@ -52,7 +56,9 @@ class Login extends Component {
     
   render() {
     return (
+      
         <div class="container h-100">
+        <h1 className="titleLogin">Efetue login:</h1>
 		<div class="d-flex justify-content-center h-100">
 			<div class="user_card">
 				<div class="d-flex justify-content-center">
@@ -88,10 +94,10 @@ class Login extends Component {
 				</div>
 				<div class="mt-4">
 					<div class="d-flex justify-content-center links">
-						Don't have an account? <a href="#" class="ml-2">Sign Up</a>
+						Ainda não tem conta? <a href="#" class="ml-2">Registar</a>
 					</div>
 					<div class="d-flex justify-content-center links">
-						<a href="#">Forgot your password?</a>
+						<a href="#">Esqueceu-se da password?</a>
 					</div>
 				</div>
 			</div>

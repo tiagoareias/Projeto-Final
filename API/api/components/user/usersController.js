@@ -5,7 +5,7 @@ const { check, validationResult } = require('express-validator/check');
 var usersService = require('./usersService')
 var bcrypt = require('bcryptjs');
 var jwt = require('jsonwebtoken');
-
+var getToken = require('../auxiliares/token');
 //criação de um novo utilizador
 exports.createUser = async (req, res) => {
     //resposta por defeito do servidor
@@ -47,12 +47,12 @@ exports.createUser = async (req, res) => {
     }
     //caso contrário, cria o utilizador
     else {
-        //var hash = bcrypt.hashSync(req.body.hashPassword, 8);
+        var hash = bcrypt.hashSync(req.body.hashPassword, 8);
         var newUser = {
             email: req.body.email,
             username: req.body.username,
             nome: req.body.nome,
-            hashPassword: req.body.hashPassword
+            hashPassword: hash
         }
         var createUser;
         //criação de um novo user de acordo com os parâmetros recebidos
@@ -231,29 +231,34 @@ exports.deleteUser = async (req, res) => {
 }
 
 exports.login = async (req, res) => {
-    let serverResponse = { status: "Não Autenticado", response: {}, token: {} }
+    let serverResponse = { status: "Não Autenticado", response: {}, token:{}}
     var existsUserName;
     var username = req.body.username;
+    let code = 200;
+    console.log(username);
+    console.log(req.body.hashPassword);
     //verficar se existe algum utilizador na base de dados com o  username inserido
     await usersService.getUser(username).then(user => existsUserName = user).catch(err => console.log(err));
     //se não existir esse utilizador ou a password estiver errada
-    // if (existsUserName == null || !bcrypt.compareSync(req.body.password, existsUserName.hashPassword)) {
-    //     serverResponse = { status: "Username ou password errados", response: {}, token: {} };
-    //     return res.send(serverResponse);
-    // }
-    if(existsUserName == null || !existsUserName.hashPassword == req.body.password){
-        serverResponse = { status: "Username ou password errados", response: {}, token: {} };
-        return res.send(serverResponse);
-    }
+    console.log(req.body.hashPassword);
+    console.log(existsUserName.hashPassword);
+
+     if (existsUserName == null || !bcrypt.compareSync(req.body.hashPassword, existsUserName.hashPassword)) {
+         serverResponse.status= "Username ou password errados";
+         
+     }
     //se existir o utilizador e a password bater certo
     else {
         // create a token
-        // var token = jwt.sign({ id: username }, 'secret', {
-        //     expiresIn: 600 // expires in 10 minutos ***PARA TESTES****
+         var token = jwt.sign({ id: username }, 'secret', {
+             expiresIn: 600 // expires in 10 minutos ***PARA TESTES****
 
-        // });
-        serverResponse = { status: "Autenticado", response: existsUserName, token: {} }
-
+         });
+        serverResponse.status ="Autenticado";
+        serverResponse.response = existsUserName;
+        serverResponse.token = token;
     }
-    return res.send(serverResponse);
+    //resposta do servidor
+    res
+      .json(serverResponse);
 }

@@ -3,9 +3,7 @@
     .user_card {
         height: 400px;
         width: 350px;
-        margin-top: auto;
-        margin-bottom: auto;
-        background: #f39c12;
+        background: #ffc107;
         position: relative;
         display: flex;
         justify-content: center;
@@ -24,7 +22,6 @@
         top: -75px;
         
         
-        padding: 10px;
         text-align: center;
     }
     .brand_logo {
@@ -63,3 +60,7 @@
         background-color: #c0392b !important;
     }
  
+    .titleLogin{
+        text-align: center;
+        padding-top: 10px;
+    }
