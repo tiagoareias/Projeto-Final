@@ -5,7 +5,7 @@ const { check, validationResult } = require('express-validator/check');
 var usersService = require('./usersService')
 var bcrypt = require('bcryptjs');
 var jwt = require('jsonwebtoken');
-var getToken = require('../auxiliares/token');
+//var getToken = require('../auxiliares/token');
 //criação de um novo utilizador
 exports.createUser = async (req, res) => {
     //resposta por defeito do servidor
