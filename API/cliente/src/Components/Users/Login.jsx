@@ -70,13 +70,13 @@ class Login extends Component {
 					<form onSubmit={this.handleSubmit}>
 						<div class="input-group mb-3">
 							<div class="input-group-append">
-								<span class="input-group-text"><i class="fas fa-user"></i></span>
+								<span class="input-group-text"><i class="fa fa-user"></i></span>
 							</div>
 							<input id="username"type="text" name="" class="form-control input_user"  placeholder="username"></input>
 						</div>
 						<div class="input-group mb-2">
 							<div class="input-group-append">
-								<span class="input-group-text"><i class="fas fa-key"></i></span>
+								<span class="input-group-text"><i class="fa fa-key"></i></span>
 							</div>
 							<input id="password" type="password" name="" class="form-control input_pass" placeholder="password"></input>
 						</div>

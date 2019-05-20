@@ -61,8 +61,12 @@ class Header extends Component {
                     <div className="collapse navbar-collapse" id="navbarText">
                         <ul className="navbar-nav mr-auto">
                             <li className="nav-item active">
+                                <a className="nav-link" href="/register">Criar novos utilizadores <span className="sr-only">(current)</span></a>
+                            </li>
+                            <li className="nav-item active">
                                 <a className="nav-link" href="#">Músicas <span className="sr-only">(current)</span></a>
                             </li>
+
                         </ul>
                         <li className="navbar-text">
                             <a className="nav-link" > {sessionStorage.getItem('nome')}</a>
@@ -77,5 +81,11 @@ class Header extends Component {
         }
     }
 }
+//{condição ?(
+
+//):(
+
+//)}
+
 
 export default Header;
