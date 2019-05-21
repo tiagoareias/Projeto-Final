@@ -1,9 +1,17 @@
 import React, { Component } from "react";
 import '../../CssComponents/header.css';
 import logo from '../../logo.png';
+var jwt = require('jsonwebtoken');
 class Header extends Component {
 
-    logout(){
+
+    getName() {
+        var decoded = jwt.decode(sessionStorage.getItem('token'));
+        var name = decoded.nome;
+        console.log(name)
+        return name;
+    }
+    logout() {
         localStorage.clear();
         sessionStorage.clear();
         window.location.href = '/';
@@ -42,7 +50,7 @@ class Header extends Component {
                 </nav>
             );
         }
-        else{
+        else {
             return (
                 <nav className="navbar navbar-expand-lg navbar-light bg-warning">
                     <a className="navbar-brand" href="/" style={{ paddingLeft: '35px' }}>
@@ -69,10 +77,10 @@ class Header extends Component {
 
                         </ul>
                         <li className="navbar-text">
-                            <a className="nav-link" > {sessionStorage.getItem('nome')}</a>
+                            <a className="nav-link" > {this.getName()}</a>
                         </li>
                         <li className="navbar-text">
-                        <button class="btn btn-sm btn-secondary" type="button" onClick={this.logout}>Terminar Sessão</button>                       
+                            <button class="btn btn-sm btn-secondary" type="button" onClick={this.logout}>Terminar Sessão</button>
                         </li>
 
                     </div>

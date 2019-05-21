@@ -1,4 +1,5 @@
 import React, { Component } from "react";
+var jwt = require('jsonwebtoken');
 
 class Perfil extends Component {
   constructor() {

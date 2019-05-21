@@ -260,7 +260,8 @@ exports.login = async (req, res) => {
     //se existir o utilizador e a password bater certo
     else {
         // create a token
-        var token = jwt.sign({ id: username }, 'secret', {
+        var token = jwt.sign({ username: existsUserName.username,
+             nome: existsUserName.nome }, 'secret', {
             expiresIn: 600 // expires in 10 minutos ***PARA TESTES****
 
         });

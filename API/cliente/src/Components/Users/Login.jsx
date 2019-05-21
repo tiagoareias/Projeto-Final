@@ -1,6 +1,7 @@
 import React, { Component } from "react";
 import '../../CssComponents/Users/login.css';
 import logo from '../../logo.png';
+
 class Login extends Component {
     constructor() {
         super();
@@ -45,8 +46,6 @@ class Login extends Component {
             case "Autenticado":
             //console.log(resp);
             sessionStorage.setItem('token', resp.token);
-            sessionStorage.setItem('nome', resp.response.nome);
-            sessionStorage.setItem('username', resp.response.username);
             window.location = '/';
           }
         });
