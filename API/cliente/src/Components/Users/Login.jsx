@@ -46,6 +46,7 @@ class Login extends Component {
             //console.log(resp);
             sessionStorage.setItem('token', resp.token);
             sessionStorage.setItem('nome', resp.response.nome);
+            sessionStorage.setItem('username', resp.response.username);
             window.location = '/';
           }
         });

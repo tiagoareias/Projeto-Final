@@ -94,7 +94,7 @@ class Register extends Component {
                                         </div>
 
                                         <div class="form-group row">
-                                            <label for="user_name" class="col-md-4 col-form-label text-md-right">UserName</label>
+                                            <label for="user_name" class="col-md-4 col-form-label text-md-right">Username</label>
                                             <div class="col-md-6">
                                                 <input type="text" id="username" class="form-control" name="username" required></input>
                                             </div>

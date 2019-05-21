@@ -70,6 +70,7 @@ class Index extends Component {
         case "Upload":
           this.setState({ dataPost: resp.response });
           alert("Adicionada")
+          window.location = "/";
           break;
         case "URL já existe na base de dados":
           this.setState({ dataPost: resp.response });
@@ -100,7 +101,7 @@ class Index extends Component {
               <div className="input-group-prepend ">
                 <span className="input-group-text font-weight-bold" >URL</span>
               </div>
-              <input type="text" id="urlInput" placeholder=" Introduza o URL " required />
+              <input type="text" id="urlInput" pattern="^(http(s)?:\/\/)?((w){3}.)?youtu(be|.be)?(\.com)?\/.+" placeholder=" Introduza o URL " required />
               <div className="input-group-append">
                 <button type="submit" className="btn btn-dark"> Classificar </button>
               </div>
@@ -128,8 +129,10 @@ class Index extends Component {
                       <br />
                       <h5 className="font-weight-bold ">{data.name}</h5>
                       <br />
-                      <h6 className="text-secondary"><i >{data.numLikes}</i> Likes</h6>
-                      <h6 className="text-secondary"><i >{data.numDislikes}</i> Dislikes </h6>
+                      <div className="text-secondary" >
+                      <h6 id="likes"> <i className="fa fa-thumbs-o-up"></i> <i>{data.numLikes}</i></h6>
+                      <h6 id="likes"> <i className="fa fa-thumbs-o-down"></i> <i >{data.numDislikes}</i></h6>
+                      </div>
                       <br />
                       <h6 className="text-secondary"><i >{data.numViews}</i> Visualizações </h6>
                       <h6 className="text-secondary"> Publicado a <i > {data.dataPublicacao.substring(0,10)}</i></h6>
