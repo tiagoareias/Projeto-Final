@@ -34,9 +34,9 @@ class Header extends Component {
                         <li className="navbar-text">
                             <a className="nav-link" href="/login">Iniciar Sessão</a>
                         </li>
-                        <li className="navbar-text">
+                        {/* <li className="navbar-text">
                             <a className="nav-link" href="#">Registar</a>
-                        </li>
+                        </li> */}
 
                     </div>
                 </nav>

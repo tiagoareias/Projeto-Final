@@ -38,19 +38,16 @@ class Login extends Component {
         await response.json().then(resp => {
           //Verificar o estado da resposta da API
           let status = resp.status;
-          if(status == 'Username ou password errados'){
-            alert("Utilizador Não Autenticado")
-          }
-          
-          if(status == 'Autenticado'){
+          switch(status){
+            case "Username ou password errados":
+            alert("Username ou password errados")
+            break;
+            case "Autenticado":
             //console.log(resp);
             sessionStorage.setItem('token', resp.token);
             sessionStorage.setItem('nome', resp.response.nome);
             window.location = '/';
           }
-            
-              //sessionStorage.setItem('nome', resp.resposta.username);
-              //sessionStorage.setItem('id', resp.resposta.userID);
         });
       };
     
@@ -72,13 +69,13 @@ class Login extends Component {
 							<div class="input-group-append">
 								<span class="input-group-text"><i class="fa fa-user"></i></span>
 							</div>
-							<input id="username"type="text" name="" class="form-control input_user"  placeholder="username"></input>
+							<input id="username"type="text" name="" class="form-control input_user"  placeholder="username" required></input>
 						</div>
 						<div class="input-group mb-2">
 							<div class="input-group-append">
 								<span class="input-group-text"><i class="fa fa-key"></i></span>
 							</div>
-							<input id="password" type="password" name="" class="form-control input_pass" placeholder="password"></input>
+							<input id="password" type="password" name="" class="form-control input_pass" placeholder="password" required></input>
 						</div>
 						<div class="form-group">
 							<div class="custom-control custom-checkbox">

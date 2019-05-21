@@ -14,52 +14,66 @@ exports.createUser = async (req, res) => {
     var existsEmail;
     //variável que recebe a query da base de dados sobre o username
     var existsUserName;
-
-    //***Validação do Email***/
-    //verificar se o campo email está vazio e se é realmente um email
-    req.checkBody('email', 'Email is required or is not valid').notEmpty().isEmail();
-
-    //***Validação do Username***/
-    req.checkBody('username', 'Username is required').notEmpty();
-
-    //***Validação do Nome***/
-    req.checkBody('nome', 'Nome is required').notEmpty();
-
-    //verificar se o email inserido existe na base de dados
-    await usersService.getUserByEmail(req.body.email).then(user => existsEmail = user).catch(err => console.log(err));
-
-    //verificar se o username inserido existe na base de dados
-    await usersService.getUser(req.body.username).then(user => existsUserName = user).catch(err => console.log(err));
-
-    //se o email existe
-    if (existsEmail != null || existsUserName != null) {
-
-        serverResponse = { status: "Email e/ou username já existe(m) na base de dados", response: {} }
+    //token
+    var token = req.headers['x-access-token'];
+    console.log(token);
+    if (!token) {
+        serverResponse = {status:"Nao está autenticado | token expirou",response:{}}
         return res.send(serverResponse);
     }
 
-    //verificar erros 
-    var errors = req.validationErrors();
-    //se existir erros de validação
-    if (errors) {
-        serverResponse = { status: "Erros na validação", response: errors }
-        return res.send(serverResponse)
+    try {
+        jwt.verify(token, 'secret');
+        //***Validação do Email***/
+        //verificar se o campo email está vazio e se é realmente um email
+        req.checkBody('email', 'Email is required or is not valid').notEmpty().isEmail();
+
+        //***Validação do Username***/
+        req.checkBody('username', 'Username is required').notEmpty();
+
+        //***Validação do Nome***/
+        req.checkBody('nome', 'Nome is required').notEmpty();
+
+        //verificar se o email inserido existe na base de dados
+        await usersService.getUserByEmail(req.body.email).then(user => existsEmail = user).catch(err => console.log(err));
+
+        //verificar se o username inserido existe na base de dados
+        await usersService.getUser(req.body.username).then(user => existsUserName = user).catch(err => console.log(err));
+
+        //se o email existe
+        if (existsEmail != null || existsUserName != null) {
+
+            serverResponse = { status: "Email e/ou username já existe(m) na base de dados", response: {} }
+            return res.send(serverResponse);
+        }
+
+        //verificar erros 
+        var errors = req.validationErrors();
+        //se existir erros de validação
+        if (errors) {
+            serverResponse = { status: "Erros na validação", response: errors }
+            return res.send(serverResponse)
+        }
+        //caso contrário, cria o utilizador
+        else {
+            var hash = bcrypt.hashSync(req.body.hashPassword, 8);
+            var newUser = {
+                email: req.body.email,
+                username: req.body.username,
+                nome: req.body.nome,
+                hashPassword: hash
+            }
+            var createUser;
+            //criação de um novo user de acordo com os parâmetros recebidos
+            await usersService.createUser(newUser).then(user => createUser = user).catch(err => console.log(err));
+            if (createUser != null) {
+                serverResponse = { status: "Utilizador Criado com Sucesso", response: createUser };
+            }
+            return res.send(serverResponse);
+        }
     }
-    //caso contrário, cria o utilizador
-    else {
-        var hash = bcrypt.hashSync(req.body.hashPassword, 8);
-        var newUser = {
-            email: req.body.email,
-            username: req.body.username,
-            nome: req.body.nome,
-            hashPassword: hash
-        }
-        var createUser;
-        //criação de um novo user de acordo com os parâmetros recebidos
-        await usersService.createUser(newUser).then(user => createUser = user).catch(err => console.log(err));
-        if (createUser != null) {
-            serverResponse = { status: "Utilizador Criado com Sucesso", response: createUser };
-        }
+    catch (err) {
+        serverResponse = {status:"Nao está autenticado | token expirou",response:{}}
         return res.send(serverResponse);
     }
 }
@@ -86,7 +100,8 @@ exports.getUser = async (req, res) => {
         }
         return res.send(serverResponse);
     } catch (err) {
-        return res.status(500).send({ auth: false, message: 'Failed to authenticate token.' });
+        serverResponse = {status:"Nao está autenticado | token expirou",response:{}}
+        return res.send(serverResponse);
     }
 
 }
@@ -150,8 +165,8 @@ exports.editUser = async (req, res) => {
     //***Validação do Nome***/
     req.checkBody('nome', 'Nome is required').notEmpty();
 
-     //***Validação da passord***/
-     req.checkBody('hashPassword', 'Password is required').notEmpty();
+    //***Validação da passord***/
+    req.checkBody('hashPassword', 'Password is required').notEmpty();
 
     //verificar erros de validação
     var errors = req.validationErrors();
@@ -231,34 +246,29 @@ exports.deleteUser = async (req, res) => {
 }
 
 exports.login = async (req, res) => {
-    let serverResponse = { status: "Não Autenticado", response: {}, token:{}}
+    let serverResponse = { status: "Não Autenticado", response: {}, token: {} }
     var existsUserName;
     var username = req.body.username;
     let code = 200;
-    console.log(username);
-    console.log(req.body.hashPassword);
     //verficar se existe algum utilizador na base de dados com o  username inserido
     await usersService.getUser(username).then(user => existsUserName = user).catch(err => console.log(err));
     //se não existir esse utilizador ou a password estiver errada
-    console.log(req.body.hashPassword);
-    console.log(existsUserName.hashPassword);
+    if (existsUserName == null || !bcrypt.compareSync(req.body.hashPassword, existsUserName.hashPassword)) {
+        serverResponse.status = "Username ou password errados";
 
-     if (existsUserName == null || !bcrypt.compareSync(req.body.hashPassword, existsUserName.hashPassword)) {
-         serverResponse.status= "Username ou password errados";
-         
-     }
+    }
     //se existir o utilizador e a password bater certo
     else {
         // create a token
-         var token = jwt.sign({ id: username }, 'secret', {
-             expiresIn: 600 // expires in 10 minutos ***PARA TESTES****
+        var token = jwt.sign({ id: username }, 'secret', {
+            expiresIn: 600 // expires in 10 minutos ***PARA TESTES****
 
-         });
-        serverResponse.status ="Autenticado";
+        });
+        serverResponse.status = "Autenticado";
         serverResponse.response = existsUserName;
         serverResponse.token = token;
     }
     //resposta do servidor
     res
-      .json(serverResponse);
+        .json(serverResponse);
 }

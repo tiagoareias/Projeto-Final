@@ -16,12 +16,19 @@ class Index extends Component {
   componentDidMount() {
     this.getLastVideos();
   }
+  logout(){
+    localStorage.clear();
+    sessionStorage.clear();
+    window.location.href = '/';
+}
+
 
   async getLastVideos() {
     const response = await fetch('http://localhost:8000/music', {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json',
+        'x-access-token': sessionStorage.getItem('token')
       }
     });
 
@@ -30,6 +37,9 @@ class Index extends Component {
       switch (status) {
         case "Últimas músicas classificadas":
           this.setState({ dataGet: resp.response });
+          break;
+        case "token expired":
+          this.logout();
           break;
         default:
           console.log(this.state.alertText)

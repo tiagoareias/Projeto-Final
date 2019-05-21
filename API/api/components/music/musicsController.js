@@ -1,5 +1,5 @@
 var musicsService = require('./musicsService');
-var fetchVideoInfo = require('youtube-info');   
+var fetchVideoInfo = require('youtube-info');
 const { check, validationResult } = require('express-validator/check');
 var jwt = require('jsonwebtoken');
 
@@ -20,8 +20,8 @@ exports.uploadVideo = async (req, res) => {
     //verificar se a música já existe na base de dados
     await musicsService.getVideo(idVideo).then(mus => existsMusica = mus).catch(err => console.log(err));
 
-    if(existsMusica !=null){
-        serverResponse = {status:"URL já existe na base de dados",response:existsMusica}
+    if (existsMusica != null) {
+        serverResponse = { status: "URL já existe na base de dados", response: existsMusica }
         return res.send(serverResponse)
     }
 
@@ -45,9 +45,11 @@ exports.uploadVideo = async (req, res) => {
                 const numLikes = videoInfo.likeCount;
                 const numComentarios = videoInfo.commentCount;
 
-                const dadosMusica = { idVideo: idVideo, url: url, name: nome, autor: autor, 
-                                      dataPublicacao: dataPublicacao, numViews: numViews,
-                                      numDislikes: numDislikes, numLikes: numLikes, numComentarios }
+                const dadosMusica = {
+                    idVideo: idVideo, url: url, name: nome, autor: autor,
+                    dataPublicacao: dataPublicacao, numViews: numViews,
+                    numDislikes: numDislikes, numLikes: numLikes, numComentarios
+                }
 
                 await musicsService.uploadVideo(dadosMusica);
                 serverResponse = { status: "Upload", response: dadosMusica }
@@ -61,7 +63,7 @@ exports.uploadVideo = async (req, res) => {
 
 }
 
-exports.getVideo = async(req,res) =>{
+exports.getVideo = async (req, res) => {
     let serverResponse = { status: "URL não está presente na base de dados", response: {} }
     //variável que guarda a query à base de dados
     var urlBD;
@@ -69,21 +71,38 @@ exports.getVideo = async(req,res) =>{
     var idVideo = req.params.idVideo;
     await musicsService.getVideo(idVideo).then(url => urlBD = url).catch(err => console.log(err));
 
-    if(urlBD != null){
-        serverResponse = {status: "URL com o id " + idVideo + " está na base de dados",response:urlBD}
+    if (urlBD != null) {
+        serverResponse = { status: "URL com o id " + idVideo + " está na base de dados", response: urlBD }
     }
     return res.send(serverResponse);
 }
 
-exports.getLastVideos = async(req,res) =>{
+exports.getLastVideos = async (req, res) => {
     let serverResponse = { status: "Ainda não existem músicas na Base de Dados", response: {} }
     //variável que guarda a query à base de dados
     var musicas;
-    await musicsService.getLastVideos().then(mus => musicas = mus).catch(err => console.log(err))
-    if(musicas.length > 0 ){
-        serverResponse = {status: "Últimas músicas classificadas", response:musicas}
+    var token = req.headers['x-access-token'];
+    console.log(token);
+    if (token == "null") {
+        await musicsService.getLastVideos().then(mus => musicas = mus).catch(err => console.log(err))
+        if (musicas.length > 0) {
+            serverResponse = { status: "Últimas músicas classificadas", response: musicas }
+        }
+        return res.send(serverResponse);
     }
-    return res.send(serverResponse);
+    else {
+        try {
+            jwt.verify(token, 'secret');
+            await musicsService.getLastVideos().then(mus => musicas = mus).catch(err => console.log(err))
+            if (musicas.length > 0) {
+                serverResponse = { status: "Últimas músicas classificadas", response: musicas }
+            }
+            return res.send(serverResponse);
+        } catch (err) {
+            serverResponse = { status: "token expired", response: {} }
+            return res.send(serverResponse);
+        }
+    }
 }
 
 exports.deleteMusic = async (req, res) => {
