@@ -4,4 +4,5 @@ module.exports = (app) => {
     app.get('/music/:idVideo', musicsController.getVideo);
     app.get('/music', musicsController.getLastVideos);
     app.post('/music/:idVideo/delete', musicsController.deleteMusic);
+    app.get('/music/search/:pesquisaMusica', musicsController.getVideoPesquisa);
 }

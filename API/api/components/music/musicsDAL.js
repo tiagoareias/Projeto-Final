@@ -10,6 +10,12 @@ exports.getVideo = async (idVideo) => {
     return musica;
 }
 
+exports.getVideoPesquisa = async(pesquisaMusica) =>{
+    var pesquisa;
+    await db.Music.findAll({ where: { name: { $like: '%'+pesquisaMusica+'%' } } }).then(music => pesquisa = music).catch(err => console.log(err))
+    return pesquisa;
+}
+
 exports.getLastVideos = async () =>{
     var musicas;
     await db.Music.findAll({ order: [['createdAt', 'DESC']], limit:4 })
