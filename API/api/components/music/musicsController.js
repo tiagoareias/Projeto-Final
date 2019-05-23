@@ -77,6 +77,18 @@ exports.getVideo = async (req, res) => {
     return res.send(serverResponse);
 }
 
+exports.getVideoPesquisa = async (req, res) => {
+    let serverResponse = { status: "A pesquisa não retornou nenhuma música", response: "teste" }
+
+    var nome;
+    var pesquisaRealizada = req.params.pesquisaMusica;
+    await musicsService.getVideoPesquisa(pesquisaRealizada).then(music => nome = music).catch(err => console.log(err));
+
+    if(pesquisaRealizada !=null){
+        serverResponse = {status:"Musicas encontradas que contem o seguinte conjunto de caracteres " + pesquisaRealizada, response:nome}
+    }
+    return res.send(serverResponse);
+}
 exports.getLastVideos = async (req, res) => {
     let serverResponse = { status: "Ainda não existem músicas na Base de Dados", response: {} }
     //variável que guarda a query à base de dados
