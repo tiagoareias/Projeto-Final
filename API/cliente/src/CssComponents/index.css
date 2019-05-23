@@ -1,0 +1,8 @@
+#urlInput{
+  width: 600px;
+
+}
+
+::-webkit-input-placeholder {
+  font-style: italic;
+}
