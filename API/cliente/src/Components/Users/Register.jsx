@@ -16,7 +16,7 @@ class Register extends Component {
     changeStatus() {
         this.setState({ alertisNotVisible: true });
     }
-    logout(){
+    logout() {
         localStorage.clear();
         sessionStorage.clear();
         window.location.href = '/';
@@ -48,83 +48,83 @@ class Register extends Component {
             let status = resp.status;
             switch (status) {
                 case "Email e/ou username já existe(m) na base de dados":
-                  alert("Email e/ou username já existe(m) na base de dados")
-                  break;
+                    alert("Email e/ou username já existe(m) na base de dados")
+                    break;
                 case "Erros na validação":
-                  alert("Erros na validação")
-                  break;
+                    alert("Erros na validação")
+                    break;
                 case "Utilizador Criado com Sucesso":
-                  alert("Utilizador criado com sucesso")
-                  window.location = '/';
-                  break;
+                    alert("Utilizador criado com sucesso")
+                    window.location = '/';
+                    break;
                 case "Nao está autenticado | token expirou":
                     this.logout();
-                  window.location = '/login'
-                  
-                  break;
+                    window.location = '/login'
+
+                    break;
                 default:
-                  console.log(this.state.alertText)
-              }
-                });
+                    console.log(this.state.alertText)
+            }
+        });
     };
 
     render() {
-        if(sessionStorage.getItem('token') != null)
-        return (
-            <main class="my-form">
-                <div class="cotainer">
-                    <div class="row justify-content-center">
-                        <div class="col-md-8">
-                            <div class="card">
-                                <div class="card-header">Criar novo utilizador</div>
-                                <div class="card-body">
-                                <form onSubmit={this.handleSubmit}>
-                                        <div class="form-group row">
-                                            <label for="full_name" class="col-md-4 col-form-label text-md-right">Nome</label>
-                                            <div class="col-md-6">
-                                                <input type="text" id="nome" class="form-control" name="full-name" required></input>
+        if (sessionStorage.getItem('token') != null)
+            return (
+                <main className="my-form">
+                    <div className="cotainer">
+                        <div className="row justify-content-center">
+                            <div className="col-md-8">
+                                <div className="card">
+                                    <div className="card-header">Criar novo utilizador</div>
+                                    <div className="card-body">
+                                        <form onSubmit={this.handleSubmit}>
+                                            <div className="form-group row">
+                                                <label htmlFor="full_name" className="col-md-4 col-form-label text-md-right">Nome</label>
+                                                <div className="col-md-6">
+                                                    <input type="text" id="nome" className="form-control" name="full-name" required></input>
+                                                </div>
                                             </div>
-                                        </div>
 
-                                        <div class="form-group row">
-                                            <label for="email_address" class="col-md-4 col-form-label text-md-right">E-Mail</label>
-                                            <div class="col-md-6">
-                                                <input type="text" id="email" class="form-control" name="email-address" required></input>
+                                            <div className="form-group row">
+                                                <label htmlFor="email_address" className="col-md-4 col-form-label text-md-right">E-Mail</label>
+                                                <div className="col-md-6">
+                                                    <input type="text" id="email" className="form-control" name="email-address" required></input>
+                                                </div>
                                             </div>
-                                        </div>
 
-                                        <div class="form-group row">
-                                            <label for="user_name" class="col-md-4 col-form-label text-md-right">Username</label>
-                                            <div class="col-md-6">
-                                                <input type="text" id="username" class="form-control" name="username" required></input>
+                                            <div className="form-group row">
+                                                <label htmlFor="user_name" className="col-md-4 col-form-label text-md-right">Username</label>
+                                                <div className="col-md-6">
+                                                    <input type="text" id="username" className="form-control" name="username" required></input>
+                                                </div>
                                             </div>
-                                        </div>
 
-                                        <div class="form-group row">
-                                            <label for="password" class="col-md-4 col-form-label text-md-right">Password</label>
-                                            <div class="col-md-6">
-                                                <input type="password" id="password" class="form-control" required></input>
+                                            <div className="form-group row">
+                                                <label htmlFor="password" className="col-md-4 col-form-label text-md-right">Password</label>
+                                                <div className="col-md-6">
+                                                    <input type="password" id="password" className="form-control" required></input>
+                                                </div>
                                             </div>
-                                        </div>
 
 
-                                        <div class="col-md-6 offset-md-4">
-                                            <button type="submit" class="btn">
-                                                Criar Utilizador
+                                            <div className="col-md-6 offset-md-4">
+                                                <button type="submit" className="btn">
+                                                    Criar Utilizador
                                         </button>
-                                        </div>
+                                            </div>
 
-                                    </form>
+                                        </form>
+                                    </div>
                                 </div>
                             </div>
                         </div>
                     </div>
-                </div>
 
-            </main>
-        );
-        else{
-            window.location="*";
+                </main>
+            );
+        else {
+            window.location = "*";
         }
     }
 }

@@ -39,6 +39,7 @@ class Index extends Component {
           this.setState({ dataGet: resp.response });
           break;
         case "token expired":
+          alert("Sessão expirou")
           this.logout();
           break;
         default:

@@ -8,7 +8,6 @@ class Header extends Component {
     getName() {
         var decoded = jwt.decode(sessionStorage.getItem('token'));
         var name = decoded.nome;
-        console.log(name)
         return name;
     }
     logout() {
@@ -69,7 +68,7 @@ class Header extends Component {
                     <div className="collapse navbar-collapse" id="navbarText">
                         <ul className="navbar-nav mr-auto">
                             <li className="nav-item active">
-                                <a className="nav-link" href="/register">Criar novos utilizadores <span className="sr-only">(current)</span></a>
+                                <a className="nav-link" href="/registar">Criar novos utilizadores <span className="sr-only">(current)</span></a>
                             </li>
                             <li className="nav-item active">
                                 <a className="nav-link" href="#">Músicas <span className="sr-only">(current)</span></a>
@@ -80,7 +79,7 @@ class Header extends Component {
                             <a className="nav-link" > {this.getName()}</a>
                         </li>
                         <li className="navbar-text">
-                            <button class="btn btn-sm btn-secondary" type="button" onClick={this.logout}>Terminar Sessão</button>
+                            <button className="btn btn-sm btn-secondary" type="button" onClick={this.logout}>Terminar Sessão</button>
                         </li>
 
                     </div>

@@ -144,15 +144,15 @@ exports.editUser = async (req, res) => {
     var updateUser = {
         //email: req.body.email,
         //username: req.body.username,
-        nome: req.body.nome,
+        //nome: req.body.nome,
         hashPassword: hash
     }
     //variável que recebe a query da base de dados sobre o username do URL
     var existsUserNameURL;
     //variável que recebe a query da base de dados sobre o email
-    var existsEmail;
+    //var existsEmail;
     //variável que recebe a query da base de dados sobre o username
-    var existsUserName;
+    //var existsUserName;
 
     //***Validação do Email***/
 
@@ -163,10 +163,10 @@ exports.editUser = async (req, res) => {
     // req.checkBody('username', 'Username is required').notEmpty();
 
     //***Validação do Nome***/
-    req.checkBody('nome', 'Nome is required').notEmpty();
+    //req.checkBody('nome', 'Nome is required').notEmpty();
 
     //***Validação da passord***/
-    req.checkBody('hashPassword', 'Password is required').notEmpty();
+    //req.checkBody('hashPassword', 'Password is required').notEmpty();
 
     //verificar erros de validação
     var errors = req.validationErrors();
@@ -177,10 +177,10 @@ exports.editUser = async (req, res) => {
     }
 
     //verificar se o email inserido existe na base de dados
-    await usersService.getUserByEmail(req.body.email).then(user => existsEmail = user).catch(err => console.log(err));
+    //await usersService.getUserByEmail(req.body.email).then(user => existsEmail = user).catch(err => console.log(err));
 
     //verificar se o username inserido existe na base de dados
-    await usersService.getUser(req.body.username).then(user => existsUserName = user).catch(err => console.log(err));
+    //await usersService.getUser(req.body.username).then(user => existsUserName = user).catch(err => console.log(err));
 
     //verificar se o username inserido existe na base de dados
     await usersService.getUser(req.params.username).then(user => existsUserNameURL = user).catch(err => console.log(err));
@@ -201,20 +201,21 @@ exports.editUser = async (req, res) => {
         }
         else {
             //verificar se email e username já estão na base de dados
-            if (existsEmail == null && existsUserName == null) {
+            //if (existsEmail == null && existsUserName == null) {
                 //update à base de dados
                 await usersService.editUser(updateUser, userName).then(user => userUpdate = user).catch(err => console.log(err));
                 if (userUpdate != 0) {
                     serverResponse = { status: "Updated", response: userUpdate }
                 }
-            }
+            /*}
             else {
                 serverResponse = { status: "Not Updated | Username ou email já existem" }
-            }
+            }*/
         }
         return res.send(serverResponse);
     } catch (err) {
-        return res.status(500).send({ auth: false, message: 'Failed to authenticate token.' });
+        serverResponse = {status:"Nao está autenticado | token expirou",response:{}}
+        return res.send(serverResponse);
     }
 }
 

@@ -13,7 +13,7 @@ ReactDOM.render(
         <Switch>
             <Route path="/" exact={true} component={IndexPage} />
             <Route path="/login"component={LoginPage} />
-            <Route path="/register"component={RegisterPage} />
+            <Route path="/registar"component={RegisterPage} />
             <Route path="/utilizador/Perfil" component = {PerfilPage} />
             <Route path='*' component={NotFindPage} />
         </Switch>
