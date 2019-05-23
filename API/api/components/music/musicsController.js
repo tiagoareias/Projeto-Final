@@ -85,7 +85,7 @@ exports.getVideoPesquisa = async (req, res) => {
     await musicsService.getVideoPesquisa(pesquisaRealizada).then(music => nome = music).catch(err => console.log(err));
 
     if(pesquisaRealizada !=null){
-        serverResponse = {status:"Musicas encontradas que contem  " + pesquisaRealizada, response:nome}
+        serverResponse = {status:"Musicas encontradas que contem o seguinte conjunto de caracteres " + pesquisaRealizada, response:nome}
     }
     return res.send(serverResponse);
 }
