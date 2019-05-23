@@ -3,20 +3,20 @@ import '../../CssComponents/footer.css'
 class Footer extends Component {
   render() {
     return (
-		<footer class="footer-distributed">
+		<footer className="footer-distributed">
 
-			<div class="footer-right">
+			<div className="footer-right">
 
-				<a ><i class="fa fa-facebook"></i></a>
-				<a ><i class="fa fa-twitter"></i></a>
-				<a ><i class="fa fa-linkedin"></i></a>
-				<a ><i class="fa fa-github"></i></a>
+				<a ><i className="fa fa-facebook"></i></a>
+				<a ><i className="fa fa-twitter"></i></a>
+				<a ><i className="fa fa-linkedin"></i></a>
+				<a ><i className="fa fa-github"></i></a>
 
 			</div>
 
-			<div class="footer-left">
+			<div className="footer-left">
 
-				<p class="footer-links">
+				<p className="footer-links">
 					<a >Home</a>
 					·
 					·
