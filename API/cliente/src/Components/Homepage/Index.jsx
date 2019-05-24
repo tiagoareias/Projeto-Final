@@ -1,6 +1,5 @@
 import React, { Component } from "react";
 import '../../CssComponents/index.css'
-
 class Index extends Component {
 
   constructor() {
@@ -9,23 +8,19 @@ class Index extends Component {
       alertText: "Ocorreu um erro técnico. Tente novamente mais tarde",
       alertisNotVisible: true,
       alertColor: "danger",
-      //Ultimas 4 musicas
       dataGet: [],
-      //Dados da musica introduzida pelo URL
-      dataPost: [],
-      //Dados da musica pesquisada
-      dataGetSearh: []
+      dataPost: []
     }
   }
 
   componentDidMount() {
     this.getLastVideos();
   }
-  logout() {
+  logout(){
     localStorage.clear();
     sessionStorage.clear();
     window.location.href = '/';
-  }
+}
 
 
   async getLastVideos() {
@@ -44,7 +39,6 @@ class Index extends Component {
           this.setState({ dataGet: resp.response });
           break;
         case "token expired":
-          alert("Sessão expirou")
           this.logout();
           break;
         default:
@@ -52,35 +46,6 @@ class Index extends Component {
       }
     })
   }
-
-  getSearch = async e => {
-    e.preventDefault();
-
-    const pesquisaMusica = document.getElementById('searchMusicas').value;
-
-    const response = await fetch(`http://localhost:8000/music/search/${pesquisaMusica}`, {
-      method: 'GET',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-    });
-    //Aguardar API
-    await response.json().then(resp => {
-      //Verificar o estado da resposta da API
-      const datalistSearch = document.getElementById('musics');
-
-      this.setState({ dataGetSearh: resp.response })
-      let numMusicas = this.state.dataGetSearh.length;
-      datalistSearch.textContent = "";
-      for (let i = 0; i < numMusicas; i++) {
-        const option = document.createElement('option');
-        option.setAttribute('id', this.state.dataGetSearh[i].idVideo);
-        option.setAttribute('value', this.state.dataGetSearh[i].name)
-        datalistSearch.append(option);
-      }
-    });
-  }
-
 
   handleSubmit = async e => {
     e.preventDefault();
@@ -130,18 +95,9 @@ class Index extends Component {
           </div>
           <br />
 
-          {/*Search*/}
-          <form onChange={this.getSearch} >
-            <div className="d-flex justify-content-end">
-              <input type="text" id="searchMusicas" placeholder="Pesquisa Músicas" list="musics" />
-              <datalist id="musics"></datalist>
-            </div>
-          </form>
-          <br />
-
           {/*URL*/}
           <form onSubmit={this.handleSubmit}>
-            <div className="input-group mb-3 d-flex ">
+            <div className="input-group mb-3 d-flex justify-content-center">
               <div className="input-group-prepend ">
                 <span className="input-group-text font-weight-bold" >URL</span>
               </div>
@@ -174,12 +130,12 @@ class Index extends Component {
                       <h5 className="font-weight-bold ">{data.name}</h5>
                       <br />
                       <div className="text-secondary" >
-                        <h6 id="likes"> <i className="fa fa-thumbs-o-up"></i> <i>{data.numLikes}</i></h6>
-                        <h6 id="likes"> <i className="fa fa-thumbs-o-down"></i> <i >{data.numDislikes}</i></h6>
+                      <h6 id="likes"> <i className="fa fa-thumbs-o-up"></i> <i>{data.numLikes}</i></h6>
+                      <h6 id="likes"> <i className="fa fa-thumbs-o-down"></i> <i >{data.numDislikes}</i></h6>
                       </div>
                       <br />
                       <h6 className="text-secondary"><i >{data.numViews}</i> Visualizações </h6>
-                      <h6 className="text-secondary"> Publicado a <i > {data.dataPublicacao.substring(0, 10)}</i></h6>
+                      <h6 className="text-secondary"> Publicado a <i > {data.dataPublicacao.substring(0,10)}</i></h6>
                     </div>
                   </div>
                 </div>
