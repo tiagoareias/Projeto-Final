@@ -8,6 +8,7 @@ import NotFindPage from './Components/Global/NotFindPage';
 import RegisterPage from './MasterComponents/Users/RegisterPage';
 import PerfilPage from './MasterComponents/Users/PerfilPage'
 import IndexPesquisaPage from './MasterComponents/Music/IndexPesquisaPage';
+import SobrePage from './MasterComponents/Outros/SobrePage';
 
 ReactDOM.render(
     <BrowserRouter>
@@ -17,6 +18,8 @@ ReactDOM.render(
             <Route path="/registar"component={RegisterPage} />
             <Route path="/utilizador/Perfil" component = {PerfilPage} />
             <Route path="/music/pesquisa" component = {IndexPesquisaPage}/>
+            
+            <Route path="/sobre" component={SobrePage} />
             <Route path='*' component={NotFindPage} />
         </Switch>
     </ BrowserRouter>

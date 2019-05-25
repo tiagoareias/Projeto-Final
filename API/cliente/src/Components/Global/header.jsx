@@ -112,7 +112,7 @@ class Header extends Component {
 
                         ) : (
                                 <li className="nav-item active">
-                                    <a className="nav-link" href="/register">Criar novos utilizadores <span className="sr-only">(current)</span></a>
+                                    <a className="nav-link" href="/registar">Criar novos utilizadores <span className="sr-only">(current)</span></a>
                                 </li>
 
                             )}
@@ -133,11 +133,11 @@ class Header extends Component {
                                 </div>
                                 <div className="modal-body">
                                     <form onChange={this.getSearch} onSubmit={this.handleSubmitOnSubmit}>
-                                        <input id="searchMusicas" class="form-control mr-sm-2" type="search" placeholder="Pesquisa Músicas" aria-label="Search" list="musics"></input>
+                                        <input id="searchMusicas" className="form-control mr-sm-2" type="search" placeholder="Pesquisa Músicas" aria-label="Search" list="musics"></input>
                                         <datalist id="musics"></datalist>
 
                                         <div className="modal-footer">
-                                        <button class="btn btn-danger" type="search">Search</button>
+                                        <button className="btn btn-danger" type="search">Search</button>
                                             <button type="button" className="btn btn-danger" data-dismiss="modal">Close</button>
                                         </div>
                                     </form>

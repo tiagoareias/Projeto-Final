@@ -17,11 +17,11 @@ class Footer extends Component {
 			<div className="footer-left">
 
 				<p className="footer-links">
-					<a >Home</a>
+					<a href="/">Home</a>
 					·
 					·
 					
-					<a >About</a>
+					<a href="/sobre" >About</a>
 					·
 					·
 					<a >Contact</a>
