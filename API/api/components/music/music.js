@@ -28,22 +28,25 @@ module.exports = (sequelize, DataTypes) => {
             allownull: false  
         },
         numViews:{
-            type: DataTypes.INTEGER,
+            type: DataTypes.STRING,
             allownull: false  
         },
         numDislikes:{
-            type: DataTypes.INTEGER,
+            type: DataTypes.STRING,
             allownull: false  
         },
         numLikes:{
-            type: DataTypes.INTEGER,
+            type: DataTypes.STRING,
             allownull: false  
         },
         numComentarios:{
-            type: DataTypes.INTEGER,
+            type: DataTypes.STRING,
             allownull: false  
         }
-    })
+    }, {
+        charset: 'utf8',
+        collate: 'utf8_unicode_ci'
+      });
     Music.sync({ force: false }).then(() => {
         // Now the `music` table in the database corresponds to the model definition
         return ;

@@ -7,8 +7,8 @@ class Header extends Component {
         super(props);
         this.state = {
             data: [],
-     //Dados da musica pesquisada
-      dataGetSearh: []
+            //Dados da musica pesquisada
+            dataGetSearh: []
 
         }
 
@@ -16,7 +16,6 @@ class Header extends Component {
     getName() {
         var decoded = jwt.decode(sessionStorage.getItem('token'));
         var name = decoded.nome;
-        console.log(name)
         return name;
     }
     logout() {
@@ -27,30 +26,30 @@ class Header extends Component {
 
     getSearch = async e => {
         e.preventDefault();
-    
+
         const pesquisaMusica = document.getElementById('searchMusicas').value;
-    
+
         const response = await fetch(`http://localhost:8000/music/search/${pesquisaMusica}`, {
-          method: 'GET',
-          headers: {
-            'Content-Type': 'application/json'
-          },
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json'
+            },
         });
         //Aguardar API
         await response.json().then(resp => {
-          //Verificar o estado da resposta da API
-          const datalistSearch = document.getElementById('musics');
-          this.setState({ dataGetSearh: resp.response })
-          let numMusicas = this.state.dataGetSearh.length;
-          datalistSearch.textContent = "";
-          for (let i = 0; i < numMusicas; i++) {
-            const option = document.createElement('option');
-            option.setAttribute('id', this.state.dataGetSearh[i].idVideo);
-            option.setAttribute('value', this.state.dataGetSearh[i].name)
-            datalistSearch.append(option);
-          }
+            //Verificar o estado da resposta da API
+            const datalistSearch = document.getElementById('musics');
+            this.setState({ dataGetSearh: resp.response })
+            let numMusicas = this.state.dataGetSearh.length;
+            datalistSearch.textContent = "";
+            for (let i = 0; i < numMusicas; i++) {
+                const option = document.createElement('option');
+                option.setAttribute('id', this.state.dataGetSearh[i].idVideo);
+                option.setAttribute('value', this.state.dataGetSearh[i].name);
+                datalistSearch.append(option);
+            }
         });
-      }
+    }
 
     handleSubmitOnSubmit = async e => {
         e.preventDefault();
@@ -66,12 +65,12 @@ class Header extends Component {
         });
         //Aguardar API
         await response.json().then(resp => {
-            console.log(resp.status);
+            //console.log(resp.status);
             //Verificar o estado da resposta da API
             let status = resp.response.length;
-            console.log(resp.response.length);
+            //console.log(resp.response.length);
             this.state.data = resp;
-            console.log(this.state.data)
+            //console.log(this.state.data)
 
             switch (status) {
                 case 0:
@@ -103,25 +102,41 @@ class Header extends Component {
                 <button className="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarText" aria-controls="navbarText" aria-expanded="false" aria-label="Toggle navigation">
                     <span className="navbar-toggler-icon"></span>
                 </button>
+
+
                 <div className="collapse navbar-collapse" id="navbarText">
                     <ul className="navbar-nav mr-auto">
-                        {(sessionStorage.getItem('token') == null) ? (
+
+                        <li className="nav-item active">
+                            <span className="nav-link"> | </span>
+                        </li>
+
+
+                        {/*SOBRE*/}
+                        <li className="nav-item active">
+                            <a className="nav-link" href="/sobre">Sobre <span className="sr-only">(current)</span></a>
+                        </li>
+
+                        <li className="nav-item active">
+                            <span className="nav-link"> | </span>
+                        </li>
+
+                        {/*CRIAR NOVOS UTILZIADORES*/}
+                        {(sessionStorage.getItem('token') != null) ? (
                             <li className="nav-item active">
-                                <a className="nav-link " href="#">Músicas <span className="sr-only">(current)</span></a>
+                                <a className="nav-link" href="/registar">Criar novos utilizadores <span className="sr-only">(current)</span></a>
                             </li>
-
                         ) : (
-                                <li className="nav-item active">
-                                    <a className="nav-link" href="/registar">Criar novos utilizadores <span className="sr-only">(current)</span></a>
-                                </li>
-
+                                <li className="nav-item active"></li>
                             )}
                     </ul>
+
+
                     {/* <form class="form-inline my-2 my-lg-0" onChange={this.handleSubmitOnChange} onSubmit={this.handleSubmitOnSubmit}>
                         <input id="searchMusicas" class="form-control mr-sm-2" type="search" placeholder="Pesquisa Músicas" aria-label="Search" list="musics"></input>
                         <button class="btn btn-outline-danger my-2 my-sm-0" type="search">Search</button>
                     </form> */}
-                    <i className="fa fa-search" data-toggle="modal" data-target="#exampleModal" style={{ fontSize: '15px',cursor:"pointer" }}></i>
+                    <i className="fa fa-search" data-toggle="modal" data-target="#exampleModal" style={{ fontSize: '15px', cursor: "pointer" }}></i>
                     <div className="modal fade" id="exampleModal" tabIndex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
                         <div className="modal-dialog" role="document">
                             <div className="modal-content">
@@ -137,7 +152,7 @@ class Header extends Component {
                                         <datalist id="musics"></datalist>
 
                                         <div className="modal-footer">
-                                        <button className="btn btn-danger" type="search">Search</button>
+                                            <button className="btn btn-danger" type="search">Search</button>
                                             <button type="button" className="btn btn-danger" data-dismiss="modal">Close</button>
                                         </div>
                                     </form>
@@ -151,12 +166,12 @@ class Header extends Component {
                             <a className="nav-link" href="/login">Iniciar Sessão</a>
                         </li>
                     ) : ([
-                        <div>
+                        <div key="sessaoIniciada">
                             <li className="navbar-text">
-                                <a className="nav-link" > {this.getName()}</a>
+                                <a className="nav-link" href="/perfil"> {this.getName()}</a>
                             </li>
                             <li className="navbar-text">
-                                <button class="btn btn-sm btn-secondary" type="button" onClick={this.logout}>Terminar Sessão</button>
+                                <button className="btn btn-sm btn-secondary" type="button" onClick={this.logout}>Terminar Sessão</button>
                             </li>
                         </div>
                     ]

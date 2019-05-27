@@ -5,7 +5,7 @@ class Footer extends Component {
     return (
 		<footer className="footer-distributed">
 
-			<div className="footer-right">
+			{/*<div className="footer-right">
 
 				<a ><i className="fa fa-facebook"></i></a>
 				<a ><i className="fa fa-twitter"></i></a>
@@ -13,21 +13,15 @@ class Footer extends Component {
 				<a ><i className="fa fa-github"></i></a>
 
 			</div>
-
+	*/}
 			<div className="footer-left">
 
 				<p className="footer-links">
-					<a href="/">Home</a>
-					·
-					·
-					
-					<a href="/sobre" >About</a>
-					·
-					·
-					<a >Contact</a>
-				</p>
-
+				<a href="/">Página Inicial</a> | <a href="/sobre">Sobre</a><br />
+						<br/>
+						</p>
 				<p>MER &copy; 2019</p>
+				
 			</div>
 
 		</footer>

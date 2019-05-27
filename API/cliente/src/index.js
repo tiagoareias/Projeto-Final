@@ -16,7 +16,7 @@ ReactDOM.render(
             <Route path="/" exact={true} component={IndexPage} />
             <Route path="/login"component={LoginPage} />
             <Route path="/registar"component={RegisterPage} />
-            <Route path="/utilizador/Perfil" component = {PerfilPage} />
+            <Route path="/perfil" component = {PerfilPage} />
             <Route path="/music/pesquisa" component = {IndexPesquisaPage}/>
             
             <Route path="/sobre" component={SobrePage} />

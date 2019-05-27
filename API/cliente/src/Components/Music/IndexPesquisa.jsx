@@ -8,24 +8,9 @@ class IndexPesquisa extends Component {
       alertText: "Ocorreu um erro técnico. Tente novamente mais tarde",
       alertisNotVisible: true,
       alertColor: "danger",
-      dataGet: window.history.state.response,
-      dataPost: []
+      dataGet: window.history.state.response
     }
   }
-  componentDidMount(){
-    //console.log(window.history.state.response);
-   //this.setState({dataGet:window.history.state.response});
-    //this.dataGet = window.history.state.response;
-    console.log(this.state.dataGet);
-  }
-  
-  handleSubmit = async e => {
-    e.preventDefault();
-
-
-    
-  };
-
  
 
   render() {

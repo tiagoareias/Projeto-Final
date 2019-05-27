@@ -94,10 +94,10 @@ exports.getLastVideos = async (req, res) => {
     //variável que guarda a query à base de dados
     var musicas;
     var token = req.headers['x-access-token'];
-    console.log(token);
+    //console.log(token);
     if (token == "null") {
         await musicsService.getLastVideos().then(mus => musicas = mus).catch(err => console.log(err))
-        if (musicas.length > 0) {
+        if (musicas.length >= 0) {
             serverResponse = { status: "Últimas músicas classificadas", response: musicas }
         }
         return res.send(serverResponse);
@@ -106,7 +106,7 @@ exports.getLastVideos = async (req, res) => {
         try {
             jwt.verify(token, 'secret');
             await musicsService.getLastVideos().then(mus => musicas = mus).catch(err => console.log(err))
-            if (musicas.length > 0) {
+            if (musicas.length >= 0) {
                 serverResponse = { status: "Últimas músicas classificadas", response: musicas }
             }
             return res.send(serverResponse);
@@ -132,7 +132,7 @@ exports.deleteMusic = async (req, res) => {
     try {
         //validar
         jwt.verify(token, 'secret');
-        console.log("nao validou")
+        //console.log("nao validou")
         //apagar música
         await musicsService.deleteMusic(musicaApagar).then(mus => musicaDelete = mus).catch(err => console.log(err));
         if (musicaDelete != 0) {
