@@ -7,7 +7,8 @@ class Register extends Component {
         this.state = {
             alertText: 'Utilizador ou palavra-passe erradas',
             alertisNotVisible: true,
-            alertColor: 'danger'
+            alertColor: 'danger',
+            data:[]
         };
         this.changeStatus = this.changeStatus.bind(this);
     }
@@ -43,7 +44,7 @@ class Register extends Component {
             body: JSON.stringify(registerData)
         });
         await response.json().then(resp => {
-            console.log(resp);
+            //console.log(resp);
             //Verificar o estado da resposta da API
             let status = resp.status;
             switch (status) {
@@ -51,13 +52,15 @@ class Register extends Component {
                     alert("Email e/ou username já existe(m) na base de dados")
                     break;
                 case "Erros na validação":
-                    alert("Erros na validação")
+                    this.setState({data: resp.response});
+                    alert(this.state.data[0].msg)
                     break;
                 case "Utilizador Criado com Sucesso":
                     alert("Utilizador criado com sucesso")
                     window.location = '/';
                     break;
                 case "Nao está autenticado | token expirou":
+                    alert("A sessão expirou")
                     this.logout();
                     window.location = '/login'
 
@@ -103,7 +106,7 @@ class Register extends Component {
                                             <div className="form-group row">
                                                 <label htmlFor="password" className="col-md-4 col-form-label text-md-right">Password</label>
                                                 <div className="col-md-6">
-                                                    <input type="password" id="password" className="form-control" required></input>
+                                                    <input type="password" id="password" className="form-control" pattern="(?=^.{8,}$)((?=.*\d)|(?=.*\W+))(?![.\n])(?=.*[A-Z])(?=.*[a-z]).*$" title="Introduza pelo menos 8 caracteres, incluindo letras maíusculas, minusculas, algarismos e caracteres especiais" required></input>
                                                 </div>
                                             </div>
 

@@ -105,7 +105,7 @@ class Header extends Component {
 
 
                 <div className="collapse navbar-collapse" id="navbarText">
-                    <ul className="navbar-nav mr-auto">
+                    <ul className="navbar-nav mr-auto" id="head">
 
                         <li className="nav-item active">
                             <span className="nav-link"> | </span>
@@ -161,12 +161,13 @@ class Header extends Component {
                         </div>
                     </div>
 
+                        {/*INICIAR SESSÃO*/}
                     {(sessionStorage.getItem('token') == null) ? (
-                        <li className="navbar-text">
+                        <li className="navbar-text" id="head">
                             <a className="nav-link" href="/login">Iniciar Sessão</a>
                         </li>
                     ) : ([
-                        <div key="sessaoIniciada">
+                        <div key="sessaoIniciada" id="head">
                             <li className="navbar-text">
                                 <a className="nav-link" href="/perfil"> {this.getName()}</a>
                             </li>

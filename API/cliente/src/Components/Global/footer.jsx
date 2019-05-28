@@ -14,7 +14,7 @@ class Footer extends Component {
 
 			</div>
 	*/}
-			<div className="footer-left">
+			<div className="footer-left text-center">
 
 				<p className="footer-links">
 				<a href="/">Página Inicial</a> | <a href="/sobre">Sobre</a><br />
