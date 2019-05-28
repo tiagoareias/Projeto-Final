@@ -1,4 +1,5 @@
 import React, { Component } from "react";
+import '../../CssComponents/sobre.css'
 class Sobre extends Component {
   render() {
     return (
