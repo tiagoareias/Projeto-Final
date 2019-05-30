@@ -23,7 +23,7 @@ app.use((req, res, next) => {
 require('./components/database/index')
 require('./components/user/index')(app)
 require('./components/music/index')(app)
-
+require('./components/refreshToken/index')(app)
 var port = 8000
 app.listen(port, () => {
     console.log('\x1b[32m%s %d\x1b[0m.', 'Server HTTP listening on port', port)
