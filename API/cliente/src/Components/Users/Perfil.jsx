@@ -19,6 +19,39 @@ class Perfil extends Component {
     this.getDetails(username);
   }
 
+  async refreshToken() {
+    var decoded = jwt.decode(sessionStorage.getItem('token'));
+    var nome = decoded.nome;
+    var username = decoded.username;
+    const dataToken = {
+      username,
+      nome
+    }
+    console.log(dataToken);
+    const response = await fetch('http://localhost:8000/token/refresh',{
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(dataToken)    
+    });
+
+    await response.json().then(resp => {
+      console.log(resp.response)
+      //Verificar o estado da resposta da API
+      let status = resp.status;
+      switch (status) {
+        case "Token Atualizado":
+          sessionStorage.clear();
+          sessionStorage.setItem('token', resp.response);
+          break;
+       
+        default:
+          window.location="/"
+      }
+    });  
+  }
+
   getDetails = async (username) => {
     const response = await fetch(`http://localhost:8000/user/${username}`, {
       method: 'GET',
@@ -35,8 +68,8 @@ class Perfil extends Component {
           this.setState({ dataGet: resp.response });
           break;
         case "Nao está autenticado | token expirou":
-          alert("Sessão terminou");
-          window.location = "/";
+          this.refreshToken();
+          this.getDetails(username);
           break;
         default:
           console.log("erro")
@@ -76,8 +109,8 @@ class Perfil extends Component {
           window.location = "/";
           break;
         case "Nao está autenticado | token expirou":
-          alert("Sessão terminou");
-          window.location = "/";
+         this.refreshToken();
+         this.handleSubmit(e);
           break;
         default:
           console.log("erro")

@@ -1,5 +1,7 @@
 import React, { Component } from "react";
-import '../../CssComponents/index.css'
+import '../../CssComponents/index.css';
+var jwt = require('jsonwebtoken');
+
 class Index extends Component {
 
   constructor() {
@@ -33,18 +35,54 @@ class Index extends Component {
     });
 
     await response.json().then(resp => {
+      var decoded = jwt.decode(sessionStorage.getItem('token'));
+      console.log(decoded);
       let status = resp.status;
       switch (status) {
         case "Últimas músicas classificadas":
           this.setState({ dataGet: resp.response });
           break;
         case "token expired":
-          this.logout();
+          this.refreshToken();
+          this.getLastVideos();
           break;
         default:
           console.log(this.state.alertText)
       }
     })
+  }
+
+  async refreshToken() {
+    var decoded = jwt.decode(sessionStorage.getItem('token'));
+    var nome = decoded.nome;
+    var username = decoded.username;
+    const dataToken = {
+      username,
+      nome
+    }
+    console.log(dataToken);
+    const response = await fetch('http://localhost:8000/token/refresh',{
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(dataToken)    
+    });
+
+    await response.json().then(resp => {
+      console.log(resp.response)
+      //Verificar o estado da resposta da API
+      let status = resp.status;
+      switch (status) {
+        case "Token Atualizado":
+          sessionStorage.clear();
+          sessionStorage.setItem('token', resp.response);
+          break;
+       
+        default:
+          window.location="/"
+      }
+    });  
   }
 
   handleSubmit = async e => {

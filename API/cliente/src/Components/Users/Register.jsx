@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 import '../../CssComponents/Users/register.css';
-//import logo from '../../logo.png';
+var jwt = require('jsonwebtoken');
 class Register extends Component {
     constructor() {
         super();
@@ -23,6 +23,39 @@ class Register extends Component {
         window.location.href = '/';
     }
 
+    async refreshToken() {
+        var decoded = jwt.decode(sessionStorage.getItem('token'));
+        var nome = decoded.nome;
+        var username = decoded.username;
+        const dataToken = {
+          username,
+          nome
+        }
+        console.log(dataToken);
+        const response = await fetch('http://localhost:8000/token/refresh',{
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(dataToken)    
+        });
+    
+        await response.json().then(resp => {
+          console.log(resp.response)
+          //Verificar o estado da resposta da API
+          let status = resp.status;
+          switch (status) {
+            case "Token Atualizado":
+              sessionStorage.clear();
+              sessionStorage.setItem('token', resp.response);
+              break;
+           
+            default:
+              window.location="/"
+          }
+        });  
+      }
+        
     handleSubmit = async e => {
         e.preventDefault();
         //Objeto Login
@@ -60,9 +93,8 @@ class Register extends Component {
                     window.location = '/';
                     break;
                 case "Nao está autenticado | token expirou":
-                    alert("A sessão expirou")
-                    this.logout();
-                    window.location = '/login'
+                    this.refreshToken();
+                    this.handleSubmit(e);
 
                     break;
                 default:
