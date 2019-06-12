@@ -1,3 +1,5 @@
+var swaggerUi = require('swagger-ui-express')
+var swaggerDocument = require( './swagger/swagger.json');
 var expressValidator = require('express-validator');
 
 var express = require('express'),
@@ -11,6 +13,7 @@ app.use(cors());
 app.use(expressValidator());
 app.use(bodyParser.urlencoded({ extended: false }))
 app.use(bodyParser.json())
+app.use('/api/doc',swaggerUi.serve,swaggerUi.setup(swaggerDocument));
 
 app.use((req, res, next) => {
     res.header("Access-Control-Allow-Origin", "*")
