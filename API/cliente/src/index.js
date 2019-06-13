@@ -9,18 +9,27 @@ import RegisterPage from './MasterComponents/Users/RegisterPage';
 import PerfilPage from './MasterComponents/Users/PerfilPage'
 import IndexPesquisaPage from './MasterComponents/Music/IndexPesquisaPage';
 import SobrePage from './MasterComponents/Outros/SobrePage';
+import UsersPage from './MasterComponents/Users/IndexPage';
 
 ReactDOM.render(
     <BrowserRouter>
         <Switch>
+            {/*GLOBAIS*/}
             <Route path="/" exact={true} component={IndexPage} />
-            <Route path="/login"component={LoginPage} />
-            <Route path="/registar"component={RegisterPage} />
-            <Route path="/perfil" component = {PerfilPage} />
-            <Route path="/music/pesquisa" component = {IndexPesquisaPage}/>
-            
             <Route path="/sobre" component={SobrePage} />
+
+            {/*UTILIZADORES*/}
+            <Route path="/login" component={LoginPage} />
+            <Route path="/registar" component={RegisterPage} />
+            <Route path="/perfil" component={PerfilPage} />
+            <Route path="/utilizadores" component={UsersPage} />
+
+
+            {/*MUSICAS*/}
+            <Route path="/music/pesquisa" component={IndexPesquisaPage} />
+
             <Route path='*' component={NotFindPage} />
+
         </Switch>
     </ BrowserRouter>
     , document.getElementById('root')

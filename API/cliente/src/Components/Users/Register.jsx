@@ -8,7 +8,7 @@ class Register extends Component {
             alertText: 'Utilizador ou palavra-passe erradas',
             alertisNotVisible: true,
             alertColor: 'danger',
-            data:[]
+            data: []
         };
         this.changeStatus = this.changeStatus.bind(this);
     }
@@ -28,34 +28,34 @@ class Register extends Component {
         var nome = decoded.nome;
         var username = decoded.username;
         const dataToken = {
-          username,
-          nome
+            username,
+            nome
         }
         console.log(dataToken);
-        const response = await fetch('http://localhost:8000/token/refresh',{
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify(dataToken)    
+        const response = await fetch('http://localhost:8000/token/refresh', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(dataToken)
         });
-    
+
         await response.json().then(resp => {
-          console.log(resp.response)
-          //Verificar o estado da resposta da API
-          let status = resp.status;
-          switch (status) {
-            case "Token Atualizado":
-              sessionStorage.clear();
-              sessionStorage.setItem('token', resp.response);
-              break;
-           
-            default:
-              window.location="/"
-          }
-        });  
-      }
-        
+            console.log(resp.response)
+            //Verificar o estado da resposta da API
+            let status = resp.status;
+            switch (status) {
+                case "Token Atualizado":
+                    sessionStorage.clear();
+                    sessionStorage.setItem('token', resp.response);
+                    break;
+
+                default:
+                    window.location = "/"
+            }
+        });
+    }
+
     handleSubmit = async e => {
         e.preventDefault();
         //Objeto Login
@@ -85,7 +85,7 @@ class Register extends Component {
                     alert("Email e/ou username já existe(m) na base de dados")
                     break;
                 case "Erros na validação":
-                    this.setState({data: resp.response});
+                    this.setState({ data: resp.response });
                     alert(this.state.data[0].msg)
                     break;
                 case "Utilizador Criado com Sucesso":
@@ -106,57 +106,69 @@ class Register extends Component {
     render() {
         if (sessionStorage.getItem('token') != null)
             return (
-                <main className="my-form">
-                    <div className="cotainer">
-                        <div className="row justify-content-center">
-                            <div className="col-md-8">
-                                <div className="card">
-                                    <div className="card-header">Criar novo utilizador</div>
-                                    <div className="card-body">
-                                        <form onSubmit={this.handleSubmit}>
-                                            <div className="form-group row">
-                                                <label htmlFor="full_name" className="col-md-4 col-form-label text-md-right">Nome</label>
-                                                <div className="col-md-6">
-                                                    <input type="text" id="nome" className="form-control" name="full-name" required></input>
-                                                </div>
-                                            </div>
+                <div className="Inicio container">
+                    <div className="container">
+                        <br />
 
-                                            <div className="form-group row">
-                                                <label htmlFor="email_address" className="col-md-4 col-form-label text-md-right">E-Mail</label>
-                                                <div className="col-md-6">
-                                                    <input type="text" id="email" className="form-control" name="email-address" required></input>
-                                                </div>
-                                            </div>
+                        <div className="row">
+                            <div className="col-md-12 mb-3">
+                                <h1 className="display-4 ">Criar novo utilizador</h1>
+                            </div>
+                        </div>
+                        <br />
+                        <main className="my-form">
+                            <div className="cotainer">
+                                <div className="row justify-content-center">
+                                    <div className="col-md-8">
+                                        <div className="card">
+                                            <div className="card-header">Criar novo utilizador</div>
+                                            <div className="card-body">
+                                                <form onSubmit={this.handleSubmit}>
+                                                    <div className="form-group row">
+                                                        <label htmlFor="full_name" className="col-md-4 col-form-label text-md-right">Nome</label>
+                                                        <div className="col-md-6">
+                                                            <input type="text" id="nome" className="form-control" name="full-name" required></input>
+                                                        </div>
+                                                    </div>
 
-                                            <div className="form-group row">
-                                                <label htmlFor="user_name" className="col-md-4 col-form-label text-md-right">Username</label>
-                                                <div className="col-md-6">
-                                                    <input type="text" id="username" className="form-control" name="username" required></input>
-                                                </div>
-                                            </div>
+                                                    <div className="form-group row">
+                                                        <label htmlFor="email_address" className="col-md-4 col-form-label text-md-right">E-Mail</label>
+                                                        <div className="col-md-6">
+                                                            <input type="text" id="email" className="form-control" name="email-address" required></input>
+                                                        </div>
+                                                    </div>
 
-                                            <div className="form-group row">
-                                                <label htmlFor="password" className="col-md-4 col-form-label text-md-right">Password</label>
-                                                <div className="col-md-6">
-                                                    <input type="password" id="password" className="form-control" pattern="(?=^.{8,}$)((?=.*\d)|(?=.*\W+))(?![.\n])(?=.*[A-Z])(?=.*[a-z]).*$" title="Introduza pelo menos 8 caracteres, incluindo letras maíusculas, minusculas, algarismos e caracteres especiais" required></input>
-                                                </div>
-                                            </div>
+                                                    <div className="form-group row">
+                                                        <label htmlFor="user_name" className="col-md-4 col-form-label text-md-right">Username</label>
+                                                        <div className="col-md-6">
+                                                            <input type="text" id="username" className="form-control" name="username" required></input>
+                                                        </div>
+                                                    </div>
+
+                                                    <div className="form-group row">
+                                                        <label htmlFor="password" className="col-md-4 col-form-label text-md-right">Password</label>
+                                                        <div className="col-md-6">
+                                                            <input type="password" id="password" className="form-control" pattern="(?=^.{8,}$)((?=.*\d)|(?=.*\W+))(?![.\n])(?=.*[A-Z])(?=.*[a-z]).*$" title="Introduza pelo menos 8 caracteres, incluindo letras maíusculas, minusculas, algarismos e caracteres especiais" required></input>
+                                                        </div>
+                                                    </div>
 
 
-                                            <div className="col-md-6 offset-md-4">
-                                                <button type="submit" className="btn">
-                                                    Criar Utilizador
+                                                    <div className="col-md-6 offset-md-4">
+                                                        <button type="submit" className="btn">
+                                                            Criar Utilizador
                                         </button>
-                                            </div>
+                                                    </div>
 
-                                        </form>
+                                                </form>
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
-                        </div>
-                    </div>
 
-                </main>
+                        </main>
+                    </div>
+                </div>
             );
         else {
             window.location = "*";

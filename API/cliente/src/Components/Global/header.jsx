@@ -24,39 +24,39 @@ class Header extends Component {
         window.location.href = '/';
     }
 
-  async refreshToken() {
-    var decoded = jwt.decode(sessionStorage.getItem('token'));
-    var nome = decoded.nome;
-    var username = decoded.username;
-    const dataToken = {
-      username,
-      nome
-    }
-    console.log(dataToken);
-    const response = await fetch('http://localhost:8000/token/refresh',{
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(dataToken)    
-    });
+    async refreshToken() {
+        var decoded = jwt.decode(sessionStorage.getItem('token'));
+        var nome = decoded.nome;
+        var username = decoded.username;
+        const dataToken = {
+            username,
+            nome
+        }
+        console.log(dataToken);
+        const response = await fetch('http://localhost:8000/token/refresh', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(dataToken)
+        });
 
-    await response.json().then(resp => {
-      console.log(resp.response)
-      //Verificar o estado da resposta da API
-      let status = resp.status;
-      switch (status) {
-        case "Token Atualizado":
-          sessionStorage.clear();
-          sessionStorage.setItem('token', resp.response);
-          break;
-       
-        default:
-          window.location="/"
-      }
-    });  
-  }
-    
+        await response.json().then(resp => {
+            console.log(resp.response)
+            //Verificar o estado da resposta da API
+            let status = resp.status;
+            switch (status) {
+                case "Token Atualizado":
+                    sessionStorage.clear();
+                    sessionStorage.setItem('token', resp.response);
+                    break;
+
+                default:
+                    window.location = "/"
+            }
+        });
+    }
+
     getSearch = async e => {
         e.preventDefault();
 
@@ -156,10 +156,16 @@ class Header extends Component {
                             <span className="nav-link"> | </span>
                         </li>
 
-                        {/*CRIAR NOVOS UTILZIADORES*/}
+                        {/*CRIAR NOVOS UTILZIADORES | LISTAR*/}
                         {(sessionStorage.getItem('token') != null) ? (
-                            <li className="nav-item active">
-                                <a className="nav-link" href="/registar">Criar novos utilizadores <span className="sr-only">(current)</span></a>
+                            <li id = "users" className="nav-item dropdown">
+                                <a className="nav-link dropdown-toggle" href="/" id="navbarDropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                    Utilizadores
+                                </a>
+                                <div className="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+                                    <a className="dropdown-item" href="/utilizadores"><i className="fa fa-th-list"></i> Listar</a>
+                                    <a className="dropdown-item" href="/registar"><i className="fa fa-plus"></i> Registar</a>
+                                </div>
                             </li>
                         ) : (
                                 <li className="nav-item active"></li>
@@ -196,7 +202,7 @@ class Header extends Component {
                         </div>
                     </div>
 
-                        {/*INICIAR SESSÃO*/}
+                    {/*INICIAR SESSÃO*/}
                     {(sessionStorage.getItem('token') == null) ? (
                         <li className="navbar-text" id="head">
                             <a className="nav-link" href="/login">Iniciar Sessão</a>
