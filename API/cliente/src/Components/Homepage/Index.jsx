@@ -18,11 +18,11 @@ class Index extends Component {
   componentDidMount() {
     this.getLastVideos();
   }
-  logout(){
+  logout() {
     localStorage.clear();
     sessionStorage.clear();
     window.location.href = '/';
-}
+  }
 
 
   async getLastVideos() {
@@ -35,8 +35,6 @@ class Index extends Component {
     });
 
     await response.json().then(resp => {
-      var decoded = jwt.decode(sessionStorage.getItem('token'));
-      console.log(decoded);
       let status = resp.status;
       switch (status) {
         case "Últimas músicas classificadas":
@@ -60,17 +58,15 @@ class Index extends Component {
       username,
       nome
     }
-    console.log(dataToken);
-    const response = await fetch('http://localhost:8000/token/refresh',{
+    const response = await fetch('http://localhost:8000/token/refresh', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify(dataToken)    
+      body: JSON.stringify(dataToken)
     });
 
     await response.json().then(resp => {
-      console.log(resp.response)
       //Verificar o estado da resposta da API
       let status = resp.status;
       switch (status) {
@@ -78,11 +74,11 @@ class Index extends Component {
           sessionStorage.clear();
           sessionStorage.setItem('token', resp.response);
           break;
-       
+
         default:
-          window.location="/"
+          window.location = "/"
       }
-    });  
+    });
   }
 
   handleSubmit = async e => {
@@ -113,6 +109,38 @@ class Index extends Component {
         case "URL já existe na base de dados":
           this.setState({ dataPost: resp.response });
           alert("Já existe na base de dados")
+          break;
+        default:
+          alert(this.state.alertText);
+      }
+    });
+  }
+
+  eliminarMusica = async e => {
+    const id = e.target.id;
+    const response = await fetch(`http://localhost:8000/music/${id}/delete`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        "x-access-token": sessionStorage.getItem("token")
+      }
+    }
+    );
+    //Aguardar API
+    await response.json().then(resp => {
+
+      //Verificar o estado da resposta da API
+      let status = resp.status;
+      switch (status) {
+        case "Failed to authenticate token.":
+          alert("Inicie sessão");
+          break;
+        case "Deleted":
+          alert("Vídeo Apagado")
+          window.location = "/";
+          break;
+        case "Not Deleted | Música não está na base de dados":
+          alert("Música não está na base de dados")
           break;
         default:
           alert(this.state.alertText);
@@ -168,20 +196,22 @@ class Index extends Component {
                       <h5 className="font-weight-bold ">{data.name}</h5>
                       <br />
                       <div className="text-secondary" >
-                      <h6 id="likes"> <i className="fa fa-thumbs-o-up"></i> <i>{data.numLikes}</i></h6>
-                      <h6 id="likes"> <i className="fa fa-thumbs-o-down"></i> <i >{data.numDislikes}</i></h6>
+                        <h6 id="likes"> <i className="fa fa-thumbs-o-up"></i> <i>{data.numLikes}</i></h6>
+                        <h6 id="likes"> <i className="fa fa-thumbs-o-down"></i> <i >{data.numDislikes}</i></h6>
                       </div>
-                      <br />
                       <h6 className="text-secondary"><i >{data.numViews}</i> Visualizações </h6>
-                      <h6 className="text-secondary"> Publicado a <i > {data.dataPublicacao.substring(0,10)}</i></h6>
+                      <h6 className="text-secondary"> Publicado a <i > {data.dataPublicacao.substring(0, 10)}</i></h6>
+                      {/*Botão Eliminar*/}
+                      {(sessionStorage.getItem('token') != null) ? (
+                        <button id={data.idVideo} type="button" className="btn btn-danger" onClick={this.eliminarMusica} >Eliminar</button>
+                      ) : (<p></p>)}
                     </div>
                   </div>
                 </div>
               )
             })
-
-
           }
+
 
         </div>
       </div>

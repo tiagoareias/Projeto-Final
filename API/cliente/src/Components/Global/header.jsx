@@ -171,7 +171,7 @@ class Header extends Component {
                         <input id="searchMusicas" class="form-control mr-sm-2" type="search" placeholder="Pesquisa Músicas" aria-label="Search" list="musics"></input>
                         <button class="btn btn-outline-danger my-2 my-sm-0" type="search">Search</button>
                     </form> */}
-                    <i className="fa fa-search" data-toggle="modal" data-target="#exampleModal" style={{ fontSize: '15px', cursor: "pointer" }}></i>
+                    <i className="fa fa-search" data-toggle="modal" data-target="#exampleModal" style={{ fontSize: '20px', cursor: "pointer" }}></i>
                     <div className="modal fade" id="exampleModal" tabIndex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
                         <div className="modal-dialog" role="document">
                             <div className="modal-content">

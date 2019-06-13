@@ -122,17 +122,16 @@ exports.deleteMusic = async (req, res) => {
     var musicaDelete;
     //musica a apagar
     var musicaApagar = req.params.idVideo;
-
     var token = req.headers['x-access-token'];
     //se o token não existir
     if (!token) {
-        return res.status(401).send({ auth: false, message: 'No token provided.' });
+        serverResponse = {status:'No token provided.'}
+        return res.send(serverResponse);
     }
     //se existir
     try {
         //validar
         jwt.verify(token, 'secret');
-        //console.log("nao validou")
         //apagar música
         await musicsService.deleteMusic(musicaApagar).then(mus => musicaDelete = mus).catch(err => console.log(err));
         if (musicaDelete != 0) {
@@ -140,6 +139,7 @@ exports.deleteMusic = async (req, res) => {
         }
         return res.send(serverResponse);
     } catch (err) {
-        return res.status(500).send({ auth: false, message: 'Failed to authenticate token.' });
+        serverResponse = {status:"Failed to authenticate token."}
+        return res.send( serverResponse)
     }
 }
