@@ -1,12 +1,13 @@
 import React, { Component } from "react";
 import '../../CssComponents/Users/login.css';
 import logo from '../../logo.png';
+import AlertMsg from '../Global/AlertMsg';
 
 class Login extends Component {
   constructor() {
     super();
     this.state = {
-      alertText: 'Utilizador ou palavra-passe erradas',
+      alertText: '',
       alertisNotVisible: true,
       alertColor: 'danger'
     };
@@ -41,12 +42,24 @@ class Login extends Component {
       let status = resp.status;
       switch (status) {
         case "Username ou password errados":
-          alert("Username ou password errados")
+          this.setState({
+            alertText: "Utilizador ou palavra-passe erradas",
+            alertisNotVisible: false,
+            alertColor: "warning"
+          });
           break;
         case "Autenticado":
           //console.log(resp);
           sessionStorage.setItem('token', resp.token);
           window.location = '/';
+          break;
+        case 
+          "Realizou demasiadas autenticações na última hora. Tente novamente mais tarde":
+          this.setState({
+            alertText: "Excedeu o número de autenticações.Volte a tentar mais tarde",
+            alertisNotVisible: false,
+            alertColor: "warning"
+          });
           break;
         default:
           console.log("erro");
@@ -62,11 +75,12 @@ class Login extends Component {
         <h1 className="titleLogin">Efetue login:</h1>
         <div className="d-flex justify-content-center h-100">
           <div className="user_card">
-            <div className="d-flex justify-content-center">
+          <div className="d-flex justify-content-center">
               <div className="brand_logo_container">
                 <img src={logo} className="brand_logo" alt="Logo"></img>
               </div>
             </div>
+
             <div className="d-flex justify-content-center form_container">
               <form onSubmit={this.handleSubmit}>
                 <div className="input-group mb-3">
@@ -89,9 +103,15 @@ class Login extends Component {
                 </div>
                 <div className="d-flex justify-content-center mt-3 login_container">
                   <button type="submit" name="button" className="btn login_btn">Login</button>
+                  
                 </div>
-
+                <AlertMsg
+            text={this.state.alertText}
+            isNotVisible={this.state.alertisNotVisible}
+            alertColor={this.state.alertColor}
+          />            
               </form>
+             
             </div>
             {/*<div className="mt-4">
 					<div className="d-flex justify-content-center links">

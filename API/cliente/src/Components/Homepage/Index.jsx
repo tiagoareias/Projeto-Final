@@ -1,5 +1,6 @@
 import React, { Component } from "react";
 import '../../CssComponents/index.css';
+import AlertMsg from '../Global/AlertMsg';
 var jwt = require('jsonwebtoken');
 
 class Index extends Component {
@@ -7,7 +8,7 @@ class Index extends Component {
   constructor() {
     super();
     this.state = {
-      alertText: "Ocorreu um erro técnico. Tente novamente mais tarde",
+      alertText: "",
       alertisNotVisible: true,
       alertColor: "danger",
       dataGet: [],
@@ -108,9 +109,20 @@ class Index extends Component {
           break;
         case "URL já existe na base de dados":
           this.setState({ dataPost: resp.response });
-          alert("Já existe na base de dados")
+          this.setState({
+            alertText: "URL já existe na base de dados",
+            alertisNotVisible: false,
+            alertColor: "warning"
+          });
           break;
-        default:
+        case "Excedeu o número de uploads permitidos nos últimos minutos":
+            this.setState({
+              alertText: "Excedeu o número de uploads permitidos nos últimos minutos",
+              alertisNotVisible: false,
+              alertColor: "warning"
+            });
+            break;
+          default:
           alert(this.state.alertText);
       }
     });
@@ -173,7 +185,11 @@ class Index extends Component {
               </div>
             </div>
           </form>
-
+          <AlertMsg
+                  text={this.state.alertText}
+                  isNotVisible={this.state.alertisNotVisible}
+                  alertColor={this.state.alertColor}
+                />
           <br />
           <div className="row">
             <div className="col-md-12 mb-3">

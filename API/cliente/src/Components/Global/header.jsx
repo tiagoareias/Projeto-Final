@@ -14,9 +14,14 @@ class Header extends Component {
 
     }
     getName() {
-        var decoded = jwt.decode(sessionStorage.getItem('token'));
-        var name = decoded.nome;
-        return name;
+        try {
+            var decoded = jwt.decode(sessionStorage.getItem('token'));
+            var name = decoded.nome;
+            return name;
+        } catch (err) {
+            sessionStorage.clear();
+            window.location = "/";
+        }
     }
     logout() {
         localStorage.clear();
@@ -156,9 +161,23 @@ class Header extends Component {
                             <span className="nav-link"> | </span>
                         </li>
 
+                        {(sessionStorage.getItem('token') != null) ? (
+                            <div className="collapse navbar-collapse" id="navbarText">
+                                <li className="nav-item active">
+                                    <a className="nav-link" href="http://localhost:8000/api/doc">Documentação da API <span className="sr-only">(current)</span></a>
+                                </li>
+                                <li className="nav-item active">
+                                    <span className="nav-link"> | </span>
+                                </li>
+                            </div>
+                        ) : (
+                                <li className="nav-item active"></li>
+                            )}
+
                         {/*CRIAR NOVOS UTILZIADORES | LISTAR*/}
                         {(sessionStorage.getItem('token') != null) ? (
-                            <li id = "users" className="nav-item dropdown">
+
+                            <li id="users" className="nav-item dropdown">
                                 <a className="nav-link dropdown-toggle" href="/" id="navbarDropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                     Utilizadores
                                 </a>
