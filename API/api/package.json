@@ -34,6 +34,25 @@
     "automock": false,
     "setupFiles": [
       "./tests/setupJest.js"
-    ]
+    ],
+    "collectCoverage": true,
+    "coverageReporters": [
+      "json",
+      "html",
+      "text-summary",
+      "lcov",
+      "clover"
+    ],
+    "collectCoverageFrom": [
+      "**/**/*.{js,jsx}",
+      "**/tests/login.test.js",
+      "!**/node_modules/**",
+      "!**/database/**",
+      "!**/music/**",
+      "!**/refreshToken/**",
+      "!**/coverage/**",
+      "!**/index.js"
+    ],
+    "forceCoverageMatch": ["**/*.test.js"]
   }
 }
