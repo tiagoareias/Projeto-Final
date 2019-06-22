@@ -1,20 +1,35 @@
+const fetch = require('node-fetch');
 
-test('Login ao utilizador areias', async () => {
+test('Login a um utilizador que não exista', async () => {
   const loginData = {
-    username: "areias",
-    hashPassword: "areias"
+    username: "admin",
+    hashPassword: "admin1"
   };
   var status;
 
-  const response = await fetch('http://localhost:8000/auth/login', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(loginData)
-    }).then(resp => status=resp.status);
-  console.log(status)
-  //  await response.json().then(resp => status=resp.status
-  //   );
-    expect(status).toBe(200)
-  });
+  await fetch('http://localhost:8000/auth/login', {
+    method: 'post',
+    body: JSON.stringify(loginData),
+    headers: { 'Content-Type': 'application/json' },
+  })
+    .then(res => res.json())
+    .then(json => status = json.status);
+  expect(status).toBe("Username ou password errados")
+});
+
+test('Login a um utilizador que exista', async () => {
+  const loginData = {
+    username: "admin",
+    hashPassword: "admin"
+  };
+  var status;
+
+  await fetch('http://localhost:8000/auth/login', {
+    method: 'post',
+    body: JSON.stringify(loginData),
+    headers: { 'Content-Type': 'application/json' },
+  })
+    .then(res => res.json())
+    .then(json => status = json.status);
+  expect(status).toBe("Autenticado")
+});
