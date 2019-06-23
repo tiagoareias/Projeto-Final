@@ -24,7 +24,10 @@ module.exports = (sequelize, DataTypes) => {
             type: DataTypes.STRING,
             allownull: false
         },
-        
+        isAdmin:{
+            type:DataTypes.BOOLEAN,
+            allownull:false
+        }
     })
 
     User.sync({ force: false }).then(() => {

@@ -3,6 +3,7 @@ module.exports = (app) => {
     const rateLimit = require('express-rate-limit');
     //rate limit para o upload de músicas
     const uploadLimiter = rateLimit({
+<<<<<<< HEAD
         windowMs: 30 * 60 * 1000, // 30 minutos
         max: 15, // bloqueia após 3 pedidos
         message: {status:"Excedeu o número de uploads permitidos nos últimos minutos"}
@@ -12,6 +13,18 @@ module.exports = (app) => {
         windowMs: 20 * 60 * 1000, // 20 minutos
         max: 25, // bloqueia após 25 pedidos
         message: {status:"Realizou demasiados pedidos ao servidor nos últimos minutos. Tente novamente mais tarde"}
+=======
+        windowMs: 30, // 30 segundos
+        max: 10, // bloqueia após 10 pedidos
+        message: "Foram feitos demasiados uploads nos últimos minutos! Volte a tentar mais tarde"
+    });
+    //rate limit para os restantes pedidos
+    const requestsLimit = rateLimit({
+        windowMs: 30, // 30 segundos
+        max: 10, // bloqueia após 10 pedidos
+        message:
+            "Realizou demasiados pedidos ao servidor nos últimos minutos. Tente novamente mais tarde"
+>>>>>>> Back-End
     });
     app.post('/music/upload', uploadLimiter, musicsController.uploadVideo);
     app.get('/music/:idVideo', requestsLimit,musicsController.getVideo);
