@@ -1,6 +1,6 @@
 const fetch = require('node-fetch');
 
-test('Login a um utilizador que não exista', async () => {
+test('Erros na introdução do username ou da password', async () => {
   const loginData = {
     username: "admin",
     hashPassword: "admin1"
