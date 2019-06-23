@@ -8,6 +8,7 @@ var jwt = require('jsonwebtoken');
 //var getToken = require('../auxiliares/token');
 //criação de um novo utilizador
 exports.createUser = async (req, res) => {
+    console.log(req.body)
     //resposta por defeito do servidor
     let serverResponse = { status: "Not Created", response: {} }
     //variável que recebe a query da base de dados sobre o email
@@ -16,14 +17,15 @@ exports.createUser = async (req, res) => {
     var existsUserName;
     //token
     var token = req.headers['x-access-token'];
-    console.log(token);
-    if (!token) {
-        serverResponse = {status:"Nao está autenticado | token expirou",response:{}}
-        return res.send(serverResponse);
-    }
+     if (!token) {
+         serverResponse = {status:"Nao está autenticado | token expirou",response:{}}
+         return res.send(serverResponse);
+     }
 
     try {
         jwt.verify(token, 'secret');
+        var decoded = jwt.decode(token);
+        console.log(decoded);
         //***Validação do Email***/
         //verificar se o campo email está vazio e se é realmente um email
         req.checkBody('email', 'Email is required or is not valid').notEmpty().isEmail();
@@ -61,7 +63,8 @@ exports.createUser = async (req, res) => {
                 email: req.body.email,
                 username: req.body.username,
                 nome: req.body.nome,
-                hashPassword: hash
+                hashPassword: hash,
+                isAdmin:req.body.isAdmin
             }
             var createUser;
             //criação de um novo user de acordo com os parâmetros recebidos
@@ -262,7 +265,7 @@ exports.login = async (req, res) => {
     else {
         // create a token
         var token = jwt.sign({ username: existsUserName.username,
-             nome: existsUserName.nome }, 'secret', {
+             nome: existsUserName.nome, isAdmin:existsUserName.isAdmin }, 'secret', {
             expiresIn: 600 // expires in 10 minutos ***PARA TESTES****
 
         });
