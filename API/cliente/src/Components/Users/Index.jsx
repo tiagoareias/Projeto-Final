@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 import "../../CssComponents/Users/index.css"
-
+var jwt = require('jsonwebtoken');
 
 class Index extends Component {
     constructor() {
@@ -15,6 +15,17 @@ class Index extends Component {
 
     componentDidMount() {
         this.getUsers();
+    }
+
+    getRole() {
+        try {
+            var decoded = jwt.decode(sessionStorage.getItem('token'));
+            var role = decoded.isAdmin;
+            return role;
+        } catch (err) {
+            sessionStorage.clear();
+            window.location = "/";
+        }
     }
 
     async getUsers() {
@@ -50,41 +61,47 @@ class Index extends Component {
         if (sessionStorage.getItem("token") == null) {
             window.location = "/";
         } else {
-            return (
-                <div className="container">
-                    <div className="row">
-                        <div className="col-md-9">
-                            <h2 className="py-3 mb-3 text-center">
-                                Lista de Utilizadores
+            if (this.getRole() === true) {
+                return (
+                    <div className="container">
+                        <div className="row">
+                            <div className="col-md-9">
+                                <h2 className="py-3 mb-3 text-center">
+                                    Lista de Utilizadores
                             </h2>
+                            </div>
                         </div>
+                        <table className="table table-sm table-hover">
+                            <thead >
+                                <tr id="cabecalho">
+                                    <th scope="col">Email</th>
+                                    <th scope="col">Username</th>
+                                    <th scope="col">Nome</th>
+                                    {/*<th scope="col"></th>*/}
+                                </tr>
+                            </thead>
+                            <tbody id="corpo">
+                                {this.state.data.map(function (obj) {
+                                    //let href = "/utilizadores/" + obj.userID;
+                                    return (
+                                        <tr className="align-middle" key={obj.userID} >
+                                            <td className="align-middle">{obj.email}</td>
+                                            <td className="align-middle" >{obj.username}</td>
+                                            <td className="align-middle"> {obj.nome}</td>
+                                        </tr>
+                                    );
+                                })
+                                }
+                            </tbody>
+                        </table>
                     </div>
-                    <table className="table table-sm table-hover">
-                        <thead >
-                            <tr id="cabecalho">
-                                <th scope="col">Email</th>
-                                <th scope="col">Username</th>
-                                <th scope="col">Nome</th>
-                                {/*<th scope="col"></th>*/}
-                            </tr>
-                        </thead>
-                        <tbody id="corpo">
-                            {this.state.data.map(function (obj) {
-                                //let href = "/utilizadores/" + obj.userID;
-                                return (
-                                    <tr className="align-middle" key={obj.userID} >
-                                        <td className="align-middle">{obj.email}</td>
-                                        <td className="align-middle" >{obj.username}</td>
-                                        <td className="align-middle"> {obj.nome}</td>
-                                    </tr>
-                                );
-                            })
-                            }
-                        </tbody>
-                    </table>
-                </div>
-            );
+                );
+            }
+            else{
+                window.location="*"
+            }
         }
+
     }
 }
 export default Index;

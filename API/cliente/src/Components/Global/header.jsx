@@ -23,6 +23,17 @@ class Header extends Component {
             window.location = "/";
         }
     }
+
+    getRole() {
+        try {
+            var decoded = jwt.decode(sessionStorage.getItem('token'));
+            var role = decoded.isAdmin;
+            return role;
+        } catch (err) {
+            sessionStorage.clear();
+            window.location = "/";
+        }
+    }
     logout() {
         localStorage.clear();
         sessionStorage.clear();
@@ -31,11 +42,14 @@ class Header extends Component {
 
     async refreshToken() {
         var decoded = jwt.decode(sessionStorage.getItem('token'));
+        console.log(decoded);
         var nome = decoded.nome;
+        var isAdmin = decoded.isAdmin;
         var username = decoded.username;
         const dataToken = {
             username,
-            nome
+            nome,
+            isAdmin
         }
         console.log(dataToken);
         const response = await fetch('http://localhost:8000/token/refresh', {
@@ -161,34 +175,47 @@ class Header extends Component {
                             <span className="nav-link"> | </span>
                         </li>
 
-                        {(sessionStorage.getItem('token') != null) ? (
-                            <div className="collapse navbar-collapse" id="navbarText">
-                                <li className="nav-item active">
-                                    <a className="nav-link" href="http://localhost:8000/api/doc">Documentação da API <span className="sr-only">(current)</span></a>
-                                </li>
-                                <li className="nav-item active">
-                                    <span className="nav-link"> | </span>
-                                </li>
-                            </div>
-                        ) : (
-                                <li className="nav-item active"></li>
-                            )}
+                        {
+                            (() => {
+                                if (sessionStorage.getItem('token') != null) {
+                                    if (this.getRole() === true) {
+                                        return (
+                                            <div className="collapse navbar-collapse" id="navbarText">
+                                                <li className="nav-item active">
+                                                    <a className="nav-link" href="http://localhost:8000/api/doc">Documentação da API <span className="sr-only">(current)</span></a>
+                                                </li>
+                                                <li className="nav-item active">
+                                                    <span className="nav-link"> | </span>
+                                                </li>
+                                            </div>
+                                        )
+                                    }
+                                }
+                            })()
 
+                        }
                         {/*CRIAR NOVOS UTILZIADORES | LISTAR*/}
-                        {(sessionStorage.getItem('token') != null) ? (
+                        {
+                            (() => {
+                                if (sessionStorage.getItem('token') != null) {
+                                    if (this.getRole() === true) {
+                                        return (
+                                            <li id="users" className="nav-item dropdown">
+                                                <a className="nav-link dropdown-toggle" href="/" id="navbarDropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                                    Utilizadores
+                                                </a>
+                                                <div className="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+                                                    <a className="dropdown-item" href="/utilizadores"><i className="fa fa-th-list"></i> Listar</a>
+                                                    <a className="dropdown-item" href="/registar"><i className="fa fa-plus"></i> Registar</a>
+                                                </div>
+                                            </li>
+                                        )
+                                    }
+                                }
 
-                            <li id="users" className="nav-item dropdown">
-                                <a className="nav-link dropdown-toggle" href="/" id="navbarDropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                    Utilizadores
-                                </a>
-                                <div className="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
-                                    <a className="dropdown-item" href="/utilizadores"><i className="fa fa-th-list"></i> Listar</a>
-                                    <a className="dropdown-item" href="/registar"><i className="fa fa-plus"></i> Registar</a>
-                                </div>
-                            </li>
-                        ) : (
-                                <li className="nav-item active"></li>
-                            )}
+                            })()
+                        }
+
                     </ul>
 
 

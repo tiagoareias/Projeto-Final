@@ -5,7 +5,7 @@ class Register extends Component {
     constructor() {
         super();
         this.state = {
-            alertText: 'Utilizador ou palavra-passe erradas',
+            alertText: '',
             alertisNotVisible: true,
             alertColor: 'danger',
             data: []
@@ -23,6 +23,16 @@ class Register extends Component {
         window.location.href = '/';
     }
 
+    getRole() {
+        try {
+            var decoded = jwt.decode(sessionStorage.getItem('token'));
+            var role = decoded.isAdmin;
+            return role;
+        } catch (err) {
+            sessionStorage.clear();
+            window.location = "/";
+        }
+    }
     async refreshToken() {
         var decoded = jwt.decode(sessionStorage.getItem('token'));
         var nome = decoded.nome;
@@ -31,7 +41,6 @@ class Register extends Component {
             username,
             nome
         }
-        console.log(dataToken);
         const response = await fetch('http://localhost:8000/token/refresh', {
             method: 'POST',
             headers: {
@@ -59,12 +68,18 @@ class Register extends Component {
     handleSubmit = async e => {
         e.preventDefault();
         //Objeto Login
+        //verificar o role
+        var role = true; 
+        var tipoUtilizador = document.getElementById('tipoUtilizador').value;
+        if(tipoUtilizador === "Não Administrador"){
+            role=false;
+        }
         const registerData = {
             nome: document.getElementById('nome').value,
             email: document.getElementById('email').value,
             username: document.getElementById('username').value,
-            hashPassword: document.getElementById('password').value
-
+            hashPassword: document.getElementById('password').value,
+            isAdmin:role
         };
 
         //Enviar pedidos
@@ -105,71 +120,81 @@ class Register extends Component {
 
     render() {
         if (sessionStorage.getItem('token') != null)
-            return (
-                <div className="Inicio container">
-                    <div className="container">
-                        <br />
+            if (this.getRole() === true) {
+                return (
+                    <div className="Inicio container">
+                        <div className="container">
+                            <br />
 
-                        <div className="row">
-                            <div className="col-md-12 mb-3">
-                                <h1 className="display-4 ">Criar novo utilizador</h1>
+                            <div className="row">
+                                <div className="col-md-12 mb-3">
+                                    <h1 className="display-4 ">Criar novo utilizador</h1>
+                                </div>
                             </div>
-                        </div>
-                        <br />
-                        <main className="my-form">
-                            <div className="cotainer">
-                                <div className="row justify-content-center">
-                                    <div className="col-md-8">
-                                        <div className="card">
-                                            <div className="card-header">Criar novo utilizador</div>
-                                            <div className="card-body">
-                                                <form onSubmit={this.handleSubmit}>
-                                                    <div className="form-group row">
-                                                        <label htmlFor="full_name" className="col-md-4 col-form-label text-md-right">Nome</label>
-                                                        <div className="col-md-6">
-                                                            <input type="text" id="nome" className="form-control" name="full-name" required></input>
+                            <br />
+                            <main className="my-form">
+                                <div className="cotainer">
+                                    <div className="row justify-content-center">
+                                        <div className="col-md-8">
+                                            <div className="card">
+                                                <div className="card-header">Criar novo utilizador</div>
+                                                <div className="card-body">
+                                                    <form onSubmit={this.handleSubmit}>
+                                                        <div className="form-group row">
+                                                            <label htmlFor="full_name" className="col-md-4 col-form-label text-md-right">Nome</label>
+                                                            <div className="col-md-6">
+                                                                <input type="text" id="nome" className="form-control" name="full-name" required></input>
+                                                            </div>
                                                         </div>
-                                                    </div>
 
-                                                    <div className="form-group row">
-                                                        <label htmlFor="email_address" className="col-md-4 col-form-label text-md-right">E-Mail</label>
-                                                        <div className="col-md-6">
-                                                            <input type="text" id="email" className="form-control" name="email-address" required></input>
+                                                        <div className="form-group row">
+                                                            <label htmlFor="email_address" className="col-md-4 col-form-label text-md-right">E-Mail</label>
+                                                            <div className="col-md-6">
+                                                                <input type="text" id="email" className="form-control" name="email-address" required></input>
+                                                            </div>
                                                         </div>
-                                                    </div>
 
-                                                    <div className="form-group row">
-                                                        <label htmlFor="user_name" className="col-md-4 col-form-label text-md-right">Username</label>
-                                                        <div className="col-md-6">
-                                                            <input type="text" id="username" className="form-control" name="username" required></input>
+                                                        <div className="form-group row">
+                                                            <label htmlFor="user_name" className="col-md-4 col-form-label text-md-right">Username</label>
+                                                            <div className="col-md-6">
+                                                                <input type="text" id="username" className="form-control" name="username" required></input>
+                                                            </div>
                                                         </div>
-                                                    </div>
 
-                                                    <div className="form-group row">
-                                                        <label htmlFor="password" className="col-md-4 col-form-label text-md-right">Password</label>
-                                                        <div className="col-md-6">
-                                                            <input type="password" id="password" className="form-control" pattern="(?=^.{8,}$)((?=.*\d)|(?=.*\W+))(?![.\n])(?=.*[A-Z])(?=.*[a-z]).*$" title="Introduza pelo menos 8 caracteres, incluindo letras maíusculas, minusculas, algarismos e caracteres especiais" required></input>
+                                                        <div className="form-group row">
+                                                            <label htmlFor="password" className="col-md-4 col-form-label text-md-right">Password</label>
+                                                            <div className="col-md-6">
+                                                                <input type="password" id="password" className="form-control" pattern="(?=^.{8,}$)((?=.*\d)|(?=.*\W+))(?![.\n])(?=.*[A-Z])(?=.*[a-z]).*$" title="Introduza pelo menos 8 caracteres, incluindo letras maíusculas, minusculas, algarismos e caracteres especiais" required></input>
+                                                            </div>
                                                         </div>
-                                                    </div>
+                                                        <div className="form-group row">
+                                                            <label>Tipo de Utilizador</label>
+                                                            <select id="tipoUtilizador" class="form-control">
+                                                                <option selected>Administrador...</option>
+                                                                <option>Não Administrador</option>
+                                                            </select>
+                                                        </div>
+                                                        <div className="col-md-6 offset-md-4">
+                                                            <button type="submit" className="btn">
+                                                                Criar Utilizador
+                                                            </button>
+                                                        </div>
 
-
-                                                    <div className="col-md-6 offset-md-4">
-                                                        <button type="submit" className="btn">
-                                                            Criar Utilizador
-                                        </button>
-                                                    </div>
-
-                                                </form>
+                                                    </form>
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
                                 </div>
-                            </div>
 
-                        </main>
+                            </main>
+                        </div>
                     </div>
-                </div>
-            );
+                );
+            }
+            else {
+                window.location = "*";
+            }
         else {
             window.location = "*";
         }
