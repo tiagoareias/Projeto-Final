@@ -5,7 +5,7 @@ const { check, validationResult } = require('express-validator/check');
 var usersService = require('./usersService')
 var bcrypt = require('bcryptjs');
 var jwt = require('jsonwebtoken');
-
+//var getToken = require('../auxiliares/token');
 //criação de um novo utilizador
 exports.createUser = async (req, res) => {
     //resposta por defeito do servidor
@@ -14,52 +14,67 @@ exports.createUser = async (req, res) => {
     var existsEmail;
     //variável que recebe a query da base de dados sobre o username
     var existsUserName;
+    //token
+    var token = req.headers['x-access-token'];
+     if (!token) {
+         serverResponse = {status:"Nao está autenticado | token expirou",response:{}}
+         return res.send(serverResponse);
+     }
 
-    //***Validação do Email***/
-    //verificar se o campo email está vazio e se é realmente um email
-    req.checkBody('email', 'Email is required or is not valid').notEmpty().isEmail();
+    try {
+        jwt.verify(token, 'secret');
+      
+        //***Validação do Email***/
+        //verificar se o campo email está vazio e se é realmente um email
+        req.checkBody('email', 'Email is required or is not valid').notEmpty().isEmail();
 
-    //***Validação do Username***/
-    req.checkBody('username', 'Username is required').notEmpty();
+        //***Validação do Username***/
+        req.checkBody('username', 'Username is required').notEmpty();
 
-    //***Validação do Nome***/
-    req.checkBody('nome', 'Nome is required').notEmpty();
+        //***Validação do Nome***/
+        req.checkBody('nome', 'Nome is required').notEmpty();
 
-    //verificar se o email inserido existe na base de dados
-    await usersService.getUserByEmail(req.body.email).then(user => existsEmail = user).catch(err => console.log(err));
+        //verificar se o email inserido existe na base de dados
+        await usersService.getUserByEmail(req.body.email).then(user => existsEmail = user).catch(err => console.log(err));
 
-    //verificar se o username inserido existe na base de dados
-    await usersService.getUser(req.body.username).then(user => existsUserName = user).catch(err => console.log(err));
+        //verificar se o username inserido existe na base de dados
+        await usersService.getUser(req.body.username).then(user => existsUserName = user).catch(err => console.log(err));
 
-    //se o email existe
-    if (existsEmail != null || existsUserName != null) {
+        //se o email existe
+        if (existsEmail != null || existsUserName != null) {
 
-        serverResponse = { status: "Email e/ou username já existe(m) na base de dados", response: {} }
-        return res.send(serverResponse);
-    }
-
-    //verificar erros 
-    var errors = req.validationErrors();
-    //se existir erros de validação
-    if (errors) {
-        serverResponse = { status: "Erros na validação", response: errors }
-        return res.send(serverResponse)
-    }
-    //caso contrário, cria o utilizador
-    else {
-        var hash = bcrypt.hashSync(req.body.hashPassword, 8);
-        var newUser = {
-            email: req.body.email,
-            username: req.body.username,
-            nome: req.body.nome,
-            hashPassword: hash
+            serverResponse = { status: "Email e/ou username já existe(m) na base de dados", response: {} }
+            return res.send(serverResponse);
         }
-        var createUser;
-        //criação de um novo user de acordo com os parâmetros recebidos
-        await usersService.createUser(newUser).then(user => createUser = user).catch(err => console.log(err));
-        if (createUser != null) {
-            serverResponse = { status: "Utilizador Criado com Sucesso", response: createUser };
+
+        //verificar erros 
+        var errors = req.validationErrors();
+        //se existir erros de validação
+        if (errors) {
+            serverResponse = { status: "Erros na validação", response: errors }
+            return res.send(serverResponse)
         }
+        //caso contrário, cria o utilizador
+        else {
+            var hash = bcrypt.hashSync(req.body.hashPassword, 8);
+            var newUser = {
+                email: req.body.email,
+                username: req.body.username,
+                nome: req.body.nome,
+                hashPassword: hash,
+                isAdmin:req.body.isAdmin
+            }
+            var createUser;
+            //criação de um novo user de acordo com os parâmetros recebidos
+            await usersService.createUser(newUser).then(user => createUser = user).catch(err => console.log(err));
+            if (createUser != null) {
+                serverResponse = { status: "Utilizador Criado com Sucesso", response: createUser };
+            }
+            return res.send(serverResponse);
+        }
+    }
+    catch (err) {
+        serverResponse = {status:"Nao está autenticado | token expirou",response:{}}
         return res.send(serverResponse);
     }
 }
@@ -86,7 +101,8 @@ exports.getUser = async (req, res) => {
         }
         return res.send(serverResponse);
     } catch (err) {
-        return res.status(500).send({ auth: false, message: 'Failed to authenticate token.' });
+        serverResponse = {status:"Nao está autenticado | token expirou",response:{}}
+        return res.send(serverResponse);
     }
 
 }
@@ -100,7 +116,8 @@ exports.getAllUsers = async (req, res) => {
     var token = req.headers['x-access-token'];
     //se o token não existir
     if (!token) {
-        return res.status(401).send({ auth: false, message: 'No token provided.' });
+        serverResponse = {status : "No token provided."}
+        return res.send(serverResponse)
     }
     //caso exista
     try {
@@ -113,7 +130,8 @@ exports.getAllUsers = async (req, res) => {
         }
 
     } catch (err) {
-        res.status(500).send({ auth: false, message: 'Failed to authenticate token.' });
+        serverResponse = {status : "Failed to authenticate token."}
+        return res.send(serverResponse)
     }
 }
 
@@ -127,28 +145,31 @@ exports.editUser = async (req, res) => {
     var hash = bcrypt.hashSync(req.body.hashPassword, 8);
     //user a atualizar
     var updateUser = {
-        email: req.body.email,
-        username: req.body.username,
-        nome: req.body.nome,
+        //email: req.body.email,
+        //username: req.body.username,
+        //nome: req.body.nome,
         hashPassword: hash
     }
     //variável que recebe a query da base de dados sobre o username do URL
     var existsUserNameURL;
     //variável que recebe a query da base de dados sobre o email
-    var existsEmail;
+    //var existsEmail;
     //variável que recebe a query da base de dados sobre o username
-    var existsUserName;
+    //var existsUserName;
 
     //***Validação do Email***/
 
-    //verificar se o campo email está vazio e se é realmente um email
-    req.checkBody('email', 'Email is required or is not valid').notEmpty().isEmail();
+    // //verificar se o campo email está vazio e se é realmente um email
+    // req.checkBody('email', 'Email is required or is not valid').notEmpty().isEmail();
 
-    //***Validação do Username***/
-    req.checkBody('username', 'Username is required').notEmpty();
+    // //***Validação do Username***/
+    // req.checkBody('username', 'Username is required').notEmpty();
 
     //***Validação do Nome***/
-    req.checkBody('nome', 'Nome is required').notEmpty();
+    //req.checkBody('nome', 'Nome is required').notEmpty();
+
+    //***Validação da passord***/
+    //req.checkBody('hashPassword', 'Password is required').notEmpty();
 
     //verificar erros de validação
     var errors = req.validationErrors();
@@ -159,10 +180,10 @@ exports.editUser = async (req, res) => {
     }
 
     //verificar se o email inserido existe na base de dados
-    await usersService.getUserByEmail(req.body.email).then(user => existsEmail = user).catch(err => console.log(err));
+    //await usersService.getUserByEmail(req.body.email).then(user => existsEmail = user).catch(err => console.log(err));
 
     //verificar se o username inserido existe na base de dados
-    await usersService.getUser(req.body.username).then(user => existsUserName = user).catch(err => console.log(err));
+    //await usersService.getUser(req.body.username).then(user => existsUserName = user).catch(err => console.log(err));
 
     //verificar se o username inserido existe na base de dados
     await usersService.getUser(req.params.username).then(user => existsUserNameURL = user).catch(err => console.log(err));
@@ -183,20 +204,21 @@ exports.editUser = async (req, res) => {
         }
         else {
             //verificar se email e username já estão na base de dados
-            if (existsEmail == null && existsUserName == null) {
+            //if (existsEmail == null && existsUserName == null) {
                 //update à base de dados
                 await usersService.editUser(updateUser, userName).then(user => userUpdate = user).catch(err => console.log(err));
                 if (userUpdate != 0) {
                     serverResponse = { status: "Updated", response: userUpdate }
                 }
-            }
+            /*}
             else {
                 serverResponse = { status: "Not Updated | Username ou email já existem" }
-            }
+            }*/
         }
         return res.send(serverResponse);
     } catch (err) {
-        return res.status(500).send({ auth: false, message: 'Failed to authenticate token.' });
+        serverResponse = {status:"Nao está autenticado | token expirou",response:{}}
+        return res.send(serverResponse);
     }
 }
 
@@ -231,22 +253,27 @@ exports.login = async (req, res) => {
     let serverResponse = { status: "Não Autenticado", response: {}, token: {} }
     var existsUserName;
     var username = req.body.username;
+    let code = 200;
     //verficar se existe algum utilizador na base de dados com o  username inserido
     await usersService.getUser(username).then(user => existsUserName = user).catch(err => console.log(err));
     //se não existir esse utilizador ou a password estiver errada
-    if (existsUserName == null || !bcrypt.compareSync(req.body.password, existsUserName.hashPassword)) {
-        serverResponse = { status: "Username ou password errados", response: {}, token: {} };
-        return res.send(serverResponse);
+    if (existsUserName == null || !bcrypt.compareSync(req.body.hashPassword, existsUserName.hashPassword)) {
+        serverResponse.status = "Username ou password errados";
+
     }
     //se existir o utilizador e a password bater certo
     else {
         // create a token
-        var token = jwt.sign({ id: username }, 'secret', {
+        var token = jwt.sign({ username: existsUserName.username,
+             nome: existsUserName.nome, isAdmin:existsUserName.isAdmin }, 'secret', {
             expiresIn: 600 // expires in 10 minutos ***PARA TESTES****
 
         });
-        serverResponse = { status: "Autenticado", response: existsUserName, token: token }
-
+        serverResponse.status = "Autenticado";
+        serverResponse.response = existsUserName;
+        serverResponse.token = token;
     }
-    return res.send(serverResponse);
+    //resposta do servidor
+    res
+        .json(serverResponse);
 }

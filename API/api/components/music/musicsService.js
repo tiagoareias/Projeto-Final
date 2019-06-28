@@ -8,6 +8,10 @@ exports.getVideo = async(idVideo) =>{
     return await musicsDal.getVideo(idVideo);
 }
 
+exports.getVideoPesquisa = async(pesquisaMusica) =>{
+    return await musicsDal.getVideoPesquisa(pesquisaMusica);
+}
+
 exports.getLastVideos = async() =>{
     return await musicsDal.getLastVideos();
 }
