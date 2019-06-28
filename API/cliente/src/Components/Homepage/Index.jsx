@@ -115,7 +115,7 @@ class Index extends Component {
             alertColor: "warning"
           });
           break;
-        case "Excedeu o número de uploads permitidos nos últimos minutos":
+        case "Foram feitos demasiados uploads nos últimos minutos! Volte a tentar mais tarde":
             this.setState({
               alertText: "Excedeu o número de uploads permitidos nos últimos minutos",
               alertisNotVisible: false,
