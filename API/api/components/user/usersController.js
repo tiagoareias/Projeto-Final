@@ -8,7 +8,6 @@ var jwt = require('jsonwebtoken');
 //var getToken = require('../auxiliares/token');
 //criação de um novo utilizador
 exports.createUser = async (req, res) => {
-    console.log(req.body)
     //resposta por defeito do servidor
     let serverResponse = { status: "Not Created", response: {} }
     //variável que recebe a query da base de dados sobre o email
@@ -24,8 +23,7 @@ exports.createUser = async (req, res) => {
 
     try {
         jwt.verify(token, 'secret');
-        var decoded = jwt.decode(token);
-        console.log(decoded);
+      
         //***Validação do Email***/
         //verificar se o campo email está vazio e se é realmente um email
         req.checkBody('email', 'Email is required or is not valid').notEmpty().isEmail();
