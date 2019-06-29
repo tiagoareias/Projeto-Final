@@ -42,6 +42,10 @@ module.exports = (sequelize, DataTypes) => {
         numComentarios:{
             type: DataTypes.STRING,
             allownull: false  
+        },
+        emocao:{
+            type:DataTypes.STRING,
+            allownull:false
         }
     }, {
         charset: 'utf8',
