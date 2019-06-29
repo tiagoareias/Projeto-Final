@@ -42,6 +42,10 @@ module.exports = (sequelize, DataTypes) => {
         numComentarios:{
             type: DataTypes.INTEGER,
             allownull: false  
+        },
+        emocao:{
+            type:DataTypes.STRING,
+            allownull:false
         }
     })
     Music.sync({ force: false }).then(() => {
