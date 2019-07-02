@@ -12,9 +12,9 @@ exports.uploadVideo = async (req, res) => {
     //variável que guarda a query à base de dados
     var existsMusica;
     //validar url
-    req.checkBody('url', 'URL is required or is not valid').isURL().notEmpty();
+    //req.checkBody('url', 'URL is required or is not valid').isURL().notEmpty();
     //endereço do vídeo do youtube
-    const url = req.body.url + "";
+    const url = req.body.urlInput + "";
     //Returns a video ID from a YouTube URL.
     const idVideo = ytdl.getURLVideoID(url);
 

@@ -87,25 +87,38 @@ class Index extends Component {
 
     //Objeto URL
     const urlInput = document.getElementById("urlInput").value;
-
+    var userFK=null;
+    if(sessionStorage.getItem('token') === null){
+      userFK=null;
+    }
+    else{
+      userFK = jwt.decode(sessionStorage.getItem('token')).userID;
+    }
+  
+    //Objeto Login
+    const uploadData = {
+      urlInput: urlInput,
+      userFK:userFK
+    };
     const response = await fetch('http://localhost:8000/music/upload', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify({ "url": urlInput })
+      body: JSON.stringify(uploadData)
 
     }
     );
     //Aguardar API
     await response.json().then(resp => {
+      console.log(resp)
       //Verificar o estado da resposta da API
       let status = resp.status;
       switch (status) {
         case "Upload":
           this.setState({ dataPost: resp.response });
           alert("Adicionada")
-          window.location = "/";
+         // window.location = "/";
           break;
         case "URL já existe na base de dados":
           this.setState({ dataPost: resp.response });

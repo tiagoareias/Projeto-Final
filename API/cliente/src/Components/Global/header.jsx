@@ -42,7 +42,6 @@ class Header extends Component {
 
     async refreshToken() {
         var decoded = jwt.decode(sessionStorage.getItem('token'));
-        console.log(decoded);
         var nome = decoded.nome;
         var isAdmin = decoded.isAdmin;
         var username = decoded.username;
