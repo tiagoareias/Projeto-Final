@@ -1,4 +1,3 @@
-//model
 'use strict';
 
 module.exports = (sequelize, DataTypes) => {
@@ -29,8 +28,11 @@ module.exports = (sequelize, DataTypes) => {
             allownull:false
         }
     })
-
-    User.sync({ force: false }).then(() => {
+    User.associate = function(models) {
+    User.hasMany(models.Music, {as: 'musics'})
+       };    
+      
+      User.sync({ force: false }).then(() => {
         // Now the `users` table in the database corresponds to the model definition
         return ;
       });

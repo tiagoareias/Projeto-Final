@@ -1,3 +1,4 @@
+
 var musicsService = require('./musicsService');
 var fetchVideoInfo = require('youtube-info');
 const { check, validationResult } = require('express-validator/check');
@@ -48,7 +49,8 @@ exports.uploadVideo = async (req, res) => {
                 const dadosMusica = {
                     idVideo: idVideo, url: url, name: nome, autor: autor,
                     dataPublicacao: dataPublicacao, numViews: numViews,
-                    numDislikes: numDislikes, numLikes: numLikes, numComentarios
+                    numDislikes: numDislikes, numLikes: numLikes, numComentarios,
+                    userFK:req.body.userFK
                 }
 
                 await musicsService.uploadVideo(dadosMusica);
