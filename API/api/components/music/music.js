@@ -23,7 +23,7 @@ module.exports = (sequelize, DataTypes) => {
             type: DataTypes.STRING,
             allownull: false
         },
-            type: DataTypes.UUID,
+        userFK:{type: DataTypes.UUID,
             references: {         
                 model: 'Users',
                 key: 'userID'

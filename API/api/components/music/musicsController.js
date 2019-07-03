@@ -135,7 +135,7 @@ exports.getLastVideos = async (req, res) => {
                     const numLikes = videoInfo.likeCount;
                     const numComentarios = videoInfo.commentCount;
                     dadosEnviar[i] = {
-                        numViews: numViews, numDislikes: numDislikes, numLikes: numLikes, numComentarios: numComentarios, emocao: musicas[i].emocao
+                        numViews: numViews, numDislikes: numDislikes, numLikes: numLikes, numComentarios: numComentarios, emocao: musicas[i].emocao,
                         idVideo: musicas[i].idVideo, nome: musicas[i].name, url: musicas[i].url, autor: autor, dataPublicacao: dataPublicacao,
                     }
                 });
@@ -162,8 +162,8 @@ exports.getLastVideos = async (req, res) => {
                         dadosEnviar[i] = {
                             idVideo: musicas[i].idVideo, nome: musicas[i].name, url: musicas[i].url, autor: autor, dataPublicacao: dataPublicacao,
                             numViews: numViews, numDislikes: numDislikes, numLikes: numLikes, numComentarios: numComentarios, emocao: musicas[i].emocao
-                    });
-                        }
+                    }
+                        });
                 }
                 serverResponse = { status: "Últimas músicas classificadas", response: dadosEnviar }
             }
