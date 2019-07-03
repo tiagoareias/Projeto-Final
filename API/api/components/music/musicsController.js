@@ -36,23 +36,9 @@ exports.uploadVideo = async (req, res) => {
     }
     else {
         if (url != null) {
-            fetchVideoInfo(idVideo, async function (err, videoInfo) {
-                if (err) throw new Error(err);
-                //console.log(videoInfo);
-                const nome = videoInfo.title;
-                const autor = videoInfo.owner;
-                const dataPublicacao = videoInfo.datePublished;
-                const numViews = videoInfo.views;
-                const numDislikes = videoInfo.dislikeCount;
-                const numLikes = videoInfo.likeCount;
-                const numComentarios = videoInfo.commentCount;
-                const emocao = "";
-
+            const emocao = "";
                 const dadosMusica = {
-                    idVideo: idVideo, url: url, name: nome, autor: autor,
-                    dataPublicacao: dataPublicacao, numViews: numViews,
-                    numDislikes: numDislikes, numLikes: numLikes, numComentarios,
-                    userFK: req.body.userFK, emocao: emocao
+                    idVideo: idVideo, url: url, emocao: emocao, userFK: req.body.userFK,
                 }
 
                 await musicsService.uploadVideo(dadosMusica);
@@ -72,7 +58,6 @@ exports.uploadVideo = async (req, res) => {
 
                 serverResponse = { status: "Upload", response: dadosMusica }
                 return res.send(serverResponse);
-            });
         }
         else {
             return res.send(serverResponse);
@@ -112,7 +97,6 @@ exports.getLastVideos = async (req, res) => {
     //variável que guarda a query à base de dados
     var musicas;
     var token = req.headers['x-access-token'];
-    console.log(token);
     if (token == "null") {
         await musicsService.getLastVideos().then(mus => musicas = mus).catch(err => console.log(err))
         if (musicas.length > 0) {
@@ -150,7 +134,6 @@ exports.deleteMusic = async (req, res) => {
     try {
         //validar
         jwt.verify(token, 'secret');
-        console.log("nao validou")
         //apagar música
         await musicsService.deleteMusic(musicaApagar).then(mus => musicaDelete = mus).catch(err => console.log(err));
         if (musicaDelete != 0) {
