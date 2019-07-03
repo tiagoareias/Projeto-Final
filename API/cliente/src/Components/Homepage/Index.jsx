@@ -222,7 +222,7 @@ class Index extends Component {
                     <div className="col-md-12 mb-3" id="frame">
                       <h4><u>Autor</u>: {data.autor}</h4>
                       <br />
-                      <h5 className="font-weight-bold ">{data.name}</h5>
+                      <h5 className="font-weight-bold ">{data.nome}</h5>
                       <br />
                       <div className="text-secondary" >
                         <h6 id="likes"> <i className="fa fa-thumbs-o-up"></i> <i>{data.numLikes}</i></h6>
@@ -231,8 +231,7 @@ class Index extends Component {
                       <h6 className="text-secondary"><i >{data.numViews}</i> Visualizações </h6>
                       <h6 className="text-secondary"> Publicado a <i > {data.dataPublicacao.substring(0, 10)}</i></h6>
                       {/*EMOCAO*/}
-                      {/*<h5 className="font-weight-bold "> Emoção: <i > {data.emocao} </i></h5>*/}
-                      <h5 className="font-weight-bold "> Emoção: <i className="text-secondary"> Emotion </i></h5>
+                      <h5 className="font-weight-bold "> Emoção: <i > {data.emocao} </i></h5>
                       {/*Botão Eliminar*/}
                       {(sessionStorage.getItem('token') != null) ? (
                         <button id={data.idVideo} type="button" className="btn btn-danger" onClick={this.eliminarMusica} >Eliminar</button>

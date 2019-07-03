@@ -96,7 +96,7 @@ class Header extends Component {
             for (let i = 0; i < numMusicas; i++) {
                 const option = document.createElement('option');
                 option.setAttribute('id', this.state.dataGetSearh[i].idVideo);
-                option.setAttribute('value', this.state.dataGetSearh[i].name);
+                option.setAttribute('value', this.state.dataGetSearh[i].nome);
                 datalistSearch.append(option);
             }
         });
