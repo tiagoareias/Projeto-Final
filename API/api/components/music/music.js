@@ -11,6 +11,10 @@ module.exports = (sequelize, DataTypes) => {
             type: DataTypes.STRING,
             allownull: false
         },
+        name:{
+            type: DataTypes.STRING,
+            allownull: false
+        },
         url: {
             type: DataTypes.STRING,
             allownull: false
@@ -19,7 +23,6 @@ module.exports = (sequelize, DataTypes) => {
             type: DataTypes.STRING,
             allownull: false
         },
-        userFK: {
             type: DataTypes.UUID,
             references: {         
                 model: 'Users',
