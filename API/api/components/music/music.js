@@ -7,23 +7,39 @@ module.exports = (sequelize, DataTypes) => {
             defaultValue: DataTypes.UUIDV4,
             primaryKey: true
         },
-        idVideo:{
-            type: DataTypes.STRING,
-            allownull:false
-        },
-        url:{
+        idVideo: {
             type: DataTypes.STRING,
             allownull: false
         },
-        emocao:{
-            type:DataTypes.STRING,
-            allownull:false
-        }
+        name:{
+            type: DataTypes.STRING,
+            allownull: false
+        },
+        url: {
+            type: DataTypes.STRING,
+            allownull: false
+        },
+        emocao: {
+            type: DataTypes.STRING,
+            allownull: false
+        },
+        /*userFK: {
+            type: DataTypes.UUID,
+            references: {         
+                model: 'Users',
+                key: 'userID'
+            }
+        }*/
     })
-    Music.sync({ force: false }).then(() => {
-        // Now the `music` table in the database corresponds to the model definition
-        return ;
-      });
 
-      return Music;
+    Music.associate = function(models) {
+        Music.belongsTo(models.User, {foreignKey: 'userFK', as: 'Users'})
+      };    
+       
+      Music.sync({ force: false }).then(() => {
+        // Now the `music` table in the database corresponds to the model definition
+        return;
+    });
+
+    return Music;
 }

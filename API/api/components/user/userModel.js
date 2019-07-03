@@ -1,3 +1,4 @@
+//model
 'use strict';
 
 module.exports = (sequelize, DataTypes) => {
@@ -23,19 +24,19 @@ module.exports = (sequelize, DataTypes) => {
             type: DataTypes.STRING,
             allownull: false
         },
-        isAdmin:{
-            type:DataTypes.BOOLEAN,
-            allownull:false
+        isAdmin: {
+            type: DataTypes.BOOLEAN,
+            allownull: false
         }
     })
-    User.associate = function(models) {
-    User.hasMany(models.Music, {as: 'musics'})
-       };    
-      
-      User.sync({ force: false }).then(() => {
-        // Now the `users` table in the database corresponds to the model definition
-        return ;
-      });
+    User.associate = function (models) {
+        User.hasMany(models.Music, { as: 'musics' })
+    };
 
-      return User;
+    User.sync({ force: false }).then(() => {
+        // Now the `users` table in the database corresponds to the model definition
+        return;
+    });
+
+    return User;
 }

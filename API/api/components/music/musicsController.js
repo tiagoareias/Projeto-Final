@@ -36,28 +36,33 @@ exports.uploadVideo = async (req, res) => {
     }
     else {
         if (url != null) {
-            const emocao = "";
-                const dadosMusica = {
-                    idVideo: idVideo, url: url, emocao: emocao, userFK: req.body.userFK,
-                }
+            var nome;
+            var dadosMusica = {};
+            fetchVideoInfo(idVideo, async function (err, videoInfo) {
+                if (err) throw new Error(err);
+                nome = videoInfo.title;
+                dadosMusica = { idVideo: idVideo, name: nome, url: url, emocao: "", userFK: req.body.userFK }
 
                 await musicsService.uploadVideo(dadosMusica);
+            });
 
-                /*amqp.connect('amqp://merUser:passwordMER@192.168.137.42', function (err, conn) {
-                    conn.createChannel(function (err, ch) {
-                        var q = 'musicExtraction';
-                        //console.log("Conn = " + conn);
-                        //console.log("Ch = " + ch);
 
-                        ch.assertQueue(q, { durable: false });
-                        ch.sendToQueue(q, new Buffer(url), { persistent: false });
-                        console.log(" [x] Sent '%s'", url);
-                    });
-                    setTimeout(function () { conn.close(); process.exit(0) }, 500);
-                });*/
 
-                serverResponse = { status: "Upload", response: dadosMusica }
-                return res.send(serverResponse);
+            /*amqp.connect('amqp://merUser:passwordMER@192.168.137.42', function (err, conn) {
+                conn.createChannel(function (err, ch) {
+                    var q = 'musicExtraction';
+                    //console.log("Conn = " + conn);
+                    //console.log("Ch = " + ch);
+
+                    ch.assertQueue(q, { durable: false });
+                    ch.sendToQueue(q, new Buffer(url), { persistent: false });
+                    console.log(" [x] Sent '%s'", url);
+                });
+                setTimeout(function () { conn.close(); process.exit(0) }, 500);
+            });*/
+
+            serverResponse = { status: "Upload", response: {} }
+            return res.send(serverResponse);
         }
         else {
             return res.send(serverResponse);
@@ -83,12 +88,29 @@ exports.getVideo = async (req, res) => {
 exports.getVideoPesquisa = async (req, res) => {
     let serverResponse = { status: "A pesquisa não retornou nenhuma música", response: "teste" }
 
-    var nome;
+    var musicas;
     var pesquisaRealizada = req.params.pesquisaMusica;
-    await musicsService.getVideoPesquisa(pesquisaRealizada).then(music => nome = music).catch(err => console.log(err));
-
+    await musicsService.getVideoPesquisa(pesquisaRealizada).then(music => musicas = music).catch(err => console.log(err));
     if (pesquisaRealizada != null) {
-        serverResponse = { status: "Musicas encontradas que contem o seguinte conjunto de caracteres " + pesquisaRealizada, response: nome }
+        var size = Object.keys(musicas).length;
+        var dadosEnviar = [];
+        for (let i = 0; i < size; i++) {
+
+            await fetchVideoInfo(musicas[i].idVideo).then(videoInfo => {
+                const autor = videoInfo.owner;
+                const dataPublicacao = videoInfo.datePublished;
+                const numViews = videoInfo.views;
+                const numDislikes = videoInfo.dislikeCount;
+                const numLikes = videoInfo.likeCount;
+                const numComentarios = videoInfo.commentCount;
+                dadosEnviar[i] = {
+                    idVideo: musicas[i].idVideo, nome: musicas[i].name, url: musicas[i].url, autor: autor, dataPublicacao: dataPublicacao,
+                    numViews: numViews, numDislikes: numDislikes, numLikes: numLikes, numComentarios: numComentarios, emocao: musicas[i].emocao
+                }
+            });
+        }
+
+        serverResponse = { status: "Musicas encontradas que contem o seguinte conjunto de caracteres " + pesquisaRealizada, response: dadosEnviar }
     }
     return res.send(serverResponse);
 }
@@ -96,11 +118,29 @@ exports.getLastVideos = async (req, res) => {
     let serverResponse = { status: "Ainda não existem músicas na Base de Dados", response: {} }
     //variável que guarda a query à base de dados
     var musicas;
-    var token = req.headers['x-access-token'];
+    var token;
+    token = req.headers['x-access-token'];
+    console.log(token);
     if (token == "null") {
         await musicsService.getLastVideos().then(mus => musicas = mus).catch(err => console.log(err))
         if (musicas.length > 0) {
-            serverResponse = { status: "Últimas músicas classificadas", response: musicas }
+            var size = Object.keys(musicas).length;
+            var dadosEnviar = [];
+            for (let i = 0; i < size; i++) {
+                await fetchVideoInfo(musicas[i].idVideo).then(videoInfo => {
+                    const autor = videoInfo.owner;
+                    const dataPublicacao = videoInfo.datePublished;
+                    const numViews = videoInfo.views;
+                    const numDislikes = videoInfo.dislikeCount;
+                    const numLikes = videoInfo.likeCount;
+                    const numComentarios = videoInfo.commentCount;
+                    dadosEnviar[i] = {
+                        idVideo: musicas[i].idVideo, nome: musicas[i].name, url: musicas[i].url, autor: autor, dataPublicacao: dataPublicacao,
+                        numViews: numViews, numDislikes: numDislikes, numLikes: numLikes, numComentarios: numComentarios, emocao: musicas[i].emocao
+                    }
+                });
+            }
+            serverResponse = { status: "Últimas músicas classificadas", response: dadosEnviar }
         }
         return res.send(serverResponse);
     }
@@ -109,7 +149,23 @@ exports.getLastVideos = async (req, res) => {
             jwt.verify(token, 'secret');
             await musicsService.getLastVideos().then(mus => musicas = mus).catch(err => console.log(err))
             if (musicas.length > 0) {
-                serverResponse = { status: "Últimas músicas classificadas", response: musicas }
+                var size = Object.keys(musicas).length;
+                var dadosEnviar = [];
+                for (let i = 0; i < size; i++) {
+                    await fetchVideoInfo(musicas[i].idVideo).then(videoInfo => {
+                        const autor = videoInfo.owner;
+                        const dataPublicacao = videoInfo.datePublished;
+                        const numViews = videoInfo.views;
+                        const numDislikes = videoInfo.dislikeCount;
+                        const numLikes = videoInfo.likeCount;
+                        const numComentarios = videoInfo.commentCount;
+                        dadosEnviar[i] = {
+                            idVideo: musicas[i].idVideo, nome: musicas[i].name, url: musicas[i].url, autor: autor, dataPublicacao: dataPublicacao,
+                            numViews: numViews, numDislikes: numDislikes, numLikes: numLikes, numComentarios: numComentarios, emocao: musicas[i].emocao
+                        }
+                    });
+                }
+                serverResponse = { status: "Últimas músicas classificadas", response: dadosEnviar }
             }
             return res.send(serverResponse);
         } catch (err) {
