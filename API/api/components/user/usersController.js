@@ -16,14 +16,14 @@ exports.createUser = async (req, res) => {
     var existsUserName;
     //token
     var token = req.headers['x-access-token'];
-     if (!token) {
-         serverResponse = {status:"Nao está autenticado | token expirou",response:{}}
-         return res.send(serverResponse);
-     }
+    if (!token) {
+        serverResponse = { status: "Nao está autenticado | token expirou", response: {} }
+        return res.send(serverResponse);
+    }
 
     try {
         jwt.verify(token, 'secret');
-      
+
         //***Validação do Email***/
         //verificar se o campo email está vazio e se é realmente um email
         req.checkBody('email', 'Email is required or is not valid').notEmpty().isEmail();
@@ -62,7 +62,7 @@ exports.createUser = async (req, res) => {
                 username: req.body.username,
                 nome: req.body.nome,
                 hashPassword: hash,
-                isAdmin:req.body.isAdmin
+                isAdmin: req.body.isAdmin
             }
             var createUser;
             //criação de um novo user de acordo com os parâmetros recebidos
@@ -74,7 +74,7 @@ exports.createUser = async (req, res) => {
         }
     }
     catch (err) {
-        serverResponse = {status:"Nao está autenticado | token expirou",response:{}}
+        serverResponse = { status: "Nao está autenticado | token expirou", response: {} }
         return res.send(serverResponse);
     }
 }
@@ -101,7 +101,7 @@ exports.getUser = async (req, res) => {
         }
         return res.send(serverResponse);
     } catch (err) {
-        serverResponse = {status:"Nao está autenticado | token expirou",response:{}}
+        serverResponse = { status: "Nao está autenticado | token expirou", response: {} }
         return res.send(serverResponse);
     }
 
@@ -203,11 +203,11 @@ exports.editUser = async (req, res) => {
         else {
             //verificar se email e username já estão na base de dados
             //if (existsEmail == null && existsUserName == null) {
-                //update à base de dados
-                await usersService.editUser(updateUser, userName).then(user => userUpdate = user).catch(err => console.log(err));
-                if (userUpdate != 0) {
-                    serverResponse = { status: "Updated", response: userUpdate }
-                }
+            //update à base de dados
+            await usersService.editUser(updateUser, userName).then(user => userUpdate = user).catch(err => console.log(err));
+            if (userUpdate != 0) {
+                serverResponse = { status: "Updated", response: userUpdate }
+            }
             /*}
             else {
                 serverResponse = { status: "Not Updated | Username ou email já existem" }
@@ -215,7 +215,7 @@ exports.editUser = async (req, res) => {
         }
         return res.send(serverResponse);
     } catch (err) {
-        serverResponse = {status:"Nao está autenticado | token expirou",response:{}}
+        serverResponse = { status: "Nao está autenticado | token expirou", response: {} }
         return res.send(serverResponse);
     }
 }
@@ -262,11 +262,13 @@ exports.login = async (req, res) => {
     //se existir o utilizador e a password bater certo
     else {
         // create a token
-        var token = jwt.sign({ username: existsUserName.username,
-             nome: existsUserName.nome, isAdmin:existsUserName.isAdmin }, 'secret', {
-            expiresIn: 600 // expires in 10 minutos ***PARA TESTES****
+        var token = jwt.sign({
+            username: existsUserName.username,
+            nome: existsUserName.nome, isAdmin: existsUserName.isAdmin
+        }, 'secret', {
+                expiresIn: 600 // expires in 10 minutos ***PARA TESTES****
 
-        });
+            });
         serverResponse.status = "Autenticado";
         serverResponse.response = existsUserName;
         serverResponse.token = token;
