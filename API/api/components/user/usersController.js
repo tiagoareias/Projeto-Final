@@ -19,7 +19,6 @@ exports.createUser = async (req, res) => {
       if (!token) {
          serverResponse = {status:"Nao está autenticado | token expirou",response:{}}
           return res.send(serverResponse);
-      }
 
     try {
         jwt.verify(token, 'secret');

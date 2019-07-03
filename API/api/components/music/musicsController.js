@@ -3,6 +3,7 @@ var musicsService = require('./musicsService');
 var fetchVideoInfo = require('youtube-info');
 const { check, validationResult } = require('express-validator/check');
 var jwt = require('jsonwebtoken');
+var amqp = require('amqplib/callback_api')
 
 const ytdl = require('ytdl-core');
 
@@ -35,28 +36,28 @@ exports.uploadVideo = async (req, res) => {
     }
     else {
         if (url != null) {
-            fetchVideoInfo(idVideo, async function (err, videoInfo) {
-                if (err) throw new Error(err);
-                //console.log(videoInfo);
-                const nome = videoInfo.title;
-                const autor = videoInfo.owner;
-                const dataPublicacao = videoInfo.datePublished;
-                const numViews = videoInfo.views;
-                const numDislikes = videoInfo.dislikeCount;
-                const numLikes = videoInfo.likeCount;
-                const numComentarios = videoInfo.commentCount;
-
+            const emocao = "";
                 const dadosMusica = {
-                    idVideo: idVideo, url: url, name: nome, autor: autor,
-                    dataPublicacao: dataPublicacao, numViews: numViews,
-                    numDislikes: numDislikes, numLikes: numLikes, numComentarios,
-                    userFK:req.body.userFK
+                    idVideo: idVideo, url: url, emocao: emocao, userFK: req.body.userFK,
                 }
 
                 await musicsService.uploadVideo(dadosMusica);
+
+                /*amqp.connect('amqp://merUser:passwordMER@192.168.137.42', function (err, conn) {
+                    conn.createChannel(function (err, ch) {
+                        var q = 'musicExtraction';
+                        //console.log("Conn = " + conn);
+                        //console.log("Ch = " + ch);
+
+                        ch.assertQueue(q, { durable: false });
+                        ch.sendToQueue(q, new Buffer(url), { persistent: false });
+                        console.log(" [x] Sent '%s'", url);
+                    });
+                    setTimeout(function () { conn.close(); process.exit(0) }, 500);
+                });*/
+
                 serverResponse = { status: "Upload", response: dadosMusica }
                 return res.send(serverResponse);
-            });
         }
         else {
             return res.send(serverResponse);
@@ -86,8 +87,8 @@ exports.getVideoPesquisa = async (req, res) => {
     var pesquisaRealizada = req.params.pesquisaMusica;
     await musicsService.getVideoPesquisa(pesquisaRealizada).then(music => nome = music).catch(err => console.log(err));
 
-    if(pesquisaRealizada !=null){
-        serverResponse = {status:"Musicas encontradas que contem o seguinte conjunto de caracteres " + pesquisaRealizada, response:nome}
+    if (pesquisaRealizada != null) {
+        serverResponse = { status: "Musicas encontradas que contem o seguinte conjunto de caracteres " + pesquisaRealizada, response: nome }
     }
     return res.send(serverResponse);
 }
@@ -96,7 +97,6 @@ exports.getLastVideos = async (req, res) => {
     //variável que guarda a query à base de dados
     var musicas;
     var token = req.headers['x-access-token'];
-    //console.log(token);
     if (token == "null") {
         await musicsService.getLastVideos().then(mus => musicas = mus).catch(err => console.log(err))
         if (musicas.length >= 0) {
@@ -144,4 +144,22 @@ exports.deleteMusic = async (req, res) => {
         serverResponse = {status:"Failed to authenticate token."}
         return res.send( serverResponse)
     }
+}
+
+
+
+exports.updateEmocao = async (req, res) => {
+    let serverResponse = { status: "Não classificada | Música não está na base de dados", response: {} }
+    //musica a atualizar
+    var musicaUpdate = req.body.idVideo;
+    var emocao = req.body.emocao;
+    var musicaAtualizada;
+    var dadosEmocao = { emocao: emocao }
+
+    //atualizar música
+    await musicsService.updateMusic(musicaUpdate, dadosEmocao).then(mus => musicaAtualizada = mus).catch(err => console.log(err));
+    if (musicaAtualizada != 0) {
+        serverResponse = { status: "Atualizada", response: musicaAtualizada }
+    }
+    return res.send(serverResponse);
 }

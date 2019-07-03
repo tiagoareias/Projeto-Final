@@ -15,34 +15,6 @@ module.exports = (sequelize, DataTypes) => {
             type: DataTypes.STRING,
             allownull: false
         },
-        name: {
-            type: DataTypes.STRING,
-            allownull: false
-        },
-        autor: {
-            type: DataTypes.STRING,
-            allownull: false
-        },
-        dataPublicacao: {
-            type: DataTypes.DATE,
-            allownull: false
-        },
-        numViews: {
-            type: DataTypes.INTEGER,
-            allownull: false
-        },
-        numDislikes: {
-            type: DataTypes.INTEGER,
-            allownull: false
-        },
-        numLikes: {
-            type: DataTypes.INTEGER,
-            allownull: false
-        },
-        numComentarios: {
-            type: DataTypes.INTEGER,
-            allownull: false
-        },
         emocao: {
             type: DataTypes.STRING,
             allownull: false
@@ -50,9 +22,9 @@ module.exports = (sequelize, DataTypes) => {
         userFK: {
             type: DataTypes.UUID,
             references: {         
-                model: 'Users',
                 key: 'userID'
             }
+                model: 'Users',
         }
     })
 
