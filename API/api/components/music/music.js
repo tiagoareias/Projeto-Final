@@ -23,13 +23,13 @@ module.exports = (sequelize, DataTypes) => {
             type: DataTypes.STRING,
             allownull: false
         },
-        /*userFK: {
+        userFK: {
             type: DataTypes.UUID,
             references: {         
                 model: 'Users',
                 key: 'userID'
             }
-        }*/
+        }
     })
 
     Music.associate = function(models) {

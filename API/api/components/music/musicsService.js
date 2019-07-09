@@ -12,6 +12,11 @@ exports.getVideoPesquisa = async(pesquisaMusica) =>{
     return await musicsDal.getVideoPesquisa(pesquisaMusica);
 }
 
+exports.getNomeMusicaPesquisa = async(pesquisaMusica) =>{
+    return await musicsDal.getNomeMusicaPesquisa(pesquisaMusica);
+}
+
+
 exports.getLastVideos = async() =>{
     return await musicsDal.getLastVideos();
 }
