@@ -3,10 +3,7 @@ var sequelize = new Sequelize('database_projetoFinal','user','123qwe', {
     host: '127.0.0.1',
     dialect: 'mysql',
     timezone:"+01:00",
-<<<<<<< HEAD
-=======
     port:4000,
->>>>>>> Back-End
     define: {
         charset: 'utf8',
         collate: 'utf8_general_ci', 

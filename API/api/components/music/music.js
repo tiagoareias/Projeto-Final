@@ -1,3 +1,4 @@
+
 'use strict';
 
 module.exports = (sequelize, DataTypes) => {
@@ -23,12 +24,8 @@ module.exports = (sequelize, DataTypes) => {
             type: DataTypes.STRING,
             allownull: false
         },
-<<<<<<< HEAD
-        userFK:{type: DataTypes.UUID,
-=======
         userFK: {
             type: DataTypes.UUID,
->>>>>>> Back-End
             references: {         
                 model: 'Users',
                 key: 'userID'
