@@ -9,7 +9,7 @@ class IndexPesquisaPage extends Component {
       return (
         <div>
           <Header/>
-          <IndexPesquisa/>
+          <IndexPesquisa query={this.props.query}/>
           <Footer/>
 
         </div>

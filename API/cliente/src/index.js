@@ -26,7 +26,7 @@ ReactDOM.render(
 
 
             {/*MUSICAS*/}
-            <Route path="/music/pesquisa" component={IndexPesquisaPage} />
+            <Route path="/music/pesquisa/:query" component={(r) => <IndexPesquisaPage query={r.match.params.query} />} />
 
             <Route path='*' component={NotFindPage} />
 

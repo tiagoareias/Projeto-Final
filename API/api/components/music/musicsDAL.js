@@ -20,7 +20,7 @@ exports.getNomeMusicaPesquisa = async(pesquisaMusica) => {
     var pesquisa;
     await db.Music.findAll({
         attributes: ['name']
-      },{ where: { name: { $like: '%' + pesquisaMusica + '%' } } }).then(music => pesquisa = music).catch(err => console.log(err))
+      , where: { name: { $like: '%' + pesquisaMusica + '%' } } }).then(music => pesquisa = music).catch(err => console.log(err))
     return pesquisa;
 }
 

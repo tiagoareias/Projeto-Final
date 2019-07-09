@@ -13,9 +13,26 @@ class IndexPesquisa extends Component {
   }
 
   componentDidMount() {
-    console.log(window.history.state.response);
+    this.pesquisaMusica(this.props.query)
     //teste
-    this.setState({ dataGet: window.history.state.response })
+    //this.setState({ dataGet: window.history.state.response })
+  }
+
+ async pesquisaMusica(pesquisaARealizar) {
+    console.log(pesquisaARealizar)
+    const response = await fetch(`http://localhost:8000/music/search/result/${pesquisaARealizar}`, {
+      method: 'GET',
+      headers: {
+          'Content-Type': 'application/json'
+      },
+  });
+  //Aguardar API
+  await response.json().then(resp => {
+    console.log(resp.response)
+      //Verificar o estado da resposta da API
+      this.setState({ dataGet: resp.response })
+      
+  });
   }
 
   eliminarMusica = async e => {

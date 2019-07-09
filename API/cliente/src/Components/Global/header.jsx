@@ -96,46 +96,47 @@ class Header extends Component {
             for (let i = 0; i < numMusicas; i++) {
                 const option = document.createElement('option');
                 option.setAttribute('id', this.state.dataGetSearh[i].idVideo);
-                option.setAttribute('value', this.state.dataGetSearh[i].nome);
+                option.setAttribute('value', this.state.dataGetSearh[i].name);
                 datalistSearch.append(option);
             }
         });
     }
 
+    
     handleSubmitOnSubmit = async e => {
+
         e.preventDefault();
 
         const pesquisaMusica = document.getElementById('searchMusicas').value;
+        window.location = "/music/pesquisa/" + pesquisaMusica
 
+        // const response = await fetch(`http://localhost:8000/music/search/${pesquisaMusica}`, {
+        //     method: 'GET',
+        //     headers: {
+        //         'Content-Type': 'application/json',
+        //         'x-access-token': sessionStorage.getItem('token')
+        //     },
+        // });
+        // //Aguardar API
+        // await response.json().then(resp => {
+        //     //console.log(resp.status);
+        //     //Verificar o estado da resposta da API
+        //     let status = resp.response.length;
+        //     //console.log(resp.response.length);
+        //     this.state.data = resp;
+        //     //console.log(this.state.data)
 
-        const response = await fetch(`http://localhost:8000/music/search/${pesquisaMusica}`, {
-            method: 'GET',
-            headers: {
-                'Content-Type': 'application/json',
-                'x-access-token': sessionStorage.getItem('token')
-            },
-        });
-        //Aguardar API
-        await response.json().then(resp => {
-            //console.log(resp.status);
-            //Verificar o estado da resposta da API
-            let status = resp.response.length;
-            //console.log(resp.response.length);
-            this.state.data = resp;
-            //console.log(this.state.data)
+        //     switch (status) {
+        //         case 0:
+        //             break;
+        //         case undefined:
+        //             break;
+        //         default:
+        //             console.log(resp)
+        //             //window.history.pushState(resp, '', '/music/pesquisa')
+        //     }
 
-            switch (status) {
-                case 0:
-                    break;
-                case undefined:
-                    break;
-                default:
-                    console.log(resp)
-                    window.history.pushState(resp, '', '/music/pesquisa')
-                    window.location = "/music/pesquisa"
-            }
-
-        });
+        // });
 
     }
     render() {

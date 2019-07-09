@@ -1,6 +1,8 @@
 import React, { Component } from "react";
 import '../../CssComponents/index.css';
 import AlertMsg from '../Global/AlertMsg';
+import LoadingGif from '../Global/LoadingGif';
+
 var jwt = require('jsonwebtoken');
 
 class Index extends Component {
@@ -12,12 +14,14 @@ class Index extends Component {
       alertisNotVisible: true,
       alertColor: "danger",
       dataGet: [],
-      dataPost: []
+      dataPost: [],
+      isHidden:false
     }
   }
 
   componentDidMount() {
     this.getLastVideos();
+    this.setState({loading:false})
   }
   logout() {
     localStorage.clear();
@@ -40,6 +44,7 @@ class Index extends Component {
       switch (status) {
         case "Últimas músicas classificadas":
           this.setState({ dataGet: resp.response });
+          this.setState({isHidden:true})
           break;
         case "token expired":
           this.refreshToken();
@@ -87,18 +92,18 @@ class Index extends Component {
 
     //Objeto URL
     const urlInput = document.getElementById("urlInput").value;
-    var userFK=null;
-    if(sessionStorage.getItem('token') === null){
-      userFK=null;
+    var userFK = null;
+    if (sessionStorage.getItem('token') === null) {
+      userFK = null;
     }
-    else{
+    else {
       userFK = jwt.decode(sessionStorage.getItem('token')).userID;
     }
-  
+
     //Objeto Login
     const uploadData = {
       urlInput: urlInput,
-      userFK:userFK
+      userFK: userFK
     };
     const response = await fetch('http://localhost:8000/music/upload', {
       method: 'POST',
@@ -118,7 +123,7 @@ class Index extends Component {
         case "Upload":
           this.setState({ dataPost: resp.response });
           alert("Adicionada")
-         // window.location = "/";
+          // window.location = "/";
           break;
         case "URL já existe na base de dados":
           this.setState({ dataPost: resp.response });
@@ -129,13 +134,13 @@ class Index extends Component {
           });
           break;
         case "Foram feitos demasiados uploads nos últimos minutos! Volte a tentar mais tarde":
-            this.setState({
-              alertText: "Excedeu o número de uploads permitidos nos últimos minutos",
-              alertisNotVisible: false,
-              alertColor: "warning"
-            });
-            break;
-          default:
+          this.setState({
+            alertText: "Excedeu o número de uploads permitidos nos últimos minutos",
+            alertisNotVisible: false,
+            alertColor: "warning"
+          });
+          break;
+        default:
           alert(this.state.alertText);
       }
     });
@@ -179,6 +184,7 @@ class Index extends Component {
 
       <div className="Inicio container">
         <div className="container">
+
           <div className="row">
             <div className="col-md-12 mb-3">
               <h1 className="display-3 text-center">MER - PÁGINA PRINCIPAL</h1>
@@ -199,17 +205,23 @@ class Index extends Component {
             </div>
           </form>
           <AlertMsg
-                  text={this.state.alertText}
-                  isNotVisible={this.state.alertisNotVisible}
-                  alertColor={this.state.alertColor}
-                />
+            text={this.state.alertText}
+            isNotVisible={this.state.alertisNotVisible}
+            alertColor={this.state.alertColor}
+          />
           <br />
-          <div className="row">
+
+          <center>
+          <LoadingGif
+          loading={this.state.isHidden}
+          />          
+          </center>
+          {/* <div className="row">
             <div className="col-md-12 mb-3">
               <h4 className="font-style-underline"> <u>Últimas músicas classificadas: </u></h4>
             </div>
-          </div>
-
+            
+            </div> */}
           {
             this.state.dataGet.map((data, index) => {
               return (
