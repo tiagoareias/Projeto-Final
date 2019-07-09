@@ -17,6 +17,11 @@ module.exports = (app) => {
     app.get('/music/:idVideo', requestsLimit,musicsController.getVideo);
     app.get('/music', requestsLimit,musicsController.getLastVideos);
     app.post('/music/:idVideo/delete',requestsLimit, musicsController.deleteMusic);
-    app.get('/music/search/:pesquisaMusica', musicsController.getVideoPesquisa);
+    app.get('/music/search/:pesquisaMusica', musicsController.getNomeMusicaPesquisa);
     app.post('/music/update', musicsController.updateEmocao);
+<<<<<<< HEAD
 }
+=======
+    app.get('/music/search/result/:pesquisaMusica', musicsController.getVideoPesquisa)
+}
+>>>>>>> Back-End

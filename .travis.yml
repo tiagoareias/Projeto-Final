@@ -1,0 +1,18 @@
+language: node_js
+
+node_js:
+  - node
+ 
+before_install:
+  - cd ./API/api/
+
+install:
+  - npm install
+  
+script:
+  - npm test
+
+
+notifications:
+ slack: projectosipt20182019:rARE6PX1hJuNVzPBseXumyHG
+
