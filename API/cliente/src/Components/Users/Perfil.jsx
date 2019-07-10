@@ -20,7 +20,6 @@ class Perfil extends Component {
   componentDidMount() {
     var decoded = jwt.decode(sessionStorage.getItem('token'));
     var username = decoded.username;
-    console.log("Username é " + username)
     this.getDetails(username);
   }
 
@@ -41,7 +40,6 @@ class Perfil extends Component {
       userID,
       isAdmin
     }
-    console.log(dataToken);
     const response = await fetch('http://localhost:8000/token/refresh', {
       method: 'POST',
       headers: {
@@ -51,7 +49,6 @@ class Perfil extends Component {
     });
 
     await response.json().then(resp => {
-      console.log(resp.response)
       //Verificar o estado da resposta da API
       let status = resp.status;
       switch (status) {
@@ -77,7 +74,6 @@ class Perfil extends Component {
       userID,
       isAdmin
     }
-    console.log(dataToken);
     const response = await fetch('http://localhost:8000/token/refresh', {
       method: 'POST',
       headers: {
@@ -87,7 +83,6 @@ class Perfil extends Component {
     });
 
     await response.json().then(resp => {
-      console.log(resp.response)
       //Verificar o estado da resposta da API
       let status = resp.status;
       switch (status) {
@@ -111,7 +106,6 @@ class Perfil extends Component {
     });
 
     await response.json().then(resp => {
-      console.log(resp.status)
       let status = resp.status;
       switch (status) {
         case "Utilizador está na base de dados":
@@ -161,7 +155,6 @@ class Perfil extends Component {
       })
       await response.json().then(resp => {
         let status = resp.status;
-        console.log(status)
         switch (status) {
           case "Updated":
             this.setState({ dataPost: resp.response });
@@ -217,7 +210,6 @@ class Perfil extends Component {
     })
     await response.json().then(resp => {
       let status = resp.status;
-      console.log(status)
       switch (status) {
         case "Updated":
           this.setState({ dataPost: resp.response });

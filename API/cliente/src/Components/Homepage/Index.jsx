@@ -15,13 +15,13 @@ class Index extends Component {
       alertColor: "danger",
       dataGet: [],
       dataPost: [],
-      isHidden:false
+      isHidden: false
     }
   }
 
   componentDidMount() {
     this.getLastVideos();
-    this.setState({loading:false})
+    this.setState({ loading: false })
   }
   logout() {
     localStorage.clear();
@@ -44,7 +44,10 @@ class Index extends Component {
       switch (status) {
         case "Últimas músicas classificadas":
           this.setState({ dataGet: resp.response });
-          this.setState({isHidden:true})
+          this.setState({ isHidden: true })
+          break;
+        case "Ainda não existem músicas na Base de Dados":
+          this.setState({ isHidden: true });
           break;
         case "token expired":
           this.refreshToken();
@@ -52,6 +55,7 @@ class Index extends Component {
           break;
         default:
           console.log(this.state.alertText)
+          break;
       }
     })
   }
@@ -116,14 +120,16 @@ class Index extends Component {
     );
     //Aguardar API
     await response.json().then(resp => {
-      console.log(resp)
       //Verificar o estado da resposta da API
       let status = resp.status;
       switch (status) {
         case "Upload":
           this.setState({ dataPost: resp.response });
-          alert("Adicionada")
-          // window.location = "/";
+          this.setState({
+            alertText: "A música será classificada. Aguarde pacientemente.",
+            alertisNotVisible: false,
+            alertColor: "success"
+          });
           break;
         case "URL já existe na base de dados":
           this.setState({ dataPost: resp.response });
@@ -146,6 +152,11 @@ class Index extends Component {
     });
   }
 
+  redirecionar () {
+    window.location = "/";
+  }
+
+
   eliminarMusica = async e => {
     const id = e.target.id;
     const response = await fetch(`http://localhost:8000/music/${id}/delete`, {
@@ -163,14 +174,27 @@ class Index extends Component {
       let status = resp.status;
       switch (status) {
         case "Failed to authenticate token.":
-          alert("Inicie sessão");
-          break;
+            this.setState({
+              alertText: "  Inicie Sessão por favor.",
+              alertisNotVisible: false,
+              alertColor: "warning"
+            });
+            break;
         case "Deleted":
-          alert("Vídeo Apagado")
-          window.location = "/";
-          break;
+            this.setState({
+              alertText: "  O vídeo foi eliminado.",
+              alertisNotVisible: false,
+              alertColor: "success"
+            });
+            setTimeout(this.redirecionar, 2000);
+            break;
         case "Not Deleted | Música não está na base de dados":
-          alert("Música não está na base de dados")
+            this.setState({
+              alertText: " O vídeo que está a tentar eliminar não existe.",
+              alertisNotVisible: false,
+              alertColor: "warning"
+            });
+            setTimeout(this.redirecionar, 2000);
           break;
         default:
           alert(this.state.alertText);
@@ -212,9 +236,9 @@ class Index extends Component {
           <br />
 
           <center>
-          <LoadingGif
-          loading={this.state.isHidden}
-          />          
+            <LoadingGif
+              loading={this.state.isHidden}
+            />
           </center>
           {/* <div className="row">
             <div className="col-md-12 mb-3">

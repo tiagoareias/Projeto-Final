@@ -1,5 +1,7 @@
 import React, { Component } from "react";
 import "../../CssComponents/Users/index.css"
+import AlertMsg from "../Global/AlertMsg"
+
 var jwt = require('jsonwebtoken');
 
 class Index extends Component {
@@ -41,11 +43,14 @@ class Index extends Component {
             let status = resp.status;
             switch (status) {
                 case "Failed to authenticate token.":
-                    alert("Inicie sessão");
+                    this.setState({
+                        alertText: "  Inicie Sessão por favor.",
+                        alertisNotVisible: false,
+                        alertColor: "warning"
+                    });
                     break;
                 case "Utilizadores na Base de Dados":
                     this.setState({ data: resp.response });
-                    console.log(this.state.data)
                     break;
                 default:
                     console.log(this.state.alertText)
@@ -71,6 +76,12 @@ class Index extends Component {
                             </h2>
                             </div>
                         </div>
+                        <AlertMsg
+                            text={this.state.alertText}
+                            isNotVisible={this.state.alertisNotVisible}
+                            alertColor={this.state.alertColor}
+                        />
+
                         <table className="table table-sm table-hover">
                             <thead >
                                 <tr id="cabecalho">
@@ -97,8 +108,8 @@ class Index extends Component {
                     </div>
                 );
             }
-            else{
-                window.location="*"
+            else {
+                window.location = "*"
             }
         }
 

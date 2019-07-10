@@ -50,7 +50,6 @@ class Header extends Component {
             nome,
             isAdmin
         }
-        console.log(dataToken);
         const response = await fetch('http://localhost:8000/token/refresh', {
             method: 'POST',
             headers: {
@@ -60,7 +59,6 @@ class Header extends Component {
         });
 
         await response.json().then(resp => {
-            console.log(resp.response)
             //Verificar o estado da resposta da API
             let status = resp.status;
             switch (status) {
