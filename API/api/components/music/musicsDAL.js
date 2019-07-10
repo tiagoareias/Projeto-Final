@@ -1,4 +1,6 @@
-var db = require('../database/index')
+var db = require('../database/index');
+var Sequelize = require('sequelize');
+const Op = Sequelize.Op;   
 
 exports.uploadVideo = async (musica) => {
     await db.Music.create(musica);
@@ -12,21 +14,19 @@ exports.getVideo = async (idVideo) => {
 
 exports.getVideoPesquisa = async (pesquisaMusica) => {
     var pesquisa;
-    await db.Music.findAll({ where: { name: { $like: '%' + pesquisaMusica + '%' } } }).then(music => pesquisa = music).catch(err => console.log(err))
+     await db.Music.findAll({ where: { name: { $like: '%' + pesquisaMusica + '%' }, emocao: { [Op.ne]: "" } } }).then(music => pesquisa = music).catch(err => console.log(err))
     return pesquisa;
 }
 
-exports.getNomeMusicaPesquisa = async(pesquisaMusica) => {
+exports.getNomeMusicaPesquisa = async (pesquisaMusica) => {
     var pesquisa;
-    await db.Music.findAll({
-        attributes: ['name']
-      , where: { name: { $like: '%' + pesquisaMusica + '%' } } }).then(music => pesquisa = music).catch(err => console.log(err))
+    await db.Music.findAll({ where: { name: { $like: '%' + pesquisaMusica + '%' },  emocao: { [Op.ne]: "" } } }).then(music => pesquisa = music).catch(err => console.log(err))
     return pesquisa;
 }
 
 exports.getLastVideos = async () => {
     var musicas;
-    await db.Music.findAll({ order: [['createdAt', 'DESC']], limit: 4 })
+    await db.Music.findAll({ where:{emocao: { [Op.ne]: "" }}, order: [['createdAt', 'DESC']], limit: 4 })
         .then(mus => musicas = mus).catch(err => console.log(err));
     return musicas;
 }
