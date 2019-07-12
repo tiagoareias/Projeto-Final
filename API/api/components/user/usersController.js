@@ -16,13 +16,13 @@ exports.createUser = async (req, res) => {
     var existsUserName;
     //token
     var token = req.headers['x-access-token'];
-    if (!token) {
-        serverResponse = { status: "Nao está autenticado | token expirou", response: {} }
-        return res.send(serverResponse);
-    }
+    // if (!token) {
+    //     serverResponse = { status: "Nao está autenticado | token expirou", response: {} }
+    //     return res.send(serverResponse);
+    // }
 
     try {
-        jwt.verify(token, 'secret');
+        //jwt.verify(token, 'secret');
 
         //***Validação do Email***/
         //verificar se o campo email está vazio e se é realmente um email

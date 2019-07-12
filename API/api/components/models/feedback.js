@@ -16,6 +16,12 @@ module.exports =  (sequelize, DataTypes) => {
         Feedback.belongsTo(models.User, {
             foreignKey: 'userFK',
         });
+
+        Feedback.belongsTo(models.Music, {
+            foreignKey: 'musicFK',
+        });
     };
+
+    
     return Feedback;
   };

@@ -28,13 +28,14 @@ module.exports = (sequelize, DataTypes) => {
         }
     });
 
-
-
     User.associate = (models) => {
         User.hasMany(models.Music, {
             foreignKey: 'userFK',
         });
-        };
+        // User.hasMany(models.ListaRepro, {
+        //     foreignKey: 'userFK',
+        // });
+    };
 
 
 

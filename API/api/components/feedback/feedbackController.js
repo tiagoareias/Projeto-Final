@@ -15,7 +15,7 @@ exports.newFeedback = async (req, res) => {
     var dadosFeedback = {
         feedback:req.body.feedback,
         userFK:req.body.userFK,
-        musicID: req.body.musicID
+        musicFK: req.body.musicFK
     };
 
     await feedbackService.newFeedback(dadosFeedback).then(url => feedback = url).catch(err => console.log(err));
@@ -30,12 +30,11 @@ exports.editFeedback = async (req, res) => {
     //variável que guarda a query à base de dados
     var feedback;
     var feedID = req.params.id;
-    console.log(feedID);
     //variável que recolhe o parâmetro enviado na request
     var dadosFeedback = {
         feedback:req.body.feedback,
         userFK:req.body.userFK,
-        musicID: req.body.musicID
+        musicFK: req.body.musicFK
     };
 
     await feedbackService.editFeedback(dadosFeedback,feedID).then(url => feedback = url).catch(err => console.log(err));

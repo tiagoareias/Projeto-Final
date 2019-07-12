@@ -1,4 +1,4 @@
-module.exports =  (sequelize, DataTypes) => {
+module.exports = (sequelize, DataTypes) => {
     const Music = sequelize.define('Music', {
         id: {
             type: DataTypes.UUID,
@@ -9,7 +9,7 @@ module.exports =  (sequelize, DataTypes) => {
             type: DataTypes.STRING,
             allownull: false
         },
-        name:{
+        name: {
             type: DataTypes.STRING,
             allownull: false
         },
@@ -22,12 +22,13 @@ module.exports =  (sequelize, DataTypes) => {
             allownull: false
         }
     });
-    Music.associate = (models) => {
-        Music.hasMany(models.Feedback, {
-            foreignKey: 'musicID',
-        });
+        Music.associate = (models) => {
+         Music.hasMany(models.Feedback, {
+             foreignKey: 'musicFK',
+         });
+
     };
-    
+
 
     return Music;
-  };
+};

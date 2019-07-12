@@ -14,7 +14,7 @@ var sequelize = new Sequelize('database_projetoFinal','user','123qwe', {
 const models = {
   User: sequelize.import('./user'),
   Music:sequelize.import('./music'),
-  Feedback:sequelize.import('./Feedback')
+  Feedback:sequelize.import('./feedback')
 };
 
 
