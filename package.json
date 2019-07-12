@@ -1,0 +1,20 @@
+{
+  "name": "projeto-final",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+    "scripts": {
+      "heroku-prebuild": "cd API/api && npm install && npm start",
+      "start": "node index.js"
+    },
+   "repository": {
+    "type": "git",
+    "url": "git+https://github.com/tiagoareias/Projeto-Final.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/tiagoareias/Projeto-Final/issues"
+  },
+  "homepage": "https://github.com/tiagoareias/Projeto-Final#readme"
+}
