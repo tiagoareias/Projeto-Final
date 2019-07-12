@@ -42,7 +42,6 @@ class Header extends Component {
 
     async refreshToken() {
         var decoded = jwt.decode(sessionStorage.getItem('token'));
-        console.log(decoded);
         var nome = decoded.nome;
         var isAdmin = decoded.isAdmin;
         var username = decoded.username;
@@ -51,7 +50,6 @@ class Header extends Component {
             nome,
             isAdmin
         }
-        console.log(dataToken);
         const response = await fetch('http://localhost:8000/token/refresh', {
             method: 'POST',
             headers: {
@@ -61,7 +59,6 @@ class Header extends Component {
         });
 
         await response.json().then(resp => {
-            console.log(resp.response)
             //Verificar o estado da resposta da API
             let status = resp.status;
             switch (status) {
@@ -103,40 +100,41 @@ class Header extends Component {
         });
     }
 
+    
     handleSubmitOnSubmit = async e => {
+
         e.preventDefault();
 
         const pesquisaMusica = document.getElementById('searchMusicas').value;
+        window.location = "/music/pesquisa/" + pesquisaMusica
 
+        // const response = await fetch(`http://localhost:8000/music/search/${pesquisaMusica}`, {
+        //     method: 'GET',
+        //     headers: {
+        //         'Content-Type': 'application/json',
+        //         'x-access-token': sessionStorage.getItem('token')
+        //     },
+        // });
+        // //Aguardar API
+        // await response.json().then(resp => {
+        //     //console.log(resp.status);
+        //     //Verificar o estado da resposta da API
+        //     let status = resp.response.length;
+        //     //console.log(resp.response.length);
+        //     this.state.data = resp;
+        //     //console.log(this.state.data)
 
-        const response = await fetch(`http://localhost:8000/music/search/${pesquisaMusica}`, {
-            method: 'GET',
-            headers: {
-                'Content-Type': 'application/json',
-                'x-access-token': sessionStorage.getItem('token')
-            },
-        });
-        //Aguardar API
-        await response.json().then(resp => {
-            //console.log(resp.status);
-            //Verificar o estado da resposta da API
-            let status = resp.response.length;
-            //console.log(resp.response.length);
-            this.state.data = resp;
-            //console.log(this.state.data)
+        //     switch (status) {
+        //         case 0:
+        //             break;
+        //         case undefined:
+        //             break;
+        //         default:
+        //             console.log(resp)
+        //             //window.history.pushState(resp, '', '/music/pesquisa')
+        //     }
 
-            switch (status) {
-                case 0:
-                    break;
-                case undefined:
-                    break;
-                default:
-                    console.log(resp)
-                    window.history.pushState(resp, '', '/music/pesquisa')
-                    window.location = "/music/pesquisa"
-            }
-
-        });
+        // });
 
     }
     render() {

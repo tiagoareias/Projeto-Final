@@ -1,39 +1,40 @@
-//model
+<<<<<<< HEAD:API/api/components/music/music.js
+
 'use strict';
 
+=======
+>>>>>>> Back-End:API/api/components/models/music.js
 module.exports = (sequelize, DataTypes) => {
-    var User = sequelize.define('User', {
-        userID: {
+    const Music = sequelize.define('Music', {
+        id: {
             type: DataTypes.UUID,
             defaultValue: DataTypes.UUIDV4,
             primaryKey: true
         },
-        email: {
+        idVideo: {
             type: DataTypes.STRING,
             allownull: false
         },
-        username: {
+        name: {
             type: DataTypes.STRING,
             allownull: false
         },
-        hashPassword: {
+        url: {
             type: DataTypes.STRING,
             allownull: false
         },
-        nome: {
+        emocao: {
             type: DataTypes.STRING,
             allownull: false
-        },
-        isAdmin:{
-            type:DataTypes.BOOLEAN,
-            allownull:false
         }
-    })
+    });
+        Music.associate = (models) => {
+         Music.hasMany(models.Feedback, {
+             foreignKey: 'musicFK',
+         });
 
-    User.sync({ force: false }).then(() => {
-        // Now the `users` table in the database corresponds to the model definition
-        return ;
-      });
+    };
 
-      return User;
-}
+
+    return Music;
+};

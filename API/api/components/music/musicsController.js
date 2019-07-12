@@ -1,7 +1,9 @@
+
 var musicsService = require('./musicsService');
 var fetchVideoInfo = require('youtube-info');
 const { check, validationResult } = require('express-validator/check');
 var jwt = require('jsonwebtoken');
+var amqp = require('amqplib/callback_api')
 
 const ytdl = require('ytdl-core');
 
@@ -11,9 +13,9 @@ exports.uploadVideo = async (req, res) => {
     //variável que guarda a query à base de dados
     var existsMusica;
     //validar url
-    req.checkBody('url', 'URL is required or is not valid').isURL().notEmpty();
+    //req.checkBody('url', 'URL is required or is not valid').isURL().notEmpty();
     //endereço do vídeo do youtube
-    const url = req.body.url + "";
+    const url = req.body.urlInput + "";
     //Returns a video ID from a YouTube URL.
     const idVideo = ytdl.getURLVideoID(url);
 
@@ -34,27 +36,33 @@ exports.uploadVideo = async (req, res) => {
     }
     else {
         if (url != null) {
+            var nome;
+            var dadosMusica = {};
             fetchVideoInfo(idVideo, async function (err, videoInfo) {
                 if (err) throw new Error(err);
-                //console.log(videoInfo);
-                const nome = videoInfo.title;
-                const autor = videoInfo.owner;
-                const dataPublicacao = videoInfo.datePublished;
-                const numViews = videoInfo.views;
-                const numDislikes = videoInfo.dislikeCount;
-                const numLikes = videoInfo.likeCount;
-                const numComentarios = videoInfo.commentCount;
-
-                const dadosMusica = {
-                    idVideo: idVideo, url: url, name: nome, autor: autor,
-                    dataPublicacao: dataPublicacao, numViews: numViews,
-                    numDislikes: numDislikes, numLikes: numLikes, numComentarios
-                }
+                nome = videoInfo.title;
+                dadosMusica = { idVideo: idVideo, name: nome, url: url, emocao: "", userFK: req.body.userFK }
 
                 await musicsService.uploadVideo(dadosMusica);
-                serverResponse = { status: "Upload", response: dadosMusica }
-                return res.send(serverResponse);
             });
+
+
+
+            /*amqp.connect('amqp://merUser:passwordMER@192.168.137.42', function (err, conn) {
+                conn.createChannel(function (err, ch) {
+                    var q = 'musicExtraction';
+                    //console.log("Conn = " + conn);
+                    //console.log("Ch = " + ch);
+
+                    ch.assertQueue(q, { durable: false });
+                    ch.sendToQueue(q, new Buffer(url), { persistent: false });
+                    console.log(" [x] Sent '%s'", url);
+                });
+                setTimeout(function () { conn.close(); process.exit(0) }, 500);
+            });*/
+
+            serverResponse = { status: "Upload", response: {} }
+            return res.send(serverResponse);
         }
         else {
             return res.send(serverResponse);
@@ -80,25 +88,74 @@ exports.getVideo = async (req, res) => {
 exports.getVideoPesquisa = async (req, res) => {
     let serverResponse = { status: "A pesquisa não retornou nenhuma música", response: "teste" }
 
-    var nome;
+    var musicas;
     var pesquisaRealizada = req.params.pesquisaMusica;
-    await musicsService.getVideoPesquisa(pesquisaRealizada).then(music => nome = music).catch(err => console.log(err));
+    await musicsService.getVideoPesquisa(pesquisaRealizada).then(music => musicas = music).catch(err => console.log(err));
+    if (pesquisaRealizada != null) {
+        var size = Object.keys(musicas).length;
+        var dadosEnviar = [];
+        for (let i = 0; i < size; i++) {
 
-    if(pesquisaRealizada !=null){
-        serverResponse = {status:"Musicas encontradas que contem o seguinte conjunto de caracteres " + pesquisaRealizada, response:nome}
+            await fetchVideoInfo(musicas[i].idVideo).then(videoInfo => {
+                const autor = videoInfo.owner;
+                const dataPublicacao = videoInfo.datePublished;
+                const numViews = videoInfo.views;
+                const numDislikes = videoInfo.dislikeCount;
+                const numLikes = videoInfo.likeCount;
+                const numComentarios = videoInfo.commentCount;
+                dadosEnviar[i] = {
+                    idVideo: musicas[i].idVideo, nome: musicas[i].name, url: musicas[i].url, autor: autor, dataPublicacao: dataPublicacao,
+                    numViews: numViews, numDislikes: numDislikes, numLikes: numLikes, numComentarios: numComentarios, emocao: musicas[i].emocao
+                }
+            });
+        }
+
+        serverResponse = { status: "Musicas encontradas que contem o seguinte conjunto de caracteres " + pesquisaRealizada, response: dadosEnviar }
     }
     return res.send(serverResponse);
 }
+
+exports.getNomeMusicaPesquisa = async (req, res) => {
+    let serverResponse = { status: "A pesquisa não retornou nenhuma música", response: {} }
+
+    var musicas;
+    var pesquisaRealizada = req.params.pesquisaMusica;
+    await musicsService.getNomeMusicaPesquisa(pesquisaRealizada).then(music => musicas = music).catch(err => console.log(err));
+    if (pesquisaRealizada != null) {
+        
+
+        serverResponse = { status: "Musicas encontradas que contem o seguinte conjunto de caracteres " + pesquisaRealizada, response: musicas }
+    }
+    return res.send(serverResponse);
+}
+
 exports.getLastVideos = async (req, res) => {
     let serverResponse = { status: "Ainda não existem músicas na Base de Dados", response: {} }
     //variável que guarda a query à base de dados
     var musicas;
-    var token = req.headers['x-access-token'];
-    //console.log(token);
+    var token;
+    token = req.headers['x-access-token'];
+    console.log(token);
     if (token == "null") {
         await musicsService.getLastVideos().then(mus => musicas = mus).catch(err => console.log(err))
-        if (musicas.length >= 0) {
-            serverResponse = { status: "Últimas músicas classificadas", response: musicas }
+        if (musicas.length > 0) {
+            var size = Object.keys(musicas).length;
+            var dadosEnviar = [];
+            for (let i = 0; i < size; i++) {
+                await fetchVideoInfo(musicas[i].idVideo).then(videoInfo => {
+                    const autor = videoInfo.owner;
+                    const dataPublicacao = videoInfo.datePublished;
+                    const numDislikes = videoInfo.dislikeCount;
+                    const numViews = videoInfo.views;
+                    const numLikes = videoInfo.likeCount;
+                    const numComentarios = videoInfo.commentCount;
+                    dadosEnviar[i] = {
+                        numViews: numViews, numDislikes: numDislikes, numLikes: numLikes, numComentarios: numComentarios, emocao: musicas[i].emocao,
+                        idVideo: musicas[i].idVideo, nome: musicas[i].name, url: musicas[i].url, autor: autor, dataPublicacao: dataPublicacao,
+                    }
+                });
+            }
+            serverResponse = { status: "Últimas músicas classificadas", response: dadosEnviar }
         }
         return res.send(serverResponse);
     }
@@ -106,8 +163,24 @@ exports.getLastVideos = async (req, res) => {
         try {
             jwt.verify(token, 'secret');
             await musicsService.getLastVideos().then(mus => musicas = mus).catch(err => console.log(err))
-            if (musicas.length >= 0) {
-                serverResponse = { status: "Últimas músicas classificadas", response: musicas }
+            if (musicas.length > 0) {
+                var size = Object.keys(musicas).length;
+                var dadosEnviar = [];
+                for (let i = 0; i < size; i++) {
+                    await fetchVideoInfo(musicas[i].idVideo).then(videoInfo => {
+                        const autor = videoInfo.owner;
+                        const dataPublicacao = videoInfo.datePublished;
+                        const numViews = videoInfo.views;
+                        const numDislikes = videoInfo.dislikeCount;
+                        const numLikes = videoInfo.likeCount;
+                        const numComentarios = videoInfo.commentCount;
+                        dadosEnviar[i] = {
+                            idVideo: musicas[i].idVideo, nome: musicas[i].name, url: musicas[i].url, autor: autor, dataPublicacao: dataPublicacao,
+                            numViews: numViews, numDislikes: numDislikes, numLikes: numLikes, numComentarios: numComentarios, emocao: musicas[i].emocao
+                    }
+                        });
+                }
+                serverResponse = { status: "Últimas músicas classificadas", response: dadosEnviar }
             }
             return res.send(serverResponse);
         } catch (err) {
@@ -142,4 +215,22 @@ exports.deleteMusic = async (req, res) => {
         serverResponse = {status:"Failed to authenticate token."}
         return res.send( serverResponse)
     }
+}
+
+
+
+exports.updateEmocao = async (req, res) => {
+    let serverResponse = { status: "Não classificada | Música não está na base de dados", response: {} }
+    //musica a atualizar
+    var musicaUpdate = req.body.idVideo;
+    var emocao = req.body.emocao;
+    var musicaAtualizada;
+    var dadosEmocao = { emocao: emocao }
+
+    //atualizar música
+    await musicsService.updateMusic(musicaUpdate, dadosEmocao).then(mus => musicaAtualizada = mus).catch(err => console.log(err));
+    if (musicaAtualizada != 0) {
+        serverResponse = { status: "Atualizada", response: musicaAtualizada }
+    }
+    return res.send(serverResponse);
 }

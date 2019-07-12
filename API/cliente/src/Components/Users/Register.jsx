@@ -1,6 +1,9 @@
 import React, { Component } from "react";
 import '../../CssComponents/Users/register.css';
+import AlertMsg from '../Global/AlertMsg'
+
 var jwt = require('jsonwebtoken');
+
 class Register extends Component {
     constructor() {
         super();
@@ -50,7 +53,6 @@ class Register extends Component {
         });
 
         await response.json().then(resp => {
-            console.log(resp.response)
             //Verificar o estado da resposta da API
             let status = resp.status;
             switch (status) {
@@ -65,21 +67,26 @@ class Register extends Component {
         });
     }
 
+    redirecionar() {
+        window.location = "/";
+    }
+
+
     handleSubmit = async e => {
         e.preventDefault();
         //Objeto Login
         //verificar o role
-        var role = true; 
+        var role = true;
         var tipoUtilizador = document.getElementById('tipoUtilizador').value;
-        if(tipoUtilizador === "Não Administrador"){
-            role=false;
+        if (tipoUtilizador === "Não Administrador") {
+            role = false;
         }
         const registerData = {
             nome: document.getElementById('nome').value,
             email: document.getElementById('email').value,
             username: document.getElementById('username').value,
             hashPassword: document.getElementById('password').value,
-            isAdmin:role
+            isAdmin: role
         };
 
         //Enviar pedidos
@@ -97,20 +104,31 @@ class Register extends Component {
             let status = resp.status;
             switch (status) {
                 case "Email e/ou username já existe(m) na base de dados":
-                    alert("Email e/ou username já existe(m) na base de dados")
+                    this.setState({
+                        alertText: "    Email e/ou username já existe(m) na base de dados.",
+                        alertisNotVisible: false,
+                        alertColor: "warning"
+                    });
                     break;
                 case "Erros na validação":
                     this.setState({ data: resp.response });
-                    alert(this.state.data[0].msg)
+                    this.setState({
+                        alertText: this.state.data[0].msg,
+                        alertisNotVisible: false,
+                        alertColor: "warning"
+                    });
                     break;
                 case "Utilizador Criado com Sucesso":
-                    alert("Utilizador criado com sucesso")
-                    window.location = '/';
+                    this.setState({
+                        alertText: "    Utilizador Criado com Sucesso.",
+                        alertisNotVisible: false,
+                        alertColor: "success"
+                    });
+                    setTimeout(this.redirecionar, 2000);
                     break;
                 case "Nao está autenticado | token expirou":
                     this.refreshToken();
                     this.handleSubmit(e);
-
                     break;
                 default:
                     console.log(this.state.alertText)
@@ -131,6 +149,11 @@ class Register extends Component {
                                     <h1 className="display-4 ">Criar novo utilizador</h1>
                                 </div>
                             </div>
+                            <AlertMsg
+                                text={this.state.alertText}
+                                isNotVisible={this.state.alertisNotVisible}
+                                alertColor={this.state.alertColor}
+                            />
                             <br />
                             <main className="my-form">
                                 <div className="cotainer">
@@ -169,9 +192,9 @@ class Register extends Component {
                                                         </div>
                                                         <div className="form-group row">
                                                             <label>Tipo de Utilizador</label>
-                                                            <select id="tipoUtilizador" class="form-control">
-                                                                <option selected>Administrador...</option>
-                                                                <option>Não Administrador</option>
+                                                            <select id="tipoUtilizador" className="form-control" defaultValue={'Administrador'}>
+                                                                <option value="Administrador" >Administrador...</option>
+                                                                <option value="Não Administrador">Não Administrador</option>
                                                             </select>
                                                         </div>
                                                         <div className="col-md-6 offset-md-4">
