@@ -5,7 +5,8 @@
   "main": "index.js",
   "scripts": {
     "start": "cd API/api && npm start",
-    "postinstall": "cd API/api && npm install"
+    "postinstall": "cd API/api && npm install",
+    "heroku-postbuild": "cd API/client && npm install && npm start"
   },
   "repository": {
     "type": "git",
