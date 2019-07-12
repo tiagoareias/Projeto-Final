@@ -1,8 +1,6 @@
-//model
-'use strict';
-
+const models = require('../models');
 module.exports = (sequelize, DataTypes) => {
-    var User = sequelize.define('User', {
+    const User = sequelize.define('User', {
         userID: {
             type: DataTypes.UUID,
             defaultValue: DataTypes.UUIDV4,
@@ -28,15 +26,18 @@ module.exports = (sequelize, DataTypes) => {
             type: DataTypes.BOOLEAN,
             allownull: false
         }
-    })
-    User.associate = function (models) {
-        User.hasMany(models.Music, { as: 'musics' })
-    };
-
-    User.sync({ force: false }).then(() => {
-        // Now the `users` table in the database corresponds to the model definition
-        return;
     });
 
+    User.associate = (models) => {
+        User.hasMany(models.Music, {
+            foreignKey: 'userFK',
+        });
+        // User.hasMany(models.ListaRepro, {
+        //     foreignKey: 'userFK',
+        // });
+    };
+
+
+
     return User;
-}
+};

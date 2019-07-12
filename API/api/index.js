@@ -1,3 +1,5 @@
+var models = require ('./components/models');
+
 var swaggerUi = require('swagger-ui-express')
 var swaggerDocument = require( './swagger/swagger.json');
 var expressValidator = require('express-validator');
@@ -23,14 +25,17 @@ app.use((req, res, next) => {
     next();
 })
 //app.use(expressSession({secret:'max',saveUninitialized:false,resave:false}));
-require('./components/database/index')
 require('./components/user/index')(app)
 require('./components/music/index')(app)
+require('./components/feedback/index')(app)
 require('./components/refreshToken/index')(app)
 var port = 8000
-app.listen(port, () => {
-    console.log('\x1b[32m%s %d\x1b[0m.', 'Server HTTP listening on port', port)
-})
+
+models.sequelize.sync({}).then(() => {
+    app.listen(port, () => {
+        console.log('\x1b[32m%s %d\x1b[0m.', 'Server HTTP listening on port', port)
+    })  });
+
 
 app.get('/', function (req, res) {
     res.sendFile(__dirname + '/public/index.html')

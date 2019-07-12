@@ -1,8 +1,11 @@
+<<<<<<< HEAD:API/api/components/music/music.js
 
 'use strict';
 
+=======
+>>>>>>> Back-End:API/api/components/models/music.js
 module.exports = (sequelize, DataTypes) => {
-    var Music = sequelize.define('Music', {
+    const Music = sequelize.define('Music', {
         id: {
             type: DataTypes.UUID,
             defaultValue: DataTypes.UUIDV4,
@@ -12,7 +15,7 @@ module.exports = (sequelize, DataTypes) => {
             type: DataTypes.STRING,
             allownull: false
         },
-        name:{
+        name: {
             type: DataTypes.STRING,
             allownull: false
         },
@@ -23,24 +26,15 @@ module.exports = (sequelize, DataTypes) => {
         emocao: {
             type: DataTypes.STRING,
             allownull: false
-        },
-        userFK: {
-            type: DataTypes.UUID,
-            references: {         
-                model: 'Users',
-                key: 'userID'
-            }
         }
-    })
-
-    Music.associate = function(models) {
-        Music.belongsTo(models.User, {foreignKey: 'userFK', as: 'Users'})
-      };    
-       
-      Music.sync({ force: false }).then(() => {
-        // Now the `music` table in the database corresponds to the model definition
-        return;
     });
+        Music.associate = (models) => {
+         Music.hasMany(models.Feedback, {
+             foreignKey: 'musicFK',
+         });
+
+    };
+
 
     return Music;
-}
+};
