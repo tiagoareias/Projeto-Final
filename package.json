@@ -6,7 +6,7 @@
   "scripts": {
     "start": "cd API/api && npm start",
     "postinstall": "cd API/api && npm install",
-    "heroku-postbuild": "cd .. && cd client && npm install && npm start"
+    "heroku-postbuild": "cd .. && cd cliente && npm install && npm start"
   },
   "repository": {
     "type": "git",
