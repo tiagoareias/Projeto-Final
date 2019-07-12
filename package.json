@@ -4,8 +4,8 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start": "cd API/cliente && npm start",
-    "postinstall": "cd API/cliente && npm install"
+    "start": "cd API/cliente && npm start && cd ../api && npm start",
+    "postinstall": "cd API/cliente && npm install && cd ../api && npm install"
   },
   "repository": {
     "type": "git",
