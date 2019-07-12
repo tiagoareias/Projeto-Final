@@ -11,4 +11,5 @@ module.exports = (app) => {
     });
     app.post('/feedback/new', requestsLimit, feedbackController.newFeedback);
     app.post('/feedback/:id/edit', requestsLimit,feedbackController.editFeedback);
+    app.post('/feedback/list',requestsLimit,feedbackController.listFeedback);
 }

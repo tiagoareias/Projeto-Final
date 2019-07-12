@@ -22,6 +22,7 @@ class Index extends Component {
   componentDidMount() {
     this.getLastVideos();
     this.setState({ loading: false })
+    
   }
   logout() {
     localStorage.clear();
@@ -202,7 +203,93 @@ class Index extends Component {
     });
   }
 
+  async createFeedBack(createFeed){
+    const response = await fetch(`http://localhost:8000/feedback/new`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        "x-access-token": sessionStorage.getItem("token")
+      },
+      body: JSON.stringify(createFeed)
+    });
+    
+    await response.json().then(resp => {
+    });
+  }
 
+  
+  async atualizaFeedBack(editFeed,idFeed){
+    const response = await fetch(`http://localhost:8000/feedback/${idFeed}/edit`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        "x-access-token": sessionStorage.getItem("token")
+      },
+      body: JSON.stringify(editFeed)
+    });
+    await response.json().then(resp => {
+    });
+  }
+
+  async adicionaFeedback(valor,id) {
+    var decoded = jwt.decode(sessionStorage.getItem('token'));
+    const dadosEnviar = {
+      userFK: decoded.userID,
+      musicFK: id
+    };    
+    //verificar se já foi feito um feedback à musica pelo utilizador em questão
+    console.log(dadosEnviar)
+    const response = await fetch(`http://localhost:8000/feedback/list`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        "x-access-token": sessionStorage.getItem("token")
+      },
+      body: JSON.stringify(dadosEnviar)
+    });
+    
+    await response.json().then(resp => {
+      var count = Object.keys(resp.response).length;
+      if(resp.status === "Não foi possivel listar os feedbacks" && count===0){
+        //create feedback
+        alert("Cria feedback")
+        const createFeed = {
+          feedback:valor,
+          musicFK:id,
+          userFK: decoded.userID
+        };
+        this.createFeedBack(createFeed);
+     
+      }
+
+
+
+      if(resp.status === "Feedback listado com sucesso" && count!==0){
+        //atualiza feedback
+        alert("ATUALIZA feedback")
+        var valorFeedback = valor;
+        console.log(valor)
+        console.log(resp.response.feedback)
+
+        if(valor == resp.response.feedback+""){
+          alert("entrou")
+          valorFeedback = null;
+        }
+        var editFeed = {
+          feedback:valorFeedback,
+          musicFK:id,
+          userFK: decoded.userID
+        };
+        
+        console.log(editFeed)
+        const idFeed = resp.response.id;
+
+        this.atualizaFeedBack(editFeed,idFeed)
+      }
+    })
+    
+
+    }
   render() {
     return (
 
@@ -267,10 +354,18 @@ class Index extends Component {
                       <h6 className="text-secondary"><i >{data.numViews}</i> Visualizações </h6>
                       <h6 className="text-secondary"> Publicado a <i > {data.dataPublicacao.substring(0, 10)}</i></h6>
                       {/*EMOCAO*/}
+                      <div className="row">
                       <h5 className="font-weight-bold "> Emoção: <i > {data.emocao} </i></h5>
+
+                      <h6 id ="textLike" style={{marginLeft:"8px",marginTop:"5px"}}>| Gostou desta classificação?</h6><i onClick={()=>{this.adicionaFeedback("true",data.id)}}id="gostar"className="fa fa-thumbs-o-up" style={{fontSize:"25px" ,marginLeft:"5px"}}></i><i onClick={()=>{this.adicionaFeedback("false",data.id)}} id="naoGostar" className="fa fa-thumbs-o-down" value="false" style={{fontSize:"25px" ,marginLeft:"5px",color:"red",fontWeight:"bold"}}></i>
+
+                        </div>
                       {/*Botão Eliminar*/}
                       {(sessionStorage.getItem('token') != null) ? (
+                        <div className="row">
                         <button id={data.idVideo} type="button" className="btn btn-danger" onClick={this.eliminarMusica} >Eliminar</button>
+                        <p></p>
+                        </div>
                       ) : (<p></p>)}
                     </div>
                   </div>

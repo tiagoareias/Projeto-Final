@@ -18,7 +18,7 @@ exports.uploadVideo = async (req, res) => {
     const url = req.body.urlInput + "";
     //Returns a video ID from a YouTube URL.
     const idVideo = ytdl.getURLVideoID(url);
-
+    
     //verificar se a música já existe na base de dados
     await musicsService.getVideo(idVideo).then(mus => existsMusica = mus).catch(err => console.log(err));
 
@@ -135,7 +135,6 @@ exports.getLastVideos = async (req, res) => {
     var musicas;
     var token;
     token = req.headers['x-access-token'];
-    console.log(token);
     if (token == "null") {
         await musicsService.getLastVideos().then(mus => musicas = mus).catch(err => console.log(err))
         if (musicas.length > 0) {
@@ -151,7 +150,7 @@ exports.getLastVideos = async (req, res) => {
                     const numComentarios = videoInfo.commentCount;
                     dadosEnviar[i] = {
                         numViews: numViews, numDislikes: numDislikes, numLikes: numLikes, numComentarios: numComentarios, emocao: musicas[i].emocao,
-                        idVideo: musicas[i].idVideo, nome: musicas[i].name, url: musicas[i].url, autor: autor, dataPublicacao: dataPublicacao,
+                        id:musicas[i].id,idVideo: musicas[i].idVideo, nome: musicas[i].name, url: musicas[i].url, autor: autor, dataPublicacao: dataPublicacao,
                     }
                 });
             }
@@ -175,7 +174,7 @@ exports.getLastVideos = async (req, res) => {
                         const numLikes = videoInfo.likeCount;
                         const numComentarios = videoInfo.commentCount;
                         dadosEnviar[i] = {
-                            idVideo: musicas[i].idVideo, nome: musicas[i].name, url: musicas[i].url, autor: autor, dataPublicacao: dataPublicacao,
+                            id:musicas[i].id,idVideo: musicas[i].idVideo, nome: musicas[i].name, url: musicas[i].url, autor: autor, dataPublicacao: dataPublicacao,
                             numViews: numViews, numDislikes: numDislikes, numLikes: numLikes, numComentarios: numComentarios, emocao: musicas[i].emocao
                     }
                         });
