@@ -3,11 +3,11 @@
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
-    "scripts": {
-      "heroku-prebuild": "cd API/api && npm install",
-      "start": "node index.js"
-    },
-   "repository": {
+  "scripts": {
+    "start": "cd API/api && npm start",
+    "postinstall": "cd API/api && npm install"
+  },
+  "repository": {
     "type": "git",
     "url": "git+https://github.com/tiagoareias/Projeto-Final.git"
   },
