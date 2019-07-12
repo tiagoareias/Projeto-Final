@@ -16,8 +16,4 @@
 // // }
 // // db.sequelize = sequelize;
 
-<<<<<<< HEAD
-module.exports = db;
-=======
 // // module.exports = db;
->>>>>>> Back-End

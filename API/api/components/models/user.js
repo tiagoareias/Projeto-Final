@@ -40,8 +40,4 @@ module.exports = (sequelize, DataTypes) => {
 
 
     return User;
-<<<<<<< HEAD:API/api/components/user/userModel.js
-}
-=======
 };
->>>>>>> Back-End:API/api/components/models/user.js

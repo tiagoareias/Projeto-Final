@@ -1,4 +1,3 @@
-
 //funções que retorna a resposta
 const { check, validationResult } = require('express-validator/check');
 
@@ -20,10 +19,7 @@ exports.createUser = async (req, res) => {
          serverResponse = {status:"Nao está autenticado | token expirou",response:{}}
           return res.send(serverResponse);
       }
-<<<<<<< HEAD
-=======
 
->>>>>>> Back-End
     try {
         jwt.verify(token, 'secret');
 
