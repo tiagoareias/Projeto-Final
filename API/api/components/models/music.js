@@ -1,9 +1,3 @@
-<<<<<<< HEAD:API/api/components/music/music.js
-
-'use strict';
-
-=======
->>>>>>> Back-End:API/api/components/models/music.js
 module.exports = (sequelize, DataTypes) => {
     const Music = sequelize.define('Music', {
         id: {
