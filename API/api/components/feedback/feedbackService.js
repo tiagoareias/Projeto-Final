@@ -12,3 +12,7 @@ exports.editFeedback = async(dadosFeedback,feedID) =>{
 exports.listFeedback = async(userID,musicID) =>{
     return await feedbackDAL.listFeedback(userID,musicID);
 }
+
+exports.listFeedbackForUser = async(userID) =>{
+    return await feedbackDAL.listFeedbackForUser(userID);
+}

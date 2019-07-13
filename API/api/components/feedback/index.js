@@ -11,5 +11,8 @@ module.exports = (app) => {
     });
     app.post('/feedback/new', requestsLimit, feedbackController.newFeedback);
     app.post('/feedback/:id/edit', requestsLimit,feedbackController.editFeedback);
+    //listar o feedback de uma determinada musica de um determinado utilizador
     app.post('/feedback/list',requestsLimit,feedbackController.listFeedback);
+    //listar os feedbacks de um utilizador
+    app.get('/feedback/:id/list',requestsLimit,feedbackController.listFeedbackForUser)
 }

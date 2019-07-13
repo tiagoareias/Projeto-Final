@@ -104,7 +104,7 @@ exports.getVideoPesquisa = async (req, res) => {
                 const numLikes = videoInfo.likeCount;
                 const numComentarios = videoInfo.commentCount;
                 dadosEnviar[i] = {
-                    idVideo: musicas[i].idVideo, nome: musicas[i].name, url: musicas[i].url, autor: autor, dataPublicacao: dataPublicacao,
+                    id:musicas[i].id,idVideo: musicas[i].idVideo, nome: musicas[i].name, url: musicas[i].url, autor: autor, dataPublicacao: dataPublicacao,
                     numViews: numViews, numDislikes: numDislikes, numLikes: numLikes, numComentarios: numComentarios, emocao: musicas[i].emocao
                 }
             });

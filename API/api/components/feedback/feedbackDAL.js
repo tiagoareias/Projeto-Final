@@ -12,6 +12,12 @@ exports.editFeedback = async (dadosFeedback,feedID) =>{
 
   exports.listFeedback = async (userID,musicID) =>{
     var feedback;
-    await models.Feedback.findOne({where:{userFK:userID,musicFK:musicID}}).then(usr => feedback = usr).catch(err => console.log(err));
+    await models.Feedback.findOne({where:{userFK:userID,musicFK:musicID},include:[models.Music]}).then(usr => feedback = usr).catch(err => console.log(err));
+    return feedback;
+  }
+
+  exports.listFeedbackForUser = async (userID) =>{
+    var feedback;
+    await models.Feedback.findAll({where:{userFK:userID},include:[models.Music]}).then(usr => feedback = usr).catch(err => console.log(err));
     return feedback;
   }

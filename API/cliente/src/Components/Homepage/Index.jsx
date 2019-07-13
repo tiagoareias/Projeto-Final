@@ -21,8 +21,10 @@ class Index extends Component {
 
   componentDidMount() {
     this.getLastVideos();
+
+    //this.carregaFeedbacks();
     this.setState({ loading: false })
-    
+
   }
   logout() {
     localStorage.clear();
@@ -30,7 +32,57 @@ class Index extends Component {
     window.location.href = '/';
   }
 
+  async atualizaListaFeedback() {
 
+
+    //dados do utilizador
+    var decoded = jwt.decode(sessionStorage.getItem('token'));
+    //ID do utilizador
+    var userID = decoded.userID;
+    const response = await fetch(`http://localhost:8000/feedback/${userID}/list`, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+        "x-access-token": sessionStorage.getItem("token")
+      }
+    });
+
+    await response.json().then(resp => {
+      var count = Object.keys(resp.response).length;
+      var i;
+      for (i = 0; i < count; i++) {
+        //recolher o feedback do utilizador
+        var feedback = resp.response[i].feedback;
+        //recolher os botões like e deslike
+        var gostar = document.getElementById(resp.response[i].Music.idVideo);
+        var naoGostar = document.getElementById(resp.response[i].Music.idVideo + "N");
+        var textLike = document.getElementById(resp.response[i].Music.idVideo + "T");
+        gostar.style.color = "";
+        naoGostar.style.color = "";
+        textLike.textContent = "| Gostou desta classificação?"
+
+        if (feedback === true) {
+          gostar.style.color = "red"
+          textLike.textContent = "| Gostei da classificaçao"
+        }
+        if (feedback === null) {
+
+          gostar.style.color = "";
+          naoGostar.style.color = "";
+          textLike.textContent = "| Gostou desta classificação?"
+
+        }
+        if (feedback === false) {
+
+          naoGostar.style.color = "red"
+          textLike.textContent = "| Não gostei da classificaçao"
+        }
+
+
+      }
+
+    });
+  }
   async getLastVideos() {
     const response = await fetch('http://localhost:8000/music', {
       method: 'GET',
@@ -45,7 +97,10 @@ class Index extends Component {
       switch (status) {
         case "Últimas músicas classificadas":
           this.setState({ dataGet: resp.response });
-          this.setState({ isHidden: true })
+          this.setState({ isHidden: true });
+          if (jwt.decode(sessionStorage.getItem('token'))) {
+            this.atualizaListaFeedback();
+          }
           break;
         case "Ainda não existem músicas na Base de Dados":
           this.setState({ isHidden: true });
@@ -64,10 +119,14 @@ class Index extends Component {
   async refreshToken() {
     var decoded = jwt.decode(sessionStorage.getItem('token'));
     var nome = decoded.nome;
+    var isAdmin = decoded.isAdmin;
+    var userID = decoded.userID;
     var username = decoded.username;
     const dataToken = {
       username,
-      nome
+      nome,
+      isAdmin,
+      userID
     }
     const response = await fetch('http://localhost:8000/token/refresh', {
       method: 'POST',
@@ -153,7 +212,7 @@ class Index extends Component {
     });
   }
 
-  redirecionar () {
+  redirecionar() {
     window.location = "/";
   }
 
@@ -175,27 +234,27 @@ class Index extends Component {
       let status = resp.status;
       switch (status) {
         case "Failed to authenticate token.":
-            this.setState({
-              alertText: "  Inicie Sessão por favor.",
-              alertisNotVisible: false,
-              alertColor: "warning"
-            });
-            break;
+          this.setState({
+            alertText: "  Inicie Sessão por favor.",
+            alertisNotVisible: false,
+            alertColor: "warning"
+          });
+          break;
         case "Deleted":
-            this.setState({
-              alertText: "  O vídeo foi eliminado.",
-              alertisNotVisible: false,
-              alertColor: "success"
-            });
-            setTimeout(this.redirecionar, 2000);
-            break;
+          this.setState({
+            alertText: "  O vídeo foi eliminado.",
+            alertisNotVisible: false,
+            alertColor: "success"
+          });
+          setTimeout(this.redirecionar, 2000);
+          break;
         case "Not Deleted | Música não está na base de dados":
-            this.setState({
-              alertText: " O vídeo que está a tentar eliminar não existe.",
-              alertisNotVisible: false,
-              alertColor: "warning"
-            });
-            setTimeout(this.redirecionar, 2000);
+          this.setState({
+            alertText: " O vídeo que está a tentar eliminar não existe.",
+            alertisNotVisible: false,
+            alertColor: "warning"
+          });
+          setTimeout(this.redirecionar, 2000);
           break;
         default:
           alert(this.state.alertText);
@@ -203,7 +262,7 @@ class Index extends Component {
     });
   }
 
-  async createFeedBack(createFeed){
+  async createFeedBack(createFeed, idVideo) {
     const response = await fetch(`http://localhost:8000/feedback/new`, {
       method: 'POST',
       headers: {
@@ -212,13 +271,31 @@ class Index extends Component {
       },
       body: JSON.stringify(createFeed)
     });
-    
+
     await response.json().then(resp => {
+      var iconGosto = document.getElementById(idVideo);
+      var iconNaoGosto = document.getElementById(idVideo + "N");
+      var textLike = document.getElementById(idVideo + "T");
+
+      iconGosto.style.color = "";
+      iconNaoGosto.style.color = "";
+
+      var feedback = resp.response.feedback;
+      if (feedback === "true") {
+        iconGosto.style.color = "red";
+        textLike.textContent = "| Gostei da classificaçao"
+
+      }
+      else {
+        iconNaoGosto.style.color = "red"
+        textLike.textContent = "| Não gostei da classificaçao"
+
+      }
     });
   }
 
-  
-  async atualizaFeedBack(editFeed,idFeed){
+
+  async atualizaFeedBack(editFeed, idFeed, idVideo) {
     const response = await fetch(`http://localhost:8000/feedback/${idFeed}/edit`, {
       method: 'POST',
       headers: {
@@ -228,17 +305,38 @@ class Index extends Component {
       body: JSON.stringify(editFeed)
     });
     await response.json().then(resp => {
+      var iconGosto = document.getElementById(idVideo);
+      var iconNaoGosto = document.getElementById(idVideo + "N");
+      var textLike = document.getElementById(idVideo + "T");
+
+      iconGosto.style.color = "";
+      iconNaoGosto.style.color = "";
+
+      if (resp.response.feedback === true) {
+        iconGosto.style.color = "red"
+        textLike.textContent = "| Gostei da classificaçao"
+      }
+      if (resp.response.feedback === null) {
+        iconGosto.style.color = "";
+        iconNaoGosto.style.color = "";
+        textLike.textContent = "| Gostou desta classificação?"
+
+      }
+      if (resp.response.feedback === false) {
+        iconNaoGosto.style.color = "red";
+        textLike.textContent = "| Não gostei da classificaçao"
+
+      }
     });
   }
 
-  async adicionaFeedback(valor,id) {
+  async adicionaFeedback(valor, id, idVideo) {
     var decoded = jwt.decode(sessionStorage.getItem('token'));
     const dadosEnviar = {
       userFK: decoded.userID,
       musicFK: id
-    };    
+    };
     //verificar se já foi feito um feedback à musica pelo utilizador em questão
-    console.log(dadosEnviar)
     const response = await fetch(`http://localhost:8000/feedback/list`, {
       method: 'POST',
       headers: {
@@ -247,49 +345,53 @@ class Index extends Component {
       },
       body: JSON.stringify(dadosEnviar)
     });
-    
+
     await response.json().then(resp => {
       var count = Object.keys(resp.response).length;
-      if(resp.status === "Não foi possivel listar os feedbacks" && count===0){
-        //create feedback
-        alert("Cria feedback")
-        const createFeed = {
-          feedback:valor,
-          musicFK:id,
-          userFK: decoded.userID
-        };
-        this.createFeedBack(createFeed);
-     
+      let status = resp.status;
+      switch (status) {
+        case "Não existe feedback ainda para esta música":
+          if (count === 0) {
+            //create feedback
+            const createFeed = {
+              feedback: valor,
+              musicFK: id,
+              userFK: decoded.userID
+            };
+            this.createFeedBack(createFeed, idVideo);
+          }
+          break;
+        case "Feedback listado com sucesso":
+
+          if (count !== 0) {
+            var valorFeedback = valor;
+
+            if (valor === resp.response.feedback + "") {
+              valorFeedback = null;
+            }
+            var editFeed = {
+              feedback: valorFeedback,
+              musicFK: id,
+              userFK: decoded.userID
+            };
+
+            const idFeed = resp.response.id;
+
+            this.atualizaFeedBack(editFeed, idFeed, idVideo)
+          }
+          break;
+        case "Nao está autenticado | token expirou":
+          this.refreshToken();
+          this.adicionaFeedback(valor, id, idVideo);
+          break;
+        default: console.log("erro ao listar feedback")
       }
 
 
-
-      if(resp.status === "Feedback listado com sucesso" && count!==0){
-        //atualiza feedback
-        alert("ATUALIZA feedback")
-        var valorFeedback = valor;
-        console.log(valor)
-        console.log(resp.response.feedback)
-
-        if(valor == resp.response.feedback+""){
-          alert("entrou")
-          valorFeedback = null;
-        }
-        var editFeed = {
-          feedback:valorFeedback,
-          musicFK:id,
-          userFK: decoded.userID
-        };
-        
-        console.log(editFeed)
-        const idFeed = resp.response.id;
-
-        this.atualizaFeedBack(editFeed,idFeed)
-      }
     })
-    
 
-    }
+
+  }
   render() {
     return (
 
@@ -355,16 +457,24 @@ class Index extends Component {
                       <h6 className="text-secondary"> Publicado a <i > {data.dataPublicacao.substring(0, 10)}</i></h6>
                       {/*EMOCAO*/}
                       <div className="row">
-                      <h5 className="font-weight-bold "> Emoção: <i > {data.emocao} </i></h5>
+                        <h5 className="font-weight-bold " style={{ marginLeft: "12px" }}> Emoção: <i > {data.emocao} </i></h5>
 
-                      <h6 id ="textLike" style={{marginLeft:"8px",marginTop:"5px"}}>| Gostou desta classificação?</h6><i onClick={()=>{this.adicionaFeedback("true",data.id)}}id="gostar"className="fa fa-thumbs-o-up" style={{fontSize:"25px" ,marginLeft:"5px"}}></i><i onClick={()=>{this.adicionaFeedback("false",data.id)}} id="naoGostar" className="fa fa-thumbs-o-down" value="false" style={{fontSize:"25px" ,marginLeft:"5px",color:"red",fontWeight:"bold"}}></i>
+                        {(sessionStorage.getItem('token') != null) ? (
+                          <div className="row">
+                            <h6 id={data.idVideo + "T"} style={{ marginLeft: "18px", marginTop: "5px" }}>| Gostou desta classificação?</h6>
+                            <i onClick={() => { this.adicionaFeedback("true", data.id, data.idVideo) }} id={data.idVideo} className="fa fa-thumbs-o-up" style={{ fontSize: "25px", marginLeft: "5px", cursor: "pointer" }}></i>
+                            <i onClick={() => { this.adicionaFeedback("false", data.id, data.idVideo) }} id={data.idVideo + "N"} className="fa fa-thumbs-o-down" value="false" style={{ fontSize: "25px", marginLeft: "5px", cursor: "pointer" }}></i>
+                          </div>
+                        ) : (
+                            <div></div>
+                          )}
 
-                        </div>
+                      </div>
                       {/*Botão Eliminar*/}
                       {(sessionStorage.getItem('token') != null) ? (
                         <div className="row">
-                        <button id={data.idVideo} type="button" className="btn btn-danger" onClick={this.eliminarMusica} >Eliminar</button>
-                        <p></p>
+                          <button id={data.idVideo} type="button" className="btn btn-danger" onClick={this.eliminarMusica} >Eliminar</button>
+                          <p></p>
                         </div>
                       ) : (<p></p>)}
                     </div>
