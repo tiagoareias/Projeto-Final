@@ -19,5 +19,6 @@ module.exports = (app) => {
     app.post('/music/:idVideo/delete',requestsLimit, musicsController.deleteMusic);
     app.get('/music/search/:pesquisaMusica', musicsController.getNomeMusicaPesquisa);
     app.post('/music/update', musicsController.updateEmocao);
-    app.get('/music/search/result/:pesquisaMusica', musicsController.getVideoPesquisa)
+    app.get('/music/search/result/:pesquisaMusica', musicsController.getVideoPesquisa);
+    app.post('/music/user',musicsController.getMusicasUser);
 }

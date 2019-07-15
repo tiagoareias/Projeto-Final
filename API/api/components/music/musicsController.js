@@ -18,7 +18,7 @@ exports.uploadVideo = async (req, res) => {
     const url = req.body.urlInput + "";
     //Returns a video ID from a YouTube URL.
     const idVideo = ytdl.getURLVideoID(url);
-    
+
     //verificar se a música já existe na base de dados
     await musicsService.getVideo(idVideo).then(mus => existsMusica = mus).catch(err => console.log(err));
 
@@ -104,7 +104,7 @@ exports.getVideoPesquisa = async (req, res) => {
                 const numLikes = videoInfo.likeCount;
                 const numComentarios = videoInfo.commentCount;
                 dadosEnviar[i] = {
-                    id:musicas[i].id,idVideo: musicas[i].idVideo, nome: musicas[i].name, url: musicas[i].url, autor: autor, dataPublicacao: dataPublicacao,
+                    id: musicas[i].id, idVideo: musicas[i].idVideo, nome: musicas[i].name, url: musicas[i].url, autor: autor, dataPublicacao: dataPublicacao,
                     numViews: numViews, numDislikes: numDislikes, numLikes: numLikes, numComentarios: numComentarios, emocao: musicas[i].emocao
                 }
             });
@@ -122,7 +122,7 @@ exports.getNomeMusicaPesquisa = async (req, res) => {
     var pesquisaRealizada = req.params.pesquisaMusica;
     await musicsService.getNomeMusicaPesquisa(pesquisaRealizada).then(music => musicas = music).catch(err => console.log(err));
     if (pesquisaRealizada != null) {
-        
+
 
         serverResponse = { status: "Musicas encontradas que contem o seguinte conjunto de caracteres " + pesquisaRealizada, response: musicas }
     }
@@ -150,7 +150,7 @@ exports.getLastVideos = async (req, res) => {
                     const numComentarios = videoInfo.commentCount;
                     dadosEnviar[i] = {
                         numViews: numViews, numDislikes: numDislikes, numLikes: numLikes, numComentarios: numComentarios, emocao: musicas[i].emocao,
-                        id:musicas[i].id,idVideo: musicas[i].idVideo, nome: musicas[i].name, url: musicas[i].url, autor: autor, dataPublicacao: dataPublicacao,
+                        id: musicas[i].id, idVideo: musicas[i].idVideo, nome: musicas[i].name, url: musicas[i].url, autor: autor, dataPublicacao: dataPublicacao,
                     }
                 });
             }
@@ -174,10 +174,10 @@ exports.getLastVideos = async (req, res) => {
                         const numLikes = videoInfo.likeCount;
                         const numComentarios = videoInfo.commentCount;
                         dadosEnviar[i] = {
-                            id:musicas[i].id,idVideo: musicas[i].idVideo, nome: musicas[i].name, url: musicas[i].url, autor: autor, dataPublicacao: dataPublicacao,
+                            id: musicas[i].id, idVideo: musicas[i].idVideo, nome: musicas[i].name, url: musicas[i].url, autor: autor, dataPublicacao: dataPublicacao,
                             numViews: numViews, numDislikes: numDislikes, numLikes: numLikes, numComentarios: numComentarios, emocao: musicas[i].emocao
-                    }
-                        });
+                        }
+                    });
                 }
                 serverResponse = { status: "Últimas músicas classificadas", response: dadosEnviar }
             }
@@ -197,7 +197,7 @@ exports.deleteMusic = async (req, res) => {
     var token = req.headers['x-access-token'];
     //se o token não existir
     if (!token) {
-        serverResponse = {status:'No token provided.'}
+        serverResponse = { status: 'No token provided.' }
         return res.send(serverResponse);
     }
     //se existir
@@ -211,8 +211,8 @@ exports.deleteMusic = async (req, res) => {
         }
         return res.send(serverResponse);
     } catch (err) {
-        serverResponse = {status:"Failed to authenticate token."}
-        return res.send( serverResponse)
+        serverResponse = { status: "Failed to authenticate token." }
+        return res.send(serverResponse)
     }
 }
 
@@ -232,4 +232,31 @@ exports.updateEmocao = async (req, res) => {
         serverResponse = { status: "Atualizada", response: musicaAtualizada }
     }
     return res.send(serverResponse);
+}
+
+exports.getMusicasUser = async (req, res) => {
+    let serverResponse = { status: "O utilizador em questão não inseriu nenhuma música", response: {} }
+    var musicas;
+    //userFK
+    var userFK = req.body.userFK;
+    console.log(userFK)
+    var token = req.headers['x-access-token'];
+    //se o token não existir
+    if (!token) {
+        serverResponse = { status: 'No token provided.' }
+        return res.send(serverResponse);
+    }
+    try {
+        jwt.verify(token, 'secret');
+        await musicsService.getMusicasUser(userFK).then(mus => musicas = mus).catch(err => console.log(err));
+        if (musicas != 0) {
+            serverResponse = { status: "Musicas associadas ao utilizador", response: musicas }
+        }
+        return res.send(serverResponse);
+
+    } catch (err) {
+        serverResponse = { status: "Failed to authenticate token." }
+        return res.send(serverResponse)
+    }
+
 }

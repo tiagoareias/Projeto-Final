@@ -38,7 +38,13 @@ exports.deleteMusic = async (idVideo) => {
 }
 
 exports.updateMusic = async (idVideo, emocao) => {
-    var musica
+    var musica;
     await models.Music.update(emocao, { where: { idVideo: idVideo } }).then(mus => musica = mus).catch(err => console.log(err))
     return musica;
+}
+
+exports.getMusicasUser = async(userFK) =>{
+    var musicas;
+    await models.Music.findAll({ where: { userFK: userFK } }).then(mus => musicas = mus).catch(err => console.log(err))
+    return musicas;
 }

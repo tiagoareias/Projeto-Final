@@ -24,7 +24,7 @@ class Index extends Component {
 
     //this.carregaFeedbacks();
     this.setState({ loading: false })
-
+    
   }
   logout() {
     localStorage.clear();
@@ -33,30 +33,38 @@ class Index extends Component {
   }
 
   async atualizaListaFeedback() {
+    var j;
+    for (j = 0; j < this.state.dataGet.length; j++) {
 
 
-    //dados do utilizador
-    var decoded = jwt.decode(sessionStorage.getItem('token'));
-    //ID do utilizador
-    var userID = decoded.userID;
-    const response = await fetch(`http://localhost:8000/feedback/${userID}/list`, {
-      method: 'GET',
-      headers: {
-        'Content-Type': 'application/json',
-        "x-access-token": sessionStorage.getItem("token")
-      }
-    });
+      var decoded = jwt.decode(sessionStorage.getItem('token'));
+      const dadosEnviar = {
+        userFK: decoded.userID,
+        musicFK: this.state.dataGet[j].id
+      };
+      //verificar se já foi feito um feedback à musica pelo utilizador em questão
+      const response = await fetch(`http://localhost:8000/feedback/list`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          "x-access-token": sessionStorage.getItem("token")
+        },
+        body: JSON.stringify(dadosEnviar)
+      });
 
-    await response.json().then(resp => {
-      var count = Object.keys(resp.response).length;
-      var i;
-      for (i = 0; i < count; i++) {
+      await response.json().then(resp => {
+        if (resp.status === "Nao está autenticado | token expirou") {
+          this.refreshToken();
+          this.atualizaListaFeedback();
+        }
+        else{
+        if(resp.status !=="Não existe feedback ainda para esta música"){
         //recolher o feedback do utilizador
-        var feedback = resp.response[i].feedback;
+        var feedback = resp.response.feedback;
         //recolher os botões like e deslike
-        var gostar = document.getElementById(resp.response[i].Music.idVideo);
-        var naoGostar = document.getElementById(resp.response[i].Music.idVideo + "N");
-        var textLike = document.getElementById(resp.response[i].Music.idVideo + "T");
+        var gostar = document.getElementById(resp.response.Music.idVideo);
+        var naoGostar = document.getElementById(resp.response.Music.idVideo + "N");
+        var textLike = document.getElementById(resp.response.Music.idVideo + "T");
         gostar.style.color = "";
         naoGostar.style.color = "";
         textLike.textContent = "| Gostou desta classificação?"
@@ -77,11 +85,10 @@ class Index extends Component {
           naoGostar.style.color = "red"
           textLike.textContent = "| Não gostei da classificaçao"
         }
-
-
       }
-
-    });
+    }
+      });
+    }
   }
   async getLastVideos() {
     const response = await fetch('http://localhost:8000/music', {

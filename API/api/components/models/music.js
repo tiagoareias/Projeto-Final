@@ -24,7 +24,8 @@ module.exports = (sequelize, DataTypes) => {
     });
         Music.associate = (models) => {
          Music.hasMany(models.Feedback, {
-             foreignKey: 'musicFK',
+             foreignKey: 'musicFK',onDelete: 'cascade',
+             hooks: true, 
          });
 
     };

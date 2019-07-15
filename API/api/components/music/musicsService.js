@@ -28,3 +28,7 @@ exports.deleteMusic = async(idVideo) => {
 exports.updateMusic = async(idVideo, emocao) => {
     return await musicsDal.updateMusic(idVideo, emocao);
 }
+
+exports.getMusicasUser = async(userFK) => {
+    return await musicsDal.getMusicasUser(userFK);
+}

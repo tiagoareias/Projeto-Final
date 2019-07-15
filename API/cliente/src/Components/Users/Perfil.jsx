@@ -13,7 +13,8 @@ class Perfil extends Component {
       alertisNotVisible: true,
       alertColor: 'danger',
       dataGet: [],
-      dataPost: []
+      dataPost: [],
+      dataMusic: []
     };
   }
 
@@ -21,13 +22,58 @@ class Perfil extends Component {
     var decoded = jwt.decode(sessionStorage.getItem('token'));
     var username = decoded.username;
     this.getDetails(username);
-  }
+    this.musicasInseridas();
+    if(this.state.dataGet !==0){
+      var musicasUser = document.getElementById('musicasUser');
+      musicasUser.style.display = "none";
+    }
+    
 
+  }
+  mostraDivMusicas() {
+    var musicasUser = document.getElementById('musicasUser');
+    if (musicasUser.style.display === "none") {
+      musicasUser.style.display = "block";
+    } else {
+      musicasUser.style.display = "none";
+    }
+  }
   out() {
     sessionStorage.clear();
     window.location = "/login";
   }
 
+  async musicasInseridas() {
+    var decoded = jwt.decode(sessionStorage.getItem('token'));
+    var userFK = decoded.userID;
+
+    var dados = {
+      userFK: userFK
+    }
+    const response = await fetch('http://localhost:8000/music/user', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'x-access-token': sessionStorage.getItem('token')
+      },
+      body: JSON.stringify(dados)
+    });
+    await response.json().then(resp => {
+      console.log(resp.response)
+      let status = resp.status;
+      switch (status) {
+        case "Musicas associadas ao utilizador":
+          this.setState({ dataMusic: resp.response });
+          break;
+        case "Failed to authenticate token.":
+          this.refreshToken();
+          this.musicasInseridas();
+          break;
+        default:
+      }
+    });
+
+  }
   async refreshToken() {
     var decoded = jwt.decode(sessionStorage.getItem('token'));
     var nome = decoded.nome;
@@ -95,7 +141,7 @@ class Perfil extends Component {
           window.location = "/"
       }
     });
-  }  
+  }
   getDetails = async (username) => {
     const response = await fetch(`http://localhost:8000/user/${username}`, {
       method: 'GET',
@@ -192,14 +238,14 @@ class Perfil extends Component {
       username: document.getElementById('username').value,
       email: document.getElementById('email').value,
       nome: document.getElementById('nome').value,
-      dadosExistentes:{
+      dadosExistentes: {
         username: document.getElementById('username').placeholder,
         email: document.getElementById('email').placeholder,
         nome: document.getElementById('nome').placeholder
-        }
+      }
     }
     //Verifica se não foi preenchido algum campo
-   
+
     const response = await fetch(`http://localhost:8000/user/${usernameURL}/edit`, {
       method: 'POST',
       headers: {
@@ -220,7 +266,7 @@ class Perfil extends Component {
           });
           setTimeout(() => {
             this.refreshTokenDados(resp.response);
-            window.location="/perfil";
+            window.location = "/perfil";
           }, 1000);
           break;
         case "Nao está autenticado | token expirou":
@@ -253,18 +299,70 @@ class Perfil extends Component {
 
           <div className="cardUser">
             <center>
-              <img src={logoUser} alt="John" style={{ width: "50%" }}></img>
+              <img src={logoUser} alt="alt" style={{ width: "20%" }}></img>
             </center>
             <h1>{this.state.dataGet.nome}</h1>
             <hr></hr>
             <p className="title">Username : {this.state.dataGet.username}</p>
             <p className="title">Email : {this.state.dataGet.email}</p>
-
+            <hr></hr>
             <div style={{ margin: "24px 0" }}>
             </div>
             <p><button className="buttonPerfil" data-toggle="modal" data-target="#exampleModalPassword">Alterar Password</button></p>
             <p><button className="buttonPerfil" data-toggle="modal" data-target="#exampleModalDadosPessoais">Alterar Dados </button></p>
           </div>
+          {(this.state.dataMusic!==0) ? (
+          <div>
+          <div className="pt-3 py-3 text-center">
+
+            <h2>Quais as músicas introduzidas por mim?</h2><button className="buttonConsultas" onClick={this.mostraDivMusicas}>Consulte Aqui<i style={{ marginLeft: "5px" }} className="fa fa-sort-down"></i></button>
+          </div>
+          <center>
+            <div id="musicasUser">
+              <div className="input-group mb-2 col-md-12">
+
+                {
+                  this.state.dataMusic.map((data, index) => {
+                    return (
+
+                      <div key={index} className="col-lg-4 col-md-2 mb-6">
+
+                        <div className="modal-dialog modal-lg">
+
+                          <div className="modal-content">
+
+                            <div className="modal-body mb-0 p-0">
+
+
+                              <iframe id="frame" style={{ width: "100%" }} src={"https://www.youtube.com/embed/" + data.idVideo}
+                                title={data.name} autoPlay allowFullScreen></iframe>
+
+
+                            </div>
+
+                            <div className="justify-content-center">
+                              <p>{data.name}</p>
+                              <h5>{data.emocao}</h5>
+
+                            </div>
+
+                          </div>
+
+                        </div>
+
+
+                      </div>
+
+                    )
+                  })
+                }
+              </div>
+            </div>
+          </center>
+          </div>
+          ):(
+            <div></div>
+          )}
           <div className="pt-3 py-3 text-center">
             <div className="modal fade" id="exampleModalPassword" tabIndex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
               <div className="modal-dialog" role="document">
@@ -352,10 +450,10 @@ class Perfil extends Component {
                       </div>
                     </div>
                     <AlertMsg2
-                        text={this.state.alertText}
-                        isNotVisible={this.state.alertisNotVisible}
-                        alertColor={this.state.alertColor}
-                      />
+                      text={this.state.alertText}
+                      isNotVisible={this.state.alertisNotVisible}
+                      alertColor={this.state.alertColor}
+                    />
                     <div className="modal-footer">
                       <button className="btn btn-danger" type="search">Guardar Dados</button>
                       <button type="button" className="btn btn-danger" data-dismiss="modal">Sair</button>

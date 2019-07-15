@@ -24,6 +24,16 @@ class IndexPesquisa extends Component {
     //this.setState({ dataGet: window.history.state.response })
   }
 
+  getRole() {
+    try {
+        var decoded = jwt.decode(sessionStorage.getItem('token'));
+        var role = decoded.isAdmin;
+        return role;
+    } catch (err) {
+        sessionStorage.clear();
+        window.location = "/";
+    }
+}
   async refreshToken() {
     var decoded = jwt.decode(sessionStorage.getItem('token'));
     var nome = decoded.nome;
@@ -116,6 +126,7 @@ class IndexPesquisa extends Component {
       });
     }
   }
+  
   async pesquisaMusica(pesquisaARealizar) {
     const response = await fetch(`http://localhost:8000/music/search/result/${pesquisaARealizar}`, {
       method: 'GET',
@@ -147,6 +158,7 @@ class IndexPesquisa extends Component {
   }
 
   eliminarMusica = async e => {
+    window.confirm("deseja?")
     const id = e.target.id;
     const response = await fetch(`http://localhost:8000/music/${id}/delete`, {
       method: 'POST',
@@ -387,9 +399,20 @@ class IndexPesquisa extends Component {
 
                             </div>
                             {/*Botão Eliminar*/}
-                            {(sessionStorage.getItem('token') != null) ? (
-                              <button id={data.idVideo} type="button" className="btn btn-danger" onClick={this.eliminarMusica} >Eliminar</button>
-                            ) : (<p></p>)}
+
+                            {
+                            (() => {
+                                if (sessionStorage.getItem('token') != null) {
+                                    if (this.getRole() === true) {
+                                        return (
+                                          <button id={data.idVideo} type="button" className="btn btn-danger" onClick={this.eliminarMusica} >Eliminar</button>
+                                          )
+                                    }
+                                }
+                            })()
+
+                        }
+                            
                           </div>
                         </div>
                       </div>
