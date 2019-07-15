@@ -3,7 +3,7 @@ const fetch = require('node-fetch');
 test('Erros na introdução do username ou da password', async () => {
   const loginData = {
     username: "admin",
-    hashPassword: "admin1"
+    hashPassword: "admin"
   };
   var status;
 
@@ -20,7 +20,7 @@ test('Erros na introdução do username ou da password', async () => {
 test('Login a um utilizador que exista', async () => {
   const loginData = {
     username: "admin",
-    hashPassword: "admin"
+    hashPassword: "123Qwe.."
   };
   var status;
 
