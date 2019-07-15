@@ -18,7 +18,7 @@ module.exports =  (sequelize, DataTypes) => {
         });
 
         Feedback.belongsTo(models.Music, {
-            foreignKey: 'musicFK',onDelete:'CASCADE'
+            foreignKey: 'musicFK'
         });
     };
 

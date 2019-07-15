@@ -27,7 +27,12 @@ module.exports = (sequelize, DataTypes) => {
              foreignKey: 'musicFK',onDelete: 'cascade',
              hooks: true, 
          });
-
+    
+         Music.hasMany(models.ListasMusicas, {
+            foreignKey: 'musicFK',onDelete: 'cascade',
+            hooks: true, 
+        });
+   
     };
 
 

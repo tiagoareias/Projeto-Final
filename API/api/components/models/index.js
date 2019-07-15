@@ -1,10 +1,10 @@
 const Sequelize = require('sequelize');
 
-var sequelize = new Sequelize('database_projetoFinal','user','123qwe', {
+var sequelize = new Sequelize('database_projetoFinal','root','root', {
   host: '127.0.0.1',
   dialect: 'mysql',
   timezone:"+01:00",
-  port:4000,
+  //port:4000,
   define: {
       charset: 'utf8',
       collate: 'utf8_general_ci', 
@@ -14,7 +14,9 @@ var sequelize = new Sequelize('database_projetoFinal','user','123qwe', {
 const models = {
   User: sequelize.import('./user'),
   Music:sequelize.import('./music'),
-  Feedback:sequelize.import('./feedback')
+  Feedback:sequelize.import('./feedback'),
+  ListaRepro:sequelize.import('./listaRepro'),
+  ListasMusicas:sequelize.import('./listasMusicas')
 };
 
 

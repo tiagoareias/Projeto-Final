@@ -158,7 +158,6 @@ class IndexPesquisa extends Component {
   }
 
   eliminarMusica = async e => {
-    window.confirm("deseja?")
     const id = e.target.id;
     const response = await fetch(`http://localhost:8000/music/${id}/delete`, {
       method: 'POST',

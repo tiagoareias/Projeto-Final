@@ -29,6 +29,8 @@ require('./components/user/index')(app)
 require('./components/music/index')(app)
 require('./components/feedback/index')(app)
 require('./components/refreshToken/index')(app)
+require('./components/listaReproducao/index')(app)
+require('./components/listasMusicas/index')(app)
 var port = 8000
 
 models.sequelize.sync({}).then(() => {
