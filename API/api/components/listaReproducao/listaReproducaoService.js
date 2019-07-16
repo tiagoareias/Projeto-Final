@@ -12,3 +12,7 @@ exports.deleteList = async(listID) =>{
 exports.getList = async(userFK, nomeLista) =>{
     return await listaReproducaoDAL.getList(userFK, nomeLista);
 }
+
+exports.getListUser = async(userFK) =>{
+    return await listaReproducaoDAL.getListUser(userFK);
+}

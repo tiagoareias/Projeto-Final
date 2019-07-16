@@ -17,3 +17,9 @@ exports.deleteList = async (listID) =>{
     await models.ListaRepro.findOne({where:{userFK:userFK,nomeLista:nomeLista}}).then(usr => listaUser = usr).catch(err => console.log(err));
     return listaUser;
   }
+
+  exports.getListUser = async (userFK) =>{
+    var listaUser;
+    await models.ListaRepro.findAll({where:{userFK:userFK}}).then(usr => listaUser = usr).catch(err => console.log(err));
+    return listaUser;
+  }

@@ -11,4 +11,5 @@ module.exports = (app) => {
     });
     app.post('/list/create', requestsLimit, listaReproducaoController.createList);
     app.post('/list/:id/delete', requestsLimit,listaReproducaoController.deleteList);
+    app.post('/list/user',requestsLimit,listaReproducaoController.getListUser)
 }

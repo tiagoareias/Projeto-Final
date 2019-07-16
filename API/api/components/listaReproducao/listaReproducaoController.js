@@ -8,6 +8,7 @@ const ytdl = require('ytdl-core');
 
 
 exports.createList = async (req, res) => {
+    console.log(req.body)
     let serverResponse = { status: "Lista não criada", response: {} }
     //variável que guarda a query à base de dados
     var lista;
@@ -47,6 +48,20 @@ exports.deleteList = async (req, res) => {
     await listaReproducaoService.deleteList(listaID).then(url => lista = url).catch(err => console.log(err));
     if (lista != null) {
         serverResponse = { status: "Lista Eliminada com sucesso", response: lista }
+    }
+    return res.send(serverResponse);
+}
+
+exports.getListUser = async (req, res) => {
+    let serverResponse = { status: "Não existe listas", response: {} }
+    //variável que guarda a query à base de dados
+    var listas;
+    var userFK = req.body.userFK;
+    //variável que recolhe o parâmetro enviado na request
+
+    await listaReproducaoService.getListUser(userFK).then(url => listas = url).catch(err => console.log(err));
+    if (listas != null) {
+        serverResponse = { status: "Lista Listadas com sucesso", response: listas }
     }
     return res.send(serverResponse);
 }

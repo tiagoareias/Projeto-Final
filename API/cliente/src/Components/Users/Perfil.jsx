@@ -14,7 +14,8 @@ class Perfil extends Component {
       alertColor: 'danger',
       dataGet: [],
       dataPost: [],
-      dataMusic: []
+      dataMusic: [],
+      dataListasReproducao:[]
     };
   }
 
@@ -23,11 +24,16 @@ class Perfil extends Component {
     var username = decoded.username;
     this.getDetails(username);
     this.musicasInseridas();
-    if(this.state.dataGet !==0){
+    this.listasReproducao();
+    if (this.state.dataMusic.length === 0) {
       var musicasUser = document.getElementById('musicasUser');
       musicasUser.style.display = "none";
     }
-    
+    if(this.state.dataListasReproducao.length ===0){
+      var divListas = document.getElementById('listasReproUser');
+      divListas.style.display = "none";
+    }
+
 
   }
   mostraDivMusicas() {
@@ -38,11 +44,80 @@ class Perfil extends Component {
       musicasUser.style.display = "none";
     }
   }
+
+  mostraDivListas() {
+    var listasReproUser = document.getElementById('listasReproUser');
+    if (listasReproUser.style.display === "none") {
+      listasReproUser.style.display = "block";
+    } else {
+      listasReproUser.style.display = "none";
+    }
+  }
   out() {
     sessionStorage.clear();
     window.location = "/login";
   }
 
+  async criaLista(){
+    var decoded = jwt.decode(sessionStorage.getItem('token'));
+    var nomeLista = document.getElementById('nomeLista').value;
+    var dados = {
+      userFK:decoded.userID,
+      nomeLista:nomeLista
+    }
+
+    const response = await fetch('http://localhost:8000/list/create', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'x-access-token': sessionStorage.getItem('token')
+      },
+      body: JSON.stringify(dados)
+    });
+    await response.json().then(resp => {
+      let status = resp.status;
+      switch(status){
+        case "Lista criada":
+            alert("Lista criada")
+
+            window.location="/perfil";
+            break;
+        case "Já existe uma lista com o nome escolhido":
+          alert("Já existe uma lista com o nome escolhido")
+          break;
+          default:
+          }
+    });
+
+  }
+  async listasReproducao() {
+    var decoded = jwt.decode(sessionStorage.getItem('token'));
+    var dados = {
+      userFK:decoded.userID
+    }
+    const response = await fetch('http://localhost:8000/list/user', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'x-access-token': sessionStorage.getItem('token')
+      },
+      body: JSON.stringify(dados)
+    });
+    await response.json().then(resp => {
+      let status = resp.status;
+      switch(status){
+        case "Lista Listadas com sucesso":
+            this.setState({ dataListasReproducao: resp.response });
+            break;
+        case "Não existe listas":
+          break;
+          default:
+          }
+    });
+
+
+
+  }
   async musicasInseridas() {
     var decoded = jwt.decode(sessionStorage.getItem('token'));
     var userFK = decoded.userID;
@@ -59,7 +134,6 @@ class Perfil extends Component {
       body: JSON.stringify(dados)
     });
     await response.json().then(resp => {
-      console.log(resp.response)
       let status = resp.status;
       switch (status) {
         case "Musicas associadas ao utilizador":
@@ -311,58 +385,106 @@ class Perfil extends Component {
             <p><button className="buttonPerfil" data-toggle="modal" data-target="#exampleModalPassword">Alterar Password</button></p>
             <p><button className="buttonPerfil" data-toggle="modal" data-target="#exampleModalDadosPessoais">Alterar Dados </button></p>
           </div>
-          {(this.state.dataMusic!==0) ? (
-          <div>
-          <div className="pt-3 py-3 text-center">
+         
+            <div>
+              <div className="pt-3 py-3 text-center">
+                <button style={{width:"25%"}} onClick={this.mostraDivListas} className="btn btn-secondary" >Consultar Listas de Reprodução</button>
+        
+              </div>
+              <center>
+                <div id="listasReproUser">
+                <input id="nomeLista" type = "text" style={{marginRight:"15px"}}></input>
+                <button type="button" onClick={this.criaLista} class="btn btn-secondary btn-lg" >Criar nova lista</button>
+                    {
+                      this.state.dataListasReproducao.map((data, index) => {
+                        return (
 
-            <h2>Quais as músicas introduzidas por mim?</h2><button className="buttonConsultas" onClick={this.mostraDivMusicas}>Consulte Aqui<i style={{ marginLeft: "5px" }} className="fa fa-sort-down"></i></button>
+                          <div key={index} className="col-lg-4 col-md-2 mb-6">
+                              <div>
+                               
+                                <div className="justify-content-center">
+                                <a id="aLista" data-toggle="modal" data-target={"#exampleModal"+index} style={{fontSize:"30px",marginLeft:"10px",cursor:"pointer"}}><i style={{fontSize:"30px"}}className="fa fa-caret-square-o-right"></i>{data.nomeLista}</a>
+
+                              </div>
+                            </div>
+                            <div className="modal fade" id={"exampleModal"+index} tabIndex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div className="modal-dialog" role="document">
+              <div className="modal-content">
+                <div className="modal-header">
+                  <h5 className="modal-title" id="exampleModalLabel">{data.nomeLista}</h5>
+                  <button type="button" className="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                  </button>
+                </div>
+                <center>
+                  <p>Data de publicação</p>
+                  <iframe src="https://www.youtube.com/watch?v=Zv1QV6lrc_Y"  allowfullscreen id="video"></iframe>
+                  <p>Martin Garrix - No Sleep (Lyric Video) feat. Bonn</p>
+                  <p>Emoçao: Alegre</p>
+                </center>
+
+
+
+              </div>
+            </div>
           </div>
-          <center>
-            <div id="musicasUser">
-              <div className="input-group mb-2 col-md-12">
+                          </div>
 
-                {
-                  this.state.dataMusic.map((data, index) => {
-                    return (
+                        )
+                      })
+                    }
+                
+                </div>
+              </center>
+               <br></br>     
+              <div className="pt-3 py-3 text-center">
 
-                      <div key={index} className="col-lg-4 col-md-2 mb-6">
+                <h5>Quais as músicas introduzidas por mim?</h5><button className="buttonConsultas" onClick={this.mostraDivMusicas}>Consulte Aqui<i style={{ marginLeft: "5px" }} className="fa fa-sort-down"></i></button>
+              </div>
+              <center>
+                <div id="musicasUser">
+                  <div className="input-group mb-2 col-md-12">
 
-                        <div className="modal-dialog modal-lg">
+                    {
+                      this.state.dataMusic.map((data, index) => {
+                        return (
 
-                          <div className="modal-content">
+                          <div key={index} className="col-lg-4 col-md-2 mb-6">
 
-                            <div className="modal-body mb-0 p-0">
+                            <div className="modal-dialog modal-lg">
+
+                              <div className="modal-content">
+
+                                <div className="modal-body mb-0 p-0">
 
 
-                              <iframe id="frame" style={{ width: "100%" }} src={"https://www.youtube.com/embed/" + data.idVideo}
-                                title={data.name} autoPlay allowFullScreen></iframe>
+                                  <iframe id="frame" style={{ width: "100%" }} src={"https://www.youtube.com/embed/" + data.idVideo}
+                                    title={data.name} autoPlay allowFullScreen></iframe>
 
+
+                                </div>
+
+                                <div className="justify-content-center">
+                                  <p>{data.name}</p>
+                                  <h5>{data.emocao}</h5>
+
+                                </div>
+
+                              </div>
 
                             </div>
 
-                            <div className="justify-content-center">
-                              <p>{data.name}</p>
-                              <h5>{data.emocao}</h5>
-
-                            </div>
 
                           </div>
 
-                        </div>
-
-
-                      </div>
-
-                    )
-                  })
-                }
-              </div>
+                        )
+                      })
+                    }
+                  </div>
+                </div>
+              </center>
             </div>
-          </center>
-          </div>
-          ):(
-            <div></div>
-          )}
+          
           <div className="pt-3 py-3 text-center">
             <div className="modal fade" id="exampleModalPassword" tabIndex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
               <div className="modal-dialog" role="document">
@@ -463,6 +585,8 @@ class Perfil extends Component {
               </div>
             </div>
           </div>
+     
+
         </div>
       );
     else {

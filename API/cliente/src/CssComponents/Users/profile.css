@@ -45,3 +45,8 @@
   button:hover, a:hover {
     opacity: 0.7;
   }
+
+  #aLista:hover{
+    color:orange
+  }
+  

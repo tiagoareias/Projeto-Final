@@ -15,6 +15,7 @@ class Index extends Component {
       alertColor: "danger",
       dataGet: [],
       dataPost: [],
+      dataListasReproducao: [],
       isHidden: false
     }
   }
@@ -24,13 +25,83 @@ class Index extends Component {
 
     //this.carregaFeedbacks();
     this.setState({ loading: false })
-    
+
   }
   logout() {
     localStorage.clear();
     sessionStorage.clear();
     window.location.href = '/';
   }
+
+  async listasReproducao() {
+    var decoded = jwt.decode(sessionStorage.getItem('token'));
+    var dados = {
+      userFK: decoded.userID
+    }
+    const response = await fetch('http://localhost:8000/list/user', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'x-access-token': sessionStorage.getItem('token')
+      },
+      body: JSON.stringify(dados)
+    });
+    await response.json().then(resp => {
+      let status = resp.status;
+      switch (status) {
+        case "Lista Listadas com sucesso":
+          this.setState({ dataListasReproducao: resp.response });
+          break;
+        case "Não existe listas":
+          break;
+        default:
+      }
+    });
+
+
+
+  }
+
+  async adicionaMusicaALista(data,index) {
+    var listaFK;
+    var musicFK = data;
+  
+    
+     
+      this.state.dataListasReproducao.map((data2, index2) => {
+        var listaChecked = document.getElementById("lista"+index2);
+        if(listaChecked.checked === true){
+          listaFK = data2.listaID;
+        }
+        return listaFK;
+      })
+    
+    const dadosEnviar = {
+      listaFK:listaFK,
+      musicFK:musicFK
+    }
+    console.log(dadosEnviar)
+     const response = await fetch(`http://localhost:8000/listmusic/add`, {
+         method: 'POST',
+         headers: {
+           'Content-Type': 'application/json',
+           "x-access-token": sessionStorage.getItem("token")
+         },
+         body: JSON.stringify(dadosEnviar)
+       });
+
+     await response.json().then(resp => {
+       let status = resp.status;
+       switch(status){
+         case "Musica adicionada à lista":
+           alert("musica adicionada a lista")
+           window.location = "/perfil"
+           break;
+        default:
+       }
+     });
+  }
+
 
   async atualizaListaFeedback() {
     var j;
@@ -57,36 +128,36 @@ class Index extends Component {
           this.refreshToken();
           this.atualizaListaFeedback();
         }
-        else{
-        if(resp.status !=="Não existe feedback ainda para esta música"){
-        //recolher o feedback do utilizador
-        var feedback = resp.response.feedback;
-        //recolher os botões like e deslike
-        var gostar = document.getElementById(resp.response.Music.idVideo);
-        var naoGostar = document.getElementById(resp.response.Music.idVideo + "N");
-        var textLike = document.getElementById(resp.response.Music.idVideo + "T");
-        gostar.style.color = "";
-        naoGostar.style.color = "";
-        textLike.textContent = "| Gostou desta classificação?"
+        else {
+          if (resp.status !== "Não existe feedback ainda para esta música") {
+            //recolher o feedback do utilizador
+            var feedback = resp.response.feedback;
+            //recolher os botões like e deslike
+            var gostar = document.getElementById(resp.response.Music.idVideo);
+            var naoGostar = document.getElementById(resp.response.Music.idVideo + "N");
+            var textLike = document.getElementById(resp.response.Music.idVideo + "T");
+            gostar.style.color = "";
+            naoGostar.style.color = "";
+            textLike.textContent = "| Gostou desta classificação?"
 
-        if (feedback === true) {
-          gostar.style.color = "red"
-          textLike.textContent = "| Gostei da classificaçao"
+            if (feedback === true) {
+              gostar.style.color = "red"
+              textLike.textContent = "| Gostei da classificaçao"
+            }
+            if (feedback === null) {
+
+              gostar.style.color = "";
+              naoGostar.style.color = "";
+              textLike.textContent = "| Gostou desta classificação?"
+
+            }
+            if (feedback === false) {
+
+              naoGostar.style.color = "red"
+              textLike.textContent = "| Não gostei da classificaçao"
+            }
+          }
         }
-        if (feedback === null) {
-
-          gostar.style.color = "";
-          naoGostar.style.color = "";
-          textLike.textContent = "| Gostou desta classificação?"
-
-        }
-        if (feedback === false) {
-
-          naoGostar.style.color = "red"
-          textLike.textContent = "| Não gostei da classificaçao"
-        }
-      }
-    }
       });
     }
   }
@@ -107,6 +178,8 @@ class Index extends Component {
           this.setState({ isHidden: true });
           if (jwt.decode(sessionStorage.getItem('token'))) {
             this.atualizaListaFeedback();
+            this.listasReproducao();
+
           }
           break;
         case "Ainda não existem músicas na Base de Dados":
@@ -478,11 +551,50 @@ class Index extends Component {
 
                       </div>
                       {/*Botão Eliminar*/}
-                      {(sessionStorage.getItem('token') != null) ? (
-                        <div className="row">
+                      
+                        {(sessionStorage.getItem('token') != null) ? (
+                          <div className="row">
                           <button id={data.idVideo} type="button" className="btn btn-danger" onClick={this.eliminarMusica} >Eliminar</button>
-                          <p></p>
+                        <p style={{ marginLeft: "12px", marginTop: "7px" }}>Adicionar a lista de reprodução</p><button style={{ marginLeft: "12px", borderRadius: "50%", fontSize: "20px" }} type="button" className="btn btn-danger" data-toggle="modal" data-target="#exampleModalListas" >+</button>
+                        <div className="pt-3 py-3 text-center">
+                          <div className="modal fade" id="exampleModalListas" tabIndex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                            <div className="modal-dialog" role="document">
+                              <div className="modal-content">
+                                <div className="modal-header">
+                                  <h5 className="modal-title" id="exampleModalLabel">Listas de Reprodução</h5>
+                                  <button type="button" className="close" data-dismiss="modal" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                  </button>
+                                </div>
+                                <div className="modal-body">
+                                  {
+                                    this.state.dataListasReproducao.map((data, index) => {
+                                      return (
+                                      
+                                        <div key={index} className="col-lg-4 col-md-2 mb-6">
+                                          <div>
+                                          <div style={{display:"none"}} id={index}>{data.listaID}</div>
+
+                                            <div className="justify-content-center">
+                                              <a id="aLista" style={{ fontSize: "30px", marginLeft: "10px", cursor: "pointer" }}>{data.nomeLista}</a> <input type="radio" name="inlineRadioOptions" id={"lista"+index}></input>
+                                            </div>
+                                          </div>
+                                        </div>
+
+                                      )
+                                    })
+                                  }
+                                </div>
+                                <div className="modal-footer">
+                      <button className="btn btn-danger" type="search" onClick={()=>{this.adicionaMusicaALista(data.id,index)}}>Adicionar</button>
+                      <button type="button" className="btn btn-danger" data-dismiss="modal">Sair</button>
+                    </div>
+
+                              </div>
+                            </div>
+                          </div>
                         </div>
+                      </div>
                       ) : (<p></p>)}
                     </div>
                   </div>
