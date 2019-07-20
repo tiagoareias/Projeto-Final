@@ -11,29 +11,41 @@ exports.addMusic = async (req, res) => {
     let serverResponse = { status: "Musica não adicionada à lista", response: {} }
     //variável que guarda a query à base de dados
     var novaMusica;
+    //variável que verifica se a música já existe na lista de reprodução
+    var existsMusicList;
     //variável que recolhe o parâmetro enviado na request
     var dados = {
-        musicFK:req.body.musicFK,
-        listaFK:req.body.listaFK
-        };
+        musicFK: req.body.musicFK,
+        listaFK: req.body.listaFK
+    };
+    await listaMusicasService.existsMusicList(req.body.listaFK, req.body.musicFK).then(url => existsMusicList = url).catch(err => console.log(err));
+ 
+    if (existsMusicList != null) {
+        serverResponse = { status: "Musica já existe na lista", response: existsMusicList }
 
-    await listaMusicasService.addMusic(dados).then(url => novaMusica = url).catch(err => console.log(err));
-    if (novaMusica != null) {
-        serverResponse = { status: "Musica adicionada à lista", response: novaMusica }
+       
     }
+    else {
+        await listaMusicasService.addMusic(dados).then(url => novaMusica = url).catch(err => console.log(err));
+        if (novaMusica != null) {
+            serverResponse = { status: "Musica adicionada à lista", response: novaMusica }
+        }
+    }
+
     return res.send(serverResponse);
 }
 
 exports.deleteMusicList = async (req, res) => {
+
     let serverResponse = { status: "Musica não eliminada da lista", response: {} }
     //variável que guarda a query à base de dados
     var musicaEliminada;
     var musicID = req.body.musicFK;
-    var listID = req.body.listFK;
-    
+    var listID = req.body.listaFK;
+
     //variável que recolhe o parâmetro enviado na request
 
-    await listaMusicasService.deleteMusicList(musicID,listID).then(url => musicaEliminada = url).catch(err => console.log(err));
+    await listaMusicasService.deleteMusicList(musicID, listID).then(url => musicaEliminada = url).catch(err => console.log(err));
     if (musicaEliminada != null) {
         serverResponse = { status: "Música Eliminada da lista com sucesso", response: musicaEliminada }
     }
@@ -45,7 +57,7 @@ exports.getMusicList = async (req, res) => {
     //variável que guarda a query à base de dados
     var musicasLista;
     var listaFK = req.body.listaFK;
-    
+
     //variável que recolhe o parâmetro enviado na request
 
     await listaMusicasService.getMusicList(listaFK).then(url => musicasLista = url).catch(err => console.log(err));

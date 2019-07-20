@@ -13,6 +13,12 @@ exports.deleteMusicList = async (musicID,listID) =>{
   
 exports.getMusicList = async (listID) =>{
     var deleteList;
-    await models.ListasMusicas.findAll({where:{listaFK:listID}}).then(usr => deleteList = usr).catch(err => console.log(err));
+    await models.ListasMusicas.findAll({where:{listaFK:listID},include:[models.Music]}).then(usr => deleteList = usr).catch(err => console.log(err));
     return deleteList;
+  }
+
+  exports.existsMusicList = async (listID,musicID) =>{
+    var existsMusicList;
+    await models.ListasMusicas.findOne({where:{listaFK:listID,musicFK:musicID}}).then(usr => existsMusicList = usr).catch(err => console.log(err));
+    return existsMusicList;
   }

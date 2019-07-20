@@ -140,7 +140,7 @@ class Header extends Component {
     render() {
 
         return (
-            <nav className="navbar navbar-expand-lg navbar-light bg-warning">
+            <header className="navbar navbar-expand-lg navbar-light bg-warning">
                 <a className="navbar-brand" href="/" style={{ paddingLeft: '35px' }}>
                     <img
                         src={logo}
@@ -268,7 +268,7 @@ class Header extends Component {
                         </li> */}
 
                 </div>
-            </nav>
+            </header>
         );
     }
 }

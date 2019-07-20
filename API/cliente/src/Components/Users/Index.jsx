@@ -68,7 +68,8 @@ class Index extends Component {
         } else {
             if (this.getRole() === true) {
                 return (
-                    <div className="container">
+                    <center>
+                    <div className="containerIndexUser">
                         <div className="row">
                             <div className="col-md-9">
                                 <h2 className="py-3 mb-3 text-center">
@@ -106,6 +107,7 @@ class Index extends Component {
                             </tbody>
                         </table>
                     </div>
+                    </center>
                 );
             }
             else {

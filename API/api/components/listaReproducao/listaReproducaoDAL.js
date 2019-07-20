@@ -20,6 +20,6 @@ exports.deleteList = async (listID) =>{
 
   exports.getListUser = async (userFK) =>{
     var listaUser;
-    await models.ListaRepro.findAll({where:{userFK:userFK}}).then(usr => listaUser = usr).catch(err => console.log(err));
+    await models.ListaRepro.findAll({where:{userFK:userFK},include:[models.ListasMusicas]}).then(usr => listaUser = usr).catch(err => console.log(err));
     return listaUser;
   }

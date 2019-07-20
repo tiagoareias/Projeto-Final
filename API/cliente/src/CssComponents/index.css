@@ -1,7 +1,4 @@
-#urlInput{
-  width: 600px;
 
-}
 
 ::-webkit-input-placeholder {
   font-style: italic;
@@ -22,4 +19,16 @@
 #users{
   color: black;
 }
+.imagemMER{
+width: 50%;
+}
+
+.containerPesquisa{
+  color:white;
+}
+
+.musicaPesquisa{
+  color:black;
+}
+
 

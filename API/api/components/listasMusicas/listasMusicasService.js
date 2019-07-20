@@ -12,3 +12,7 @@ exports.deleteMusicList = async(musicID,listID) =>{
 exports.getMusicList = async(listID) =>{
     return await listasMusicasDAL.getMusicList(listID);
 }
+
+exports.existsMusicList = async(listID,musicID) =>{
+    return await listasMusicasDAL.existsMusicList(listID,musicID);
+}

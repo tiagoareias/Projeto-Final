@@ -8,7 +8,7 @@ exports.uploadVideo = async (musica) => {
 
 exports.getVideo = async (idVideo) => {
     var musica;
-    await models.Music.findOne({ where: { idVideo: idVideo },include:models.Feedback}).then(music => musica = music).catch(err => console.log(err))
+    await models.Music.findOne({ where: { idVideo: idVideo },include:[models.Feedback],include:[models.ListasMusicas]}).then(music => musica = music).catch(err => console.log(err))
     return musica;
 }
 
@@ -46,5 +46,11 @@ exports.updateMusic = async (idVideo, emocao) => {
 exports.getMusicasUser = async(userFK) =>{
     var musicas;
     await models.Music.findAll({ where: { userFK: userFK } }).then(mus => musicas = mus).catch(err => console.log(err))
+    return musicas;
+}
+
+exports.getMusicasID = async(musicFK) =>{
+    var musicas;
+    await models.Music.findOne({ where: { id: musicFK } }).then(mus => musicas = mus).catch(err => console.log(err))
     return musicas;
 }

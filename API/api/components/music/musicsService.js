@@ -32,3 +32,7 @@ exports.updateMusic = async(idVideo, emocao) => {
 exports.getMusicasUser = async(userFK) => {
     return await musicsDal.getMusicasUser(userFK);
 }
+
+exports.getMusicasID = async(musicFK) => {
+    return await musicsDal.getMusicasID(musicFK);
+}
