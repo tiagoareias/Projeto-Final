@@ -51,6 +51,23 @@ exports.getMusicasUser = async(userFK) =>{
 
 exports.getMusicasID = async(musicFK) =>{
     var musicas;
-    await models.Music.findOne({ where: { id: musicFK } }).then(mus => musicas = mus).catch(err => console.log(err))
+    await models.Music.findAll({ where: { id: musicFK } }).then(mus => musicas = mus).catch(err => console.log(err))
     return musicas;
 }
+
+exports.getMusicProcessing = async() =>{
+    var musicas;
+    await models.Music.findAll({ where: { emocao:"" }}).then(mus => musicas = mus).catch(err => console.log(err))
+    return musicas;
+}
+
+exports.getMusicByEmotion = async(emocao) =>{
+    var musicas;
+    await models.Music.findAll({ where:{emocao: { [Op.eq]: emocao }}, order: [['createdAt', 'DESC']], limit: 4 })
+        .then(mus => musicas = mus).catch(err => console.log(err));
+    return musicas;
+}
+
+
+
+

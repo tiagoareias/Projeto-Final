@@ -86,7 +86,7 @@ exports.getVideo = async (req, res) => {
 }
 
 exports.getVideoPesquisa = async (req, res) => {
-    let serverResponse = { status: "A pesquisa não retornou nenhuma música", response: "teste" }
+    let serverResponse = { status: "A pesquisa não retornou nenhuma música", response: {} }
 
     var musicas;
     var pesquisaRealizada = req.params.pesquisaMusica;
@@ -239,7 +239,6 @@ exports.getMusicasUser = async (req, res) => {
     var musicas;
     //userFK
     var userFK = req.body.userFK;
-    console.log(userFK)
     var token = req.headers['x-access-token'];
     //se o token não existir
     if (!token) {
@@ -258,5 +257,49 @@ exports.getMusicasUser = async (req, res) => {
         serverResponse = { status: "Failed to authenticate token." }
         return res.send(serverResponse)
     }
+
+}
+
+exports.getMusicProcessing = async (req, res) => {
+    let serverResponse = { status: "Não existe músicas em processamento", response: {} }
+    var musicasProcess;
+
+    
+    
+    
+        await musicsService.getMusicProcessing().then(mus => musicasProcess=mus).catch(err => console.log(err))
+        if (musicasProcess!== undefined) {
+            serverResponse = { status: "Músicas em processamento", response: musicasProcess }
+        }
+        return res.send(serverResponse);
+}
+
+exports.getMusicByEmotion = async (req, res) => {
+    let serverResponse = { status: "Não existe músicas com esta emoção", response: {} }
+    var musicasEmocao;
+    var emocao = req.params.emocao;
+        await musicsService.getMusicByEmotion(emocao).then(mus => musicasEmocao=mus).catch(err => console.log(err))
+        if (musicasEmocao.length > 0) {
+            var size = Object.keys(musicasEmocao).length;
+            var dadosEnviar = [];
+            for (let i = 0; i < size; i++) {
+                await fetchVideoInfo(musicasEmocao[i].idVideo).then(videoInfo => {
+                    const autor = videoInfo.owner;
+                    const dataPublicacao = videoInfo.datePublished;
+                    const numDislikes = videoInfo.dislikeCount;
+                    const numViews = videoInfo.views;
+                    const numLikes = videoInfo.likeCount;
+                    const numComentarios = videoInfo.commentCount;
+                    dadosEnviar[i] = {
+                        numViews: numViews, numDislikes: numDislikes, numLikes: numLikes, numComentarios: numComentarios, emocao: musicasEmocao[i].emocao,
+                        id: musicasEmocao[i].id, idVideo: musicasEmocao[i].idVideo, nome: musicasEmocao[i].name, url: musicasEmocao[i].url, autor: autor, dataPublicacao: dataPublicacao,
+                    }
+                });
+            }
+            serverResponse = { status: "Últimas músicas classificadas", response: dadosEnviar }
+        }
+        return res.send(serverResponse);
+
+    
 
 }

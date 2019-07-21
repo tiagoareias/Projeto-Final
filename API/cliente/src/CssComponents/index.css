@@ -32,3 +32,9 @@ width: 50%;
 }
 
 
+
+.btn.active {
+  background-color: #666;
+  color: white;
+}
+

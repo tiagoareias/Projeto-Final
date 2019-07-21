@@ -5,7 +5,7 @@ module.exports = (app) => {
 
     //rate limit para os restantes pedidos
     const requestsLimit = rateLimit({
-        windowMs: 60*1000, // 60 segundos
+        windowMs: 40*1000, // 60 segundos
         max: 15, // bloqueia após 15 pedidos
         message:{status:"Realizou demasiados pedidos ao servidor nos últimos minutos. Tente novamente mais tarde"}
     });

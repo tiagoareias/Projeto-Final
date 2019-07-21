@@ -36,3 +36,15 @@ exports.getMusicasUser = async(userFK) => {
 exports.getMusicasID = async(musicFK) => {
     return await musicsDal.getMusicasID(musicFK);
 }
+
+exports.getMusicProcessing = async() => {
+    return await musicsDal.getMusicProcessing();
+}
+
+exports.getMusicByEmotion = async(emocao) => {
+    return await musicsDal.getMusicByEmotion(emocao);
+}
+
+
+
+

@@ -147,7 +147,6 @@ async listasReproducao() {
       });
 
       await response.json().then(resp => {
-        console.log(resp)
         if (resp.status === "Nao está autenticado | token expirou") {
           this.refreshToken();
           this.atualizaListaFeedback();
@@ -197,7 +196,7 @@ async listasReproducao() {
         //Verificar o estado da resposta da API
         this.setState({ dataGet: resp.response })
         this.setState({ isHidden: true })
-        if (jwt.decode(sessionStorage.getItem('token'))) {
+        if (jwt.decode(sessionStorage.getItem('token'))!==null) {
           this.atualizaListaFeedback();
           this.listasReproducao();
         }
@@ -464,7 +463,7 @@ async listasReproducao() {
             alertColor={this.state.alertColor}
           />
 
-
+          
           {(this.state.dataGet === "vazio") ? (
             <div className="col-md-12 mb-3">
               <h3 className="display-5 text-center">Não foram encontrados resultados para '{this.props.query}'</h3>

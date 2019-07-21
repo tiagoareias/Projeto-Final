@@ -85,6 +85,11 @@ class Perfil extends Component {
               this.setState({ dataMusicListas: resp.response });
 
           break;
+          case "Nao está autenticado | token expirou":
+              this.refreshToken();
+              this.getMusicasLista(listaFK);
+              break;
+  
         default: console.log("erro ao listar musicas de uma lista")
       }
     });
@@ -117,6 +122,11 @@ async excluiMusica(listaFK,musicFK){
           break;
       case "Musica não eliminada da lista":
         break;
+        case "Nao está autenticado | token expirou":
+            this.refreshToken();
+            this.excluiMusica(listaFK,musicFK);
+            break;
+
       default:console.log("erro a apagar a música da lista")
     }
 
@@ -151,6 +161,10 @@ async excluiMusica(listaFK,musicFK){
         case "Já existe uma lista com o nome escolhido":
           alert("Já existe uma lista com o nome escolhido")
           break;
+        case "Nao está autenticado | token expirou":
+          this.refreshToken();
+          this.criaLista();
+          break;
         default:
       }
     });
@@ -175,6 +189,10 @@ async excluiMusica(listaFK,musicFK){
         case "Lista não eliminada":
           alert("A lista não foi eliminada");
         break;
+        case "Nao está autenticado | token expirou":
+          this.refreshToken();
+          this.apagaLista(listaID);
+          break;
       default:console.log("erro a eliminar lista")
       }
     });
@@ -202,6 +220,10 @@ async excluiMusica(listaFK,musicFK){
           break;
         case "Não existe listas":
           break;
+          case "Nao está autenticado | token expirou":
+              this.refreshToken();
+              this.listasReproducao();
+              break;
         default:
       }
     });
@@ -555,7 +577,7 @@ async excluiMusica(listaFK,musicFK){
               <h5>Quais as músicas introduzidas por mim?</h5><button className="buttonConsultas" onClick={this.mostraDivMusicas}>Consulte Aqui<i style={{ marginLeft: "5px" }} className="fa fa-sort-down"></i></button>
             </div>
             <center>
-              <div id="musicasUser">
+              <div id="musicasUser" style={{color:"black"}}>
                 <div className="input-group mb-2 col-md-12">
 
                   {
@@ -603,12 +625,12 @@ async excluiMusica(listaFK,musicFK){
               <div className="modal-dialog" role="document">
                 <div className="modal-content">
                   <div className="modal-header">
-                    <h5 className="modal-title" id="exampleModalLabel">Alterar Password</h5>
+                    <h5 className="modal-title" id="exampleModalLabel" style={{color:"black"}}>Alterar Password</h5>
                     <button type="button" className="close" data-dismiss="modal" aria-label="Close">
                       <span aria-hidden="true">&times;</span>
                     </button>
                   </div>
-                  <div className="modal-body">
+                  <div className="modal-body" style={{color:"black"}}>
                     <form onSubmit={this.handleSubmit}>
                       <h2>Alterar Password</h2>
                       <div className="row">
@@ -657,12 +679,12 @@ async excluiMusica(listaFK,musicFK){
             <div className="modal-dialog" role="document">
               <div className="modal-content">
                 <div className="modal-header">
-                  <h5 className="modal-title" id="exampleModalLabel">Alterar Dados Pessoais</h5>
+                  <h5 className="modal-title" id="exampleModalLabel" style={{color:"black"}}>Alterar Dados Pessoais</h5>
                   <button type="button" className="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                   </button>
                 </div>
-                <div className="modal-body">
+                <div className="modal-body" style={{color:"black"}}>
                   <form onSubmit={this.handleSubmitDados}>
                     <div className="form-group row">
                       <label htmlFor="email" className="col-md-4 col-form-label text-md-right">E-Mail</label>

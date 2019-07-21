@@ -69,7 +69,7 @@ class Index extends Component {
             if (this.getRole() === true) {
                 return (
                     <center>
-                    <div className="containerIndexUser">
+                    <div className="containerIndexUser" style={{color:"white",fontSize:"15px",fontWeight:"bold"}}>
                         <div className="row">
                             <div className="col-md-9">
                                 <h2 className="py-3 mb-3 text-center">
@@ -85,14 +85,14 @@ class Index extends Component {
 
                         <table className="table table-sm table-hover">
                             <thead >
-                                <tr id="cabecalho">
-                                    <th scope="col">Email</th>
+                                <tr id="cabecalho" style={{color:"white"}}>
+                                    <th scope="col" >Email </th>
                                     <th scope="col">Username</th>
                                     <th scope="col">Nome</th>
                                     {/*<th scope="col"></th>*/}
                                 </tr>
                             </thead>
-                            <tbody id="corpo">
+                            <tbody id="corpo" style={{color:"white"}}>
                                 {this.state.data.map(function (obj) {
                                     //let href = "/utilizadores/" + obj.userID;
                                     return (

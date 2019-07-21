@@ -146,7 +146,7 @@ class Register extends Component {
 
                             <div className="row">
                                 <div className="col-md-12 mb-3">
-                                    <h1 className="display-4 ">Criar novo utilizador</h1>
+                                    <h1 className="display-4 " style={{color:"white"}}>Criar novo utilizador</h1>
                                 </div>
                             </div>
                             <AlertMsg

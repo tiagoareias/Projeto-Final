@@ -28,6 +28,8 @@ class Index extends Component {
 
     //this.carregaFeedbacks();
     this.setState({ loading: false })
+    var filterContainer = document.getElementById('filterContainer');
+    filterContainer.style.display="none";
 
   }
   logout() {
@@ -81,6 +83,11 @@ class Index extends Component {
           break;
         case "Não existe listas":
           break;
+          case "Nao está autenticado | token expirou":
+              this.refreshToken();
+              this.listasReproducao();
+              break;
+  
         default:
       }
     });
@@ -129,13 +136,18 @@ class Index extends Component {
 
           }, 2000);
           break;
-          case "Musica já existe na lista":
-              this.setState({
-                alertText: "Música já está presente na lista selecionada",
-                alertisNotVisible: false,
-                alertColor: "warning"
-              });
-            break;
+        case "Musica já existe na lista":
+          this.setState({
+            alertText: "Música já está presente na lista selecionada",
+            alertisNotVisible: false,
+            alertColor: "warning"
+          });
+          break;
+        case "Nao está autenticado | token expirou":
+          this.refreshToken();
+          this.adicionaMusicaALista();
+
+          break;
         default:
       }
     });
@@ -200,6 +212,7 @@ class Index extends Component {
       });
     }
   }
+
   async getLastVideos() {
     const response = await fetch('http://localhost:8000/music', {
       method: 'GET',
@@ -215,6 +228,8 @@ class Index extends Component {
         case "Últimas músicas classificadas":
           this.setState({ dataGet: resp.response });
           this.setState({ isHidden: true });
+          var filterContainer = document.getElementById('filterContainer');
+          filterContainer.style.display="block";
           if (jwt.decode(sessionStorage.getItem('token'))) {
             this.atualizaListaFeedback();
             this.listasReproducao();
@@ -233,6 +248,75 @@ class Index extends Component {
           break;
       }
     })
+  }
+
+
+  async getLastVideosEmocao(emocao) {
+    this.setState({dataGet:[]})
+       this.setState({ isHidden: false });
+    var mostrarTudo = document.getElementById('filterMostarTudo')
+    mostrarTudo.className="btn";
+    var feliz = document.getElementById('filterFeliz');
+    feliz.className="btn";
+    var tenso = document.getElementById('filterTenso');
+    tenso.className="btn";
+    var triste = document.getElementById('filterTriste');
+    triste.className="btn";
+    var calmo = document.getElementById('filterCalmo');
+    calmo.className="btn";
+
+    if(emocao==="MostrarTudo"){
+      mostrarTudo.className="btn active";
+      this.getLastVideos();
+
+    }
+    else{
+      var filterEscolhido = document.getElementById("filter"+emocao);
+      filterEscolhido.className="btn active" 
+    
+     const response = await fetch(`http://localhost:8000/music/emocao/${emocao}`, {
+       method: 'GET',
+       headers: {
+         'Content-Type': 'application/json',
+         'x-access-token': sessionStorage.getItem('token')
+       }
+     });
+
+     await response.json().then(resp => {
+       
+       
+       let status = resp.status;
+       switch (status) {
+         case "Últimas músicas classificadas":
+           this.setState({ dataGet: resp.response });
+           this.setState({ isHidden: true });
+           if (jwt.decode(sessionStorage.getItem('token'))) {
+             this.atualizaListaFeedback();
+             this.listasReproducao();
+
+           }
+           break;
+         case "Não existe músicas com esta emoção":
+           this.setState({ isHidden: true });
+           var semMusicas = document.getElementById('semMusicas');
+           semMusicas.textContent="Sem músicas de momento";
+           semMusicas.style.fontSize="25px";
+           semMusicas.style.color="white";
+           break;
+          case "Realizou demasiados pedidos ao servidor nos últimos minutos. Tente novamente mais tarde":
+              this.setState({
+                alertText: "Excedeu o número de uploads permitidos nos últimos minutos",
+                alertisNotVisible: false,
+                alertColor: "warning"
+              });
+              break;
+         
+         default:
+          console.log(this.state.alertText)
+         break;
+       }
+     })
+    }
   }
 
   async refreshToken() {
@@ -305,10 +389,14 @@ class Index extends Component {
         case "Upload":
           this.setState({ dataPost: resp.response });
           this.setState({
-            alertText: "A música será classificada. Aguarde pacientemente.",
+            alertText: "A música será classificada. Aguarde pacientemente. ",
             alertisNotVisible: false,
             alertColor: "success"
           });
+          setTimeout(() => {
+            window.location = "/music/processing/get";
+          }, 2000);
+
           break;
         case "URL já existe na base de dados":
           this.setState({ dataPost: resp.response });
@@ -537,6 +625,20 @@ class Index extends Component {
 
             </div>
           </form>
+          <center>
+            <div id="filterContainer">
+              <button id="filterMostarTudo" class="btn active" onClick={()=>{this.getLastVideosEmocao("MostrarTudo")}}> Mostrar últimas</button>
+              <button id={"filterFeliz"} class="btn" onClick={()=>{this.getLastVideosEmocao("Feliz")}}> Feliz</button>
+              <button id={"filterTenso"}class="btn" onClick={()=>{this.getLastVideosEmocao("Tenso")}}> Tenso</button>
+              <button id={"filterCalmo"} class="btn" onClick={()=>{this.getLastVideosEmocao("Calmo")}}> Calmo</button>
+              <button id={"filterTriste"} class="btn" onClick={()=>{this.getLastVideosEmocao("Triste")}}> Triste</button>
+            </div>
+            {(this.state.dataGet.length===0) ? (
+            <h3 id="semMusicas"></h3>
+          ):(
+            <div></div>
+          )}
+          </center>
           <AlertMsg
             text={this.state.alertText}
             isNotVisible={this.state.alertisNotVisible}
@@ -555,6 +657,7 @@ class Index extends Component {
             </div>
             
             </div> */}
+         
           {
             this.state.dataGet.map((data, index) => {
               return (
@@ -581,7 +684,9 @@ class Index extends Component {
 
                       <div className="justify-content-center">
                         <center>
-                          <h2 style={{ border: "1px solid" }}>{data.emocao}</h2>
+                          <div style={{ backgroundColor: "orange", width: "30%" }}>
+                            <h2 style={{ border: "1px solid" }}>{data.emocao}</h2>
+                          </div>
 
                           <div className="text-secondary" >
                             <h6 className="text-secondary"><i >{data.numViews}</i> Visualizações </h6>
@@ -600,14 +705,14 @@ class Index extends Component {
                                     <div className="modal-content">
                                       <div className="modal-header">
                                         <center>
-                                        <h5 className="modal-title" id="exampleModalLabel">Listas de Reprodução</h5>
-                                        <p><AlertMsg2
-                                          text={this.state.alertText}
-                                          isNotVisible={this.state.alertisNotVisible}
-                                          alertColor={this.state.alertColor}
-                                        /></p>
+                                          <h5 className="modal-title" id="exampleModalLabel">Listas de Reprodução</h5>
+                                          <p><AlertMsg2
+                                            text={this.state.alertText}
+                                            isNotVisible={this.state.alertisNotVisible}
+                                            alertColor={this.state.alertColor}
+                                          /></p>
                                         </center>
-                                        
+
                                         <button type="button" className="close" data-dismiss="modal" aria-label="Close">
                                           <span aria-hidden="true">&times;</span>
                                         </button>

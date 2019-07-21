@@ -18,21 +18,34 @@ exports.addMusic = async (req, res) => {
         musicFK: req.body.musicFK,
         listaFK: req.body.listaFK
     };
-    await listaMusicasService.existsMusicList(req.body.listaFK, req.body.musicFK).then(url => existsMusicList = url).catch(err => console.log(err));
- 
-    if (existsMusicList != null) {
-        serverResponse = { status: "Musica já existe na lista", response: existsMusicList }
+    var token = req.headers['x-access-token'];
 
-       
+    if (!token) {
+        serverResponse = { status: "Nao está autenticado", response: {} }
+        return res.send(serverResponse);
     }
-    else {
-        await listaMusicasService.addMusic(dados).then(url => novaMusica = url).catch(err => console.log(err));
-        if (novaMusica != null) {
-            serverResponse = { status: "Musica adicionada à lista", response: novaMusica }
+    try {
+        jwt.verify(token, 'secret');
+
+        await listaMusicasService.existsMusicList(req.body.listaFK, req.body.musicFK).then(url => existsMusicList = url).catch(err => console.log(err));
+
+        if (existsMusicList != null) {
+            serverResponse = { status: "Musica já existe na lista", response: existsMusicList }
+
+
         }
-    }
+        else {
+            await listaMusicasService.addMusic(dados).then(url => novaMusica = url).catch(err => console.log(err));
+            if (novaMusica != null) {
+                serverResponse = { status: "Musica adicionada à lista", response: novaMusica }
+            }
+        }
 
-    return res.send(serverResponse);
+        return res.send(serverResponse);
+    } catch (err) {
+        serverResponse = { status: "Nao está autenticado | token expirou", response: {} }
+        return res.send(serverResponse);
+    }
 }
 
 exports.deleteMusicList = async (req, res) => {
@@ -42,14 +55,24 @@ exports.deleteMusicList = async (req, res) => {
     var musicaEliminada;
     var musicID = req.body.musicFK;
     var listID = req.body.listaFK;
+    var token = req.headers['x-access-token'];
 
-    //variável que recolhe o parâmetro enviado na request
+    if (!token) {
+        serverResponse = { status: "Nao está autenticado", response: {} }
+        return res.send(serverResponse);
+    }
+    try{
+        jwt.verify(token, 'secret');
 
     await listaMusicasService.deleteMusicList(musicID, listID).then(url => musicaEliminada = url).catch(err => console.log(err));
     if (musicaEliminada != null) {
         serverResponse = { status: "Música Eliminada da lista com sucesso", response: musicaEliminada }
     }
     return res.send(serverResponse);
+}catch(err){
+    serverResponse = { status: "Nao está autenticado | token expirou", response: {} }
+    return res.send(serverResponse);
+}
 }
 
 exports.getMusicList = async (req, res) => {
@@ -57,8 +80,14 @@ exports.getMusicList = async (req, res) => {
     //variável que guarda a query à base de dados
     var musicasLista;
     var listaFK = req.body.listaFK;
+    var token = req.headers['x-access-token'];
 
-    //variável que recolhe o parâmetro enviado na request
+if (!token) {
+        serverResponse = { status: "Nao está autenticado", response: {} }
+        return res.send(serverResponse);
+    }
+    try{
+        jwt.verify(token, 'secret');
 
     await listaMusicasService.getMusicList(listaFK).then(url => musicasLista = url).catch(err => console.log(err));
     var count = Object.keys(musicasLista).length;
@@ -66,4 +95,8 @@ exports.getMusicList = async (req, res) => {
         serverResponse = { status: "Existem músicas nesta lista", response: musicasLista }
     }
     return res.send(serverResponse);
+}catch(err){
+    serverResponse = { status: "Nao está autenticado | token expirou", response: {} }
+    return res.send(serverResponse);
+}
 }
