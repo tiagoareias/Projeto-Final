@@ -3,6 +3,8 @@ import logoUser from '../../fotoUser.png';
 import AlertMsg from '../Global/AlertMsg';
 import AlertMsg2 from '../Global/AlertMsg';
 import AlertMsg3 from '../Global/AlertMsg';
+import AlertMsg4 from '../Global/AlertMsg';
+
 import React, { Component } from "react";
 var jwt = require('jsonwebtoken');
 
@@ -100,7 +102,6 @@ async excluiMusica(listaFK,musicFK){
     listaFK:listaFK,
     musicFK:musicFK
   }
-  console.log(dados);
   const response = await fetch('http://localhost:8000/listmusic/delete', {
     method: 'POST',
     headers: {
@@ -134,7 +135,9 @@ async excluiMusica(listaFK,musicFK){
 
 }
 
-  async criaLista() {
+criaLista = async e => {
+
+    e.preventDefault();
     var decoded = jwt.decode(sessionStorage.getItem('token'));
     var nomeLista = document.getElementById('nomeLista').value;
     var dados = {
@@ -154,16 +157,25 @@ async excluiMusica(listaFK,musicFK){
       let status = resp.status;
       switch (status) {
         case "Lista criada":
-          alert("Lista criada")
-
-          window.location = "/perfil";
-          break;
+            this.setState({
+              alertText: " Lista criada.",
+              alertisNotVisible: false,
+              alertColor: "success"
+            });
+            setTimeout(() => {
+              window.location="/perfil";
+            }, 2000);
+            break;
         case "Já existe uma lista com o nome escolhido":
-          alert("Já existe uma lista com o nome escolhido")
+          this.setState({
+            alertText: " Já existe uma lista com o nome escolhido.",
+            alertisNotVisible: false,
+            alertColor: "warning"
+          });
           break;
-        case "Nao está autenticado | token expirou":
+      case "Nao está autenticado | token expirou":
           this.refreshToken();
-          this.criaLista();
+          this.criaLista(e);
           break;
         default:
       }
@@ -184,11 +196,22 @@ async excluiMusica(listaFK,musicFK){
       let status = resp.status;
       switch(status){
         case "Lista Eliminada com sucesso":
-        window.location.reload();
-        break;
+            this.setState({
+              alertText: " Lista eliminada com sucesso.",
+              alertisNotVisible: false,
+              alertColor: "success"
+            });
+            setTimeout(() => {
+              window.location="/perfil";
+            }, 2000);
+            break;
         case "Lista não eliminada":
-          alert("A lista não foi eliminada");
-        break;
+            this.setState({
+              alertText: "A lista não foi eliminada.",
+              alertisNotVisible: false,
+              alertColor: "warning"
+            });
+            break;
         case "Nao está autenticado | token expirou":
           this.refreshToken();
           this.apagaLista(listaID);
@@ -503,6 +526,12 @@ async excluiMusica(listaFK,musicFK){
               <div style={{ width: "300px" }} className="">
                 <br></br>
                 <button style={{ width: "100%" }} onClick={this.mostraDivListas} className="btn btn-secondary" >Consultar Listas de Reprodução</button>
+                <AlertMsg4
+                        text={this.state.alertText}
+                        isNotVisible={this.state.alertisNotVisible}
+                        alertColor={this.state.alertColor}
+                      />
+
               </div>
             </center>
             <br></br>
@@ -511,7 +540,10 @@ async excluiMusica(listaFK,musicFK){
                 <form onSubmit={this.criaLista} >
                 <input id="nomeLista" type="text" style={{ marginRight: "15px" }} required/>
                 <button type="submit"  >Criar nova lista</button>
+
                 </form>
+
+
                 {
                   this.state.dataListasReproducao.map((data, index) => {
                     return (
@@ -552,7 +584,7 @@ async excluiMusica(listaFK,musicFK){
 
                                         <p>{data.Music.name}</p>
 
-                                        <iframe src={"https://www.youtube.com/embed/" + data.Music.idVideo} allowFullscreen id="video"></iframe>
+                                        <iframe src={"https://www.youtube.com/embed/" + data.Music.idVideo} allowFullscreen id="video" title={data.Music.name}></iframe>
                                         <h3 style={{ fontWeight: "lighter", color: "orange" }}>Emoçao: {data.Music.emocao}</h3>
                                         <hr></hr>
                                       </div>

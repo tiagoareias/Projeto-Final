@@ -30,6 +30,42 @@ class Index extends Component {
         }
     }
 
+    async refreshToken() {
+        var decoded = jwt.decode(sessionStorage.getItem('token'));
+        var nome = decoded.nome;
+        var username = decoded.username;
+        var userID = decoded.userID;
+        var isAdmin = decoded.isAdmin;
+        const dataToken = {
+          username,
+          nome,
+          userID,
+          isAdmin
+        }
+        const response = await fetch('http://localhost:8000/token/refresh', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(dataToken)
+        });
+    
+        await response.json().then(resp => {
+          //Verificar o estado da resposta da API
+          let status = resp.status;
+          switch (status) {
+            case "Token Atualizado":
+              sessionStorage.clear();
+              sessionStorage.setItem('token', resp.response);
+              break;
+    
+            default:
+              window.location = "/"
+          }
+        });
+      }
+    
+
     async getUsers() {
         const response = await fetch(`http://localhost:8000/user`, {
             method: 'GET',
@@ -52,9 +88,12 @@ class Index extends Component {
                 case "Utilizadores na Base de Dados":
                     this.setState({ data: resp.response });
                     break;
+                case "Nao está autenticado | token expirou":
+                    this.refreshToken();
+                break;
                 default:
                     console.log(this.state.alertText)
-                    break;
+                break;
             }
 
         });
@@ -83,7 +122,7 @@ class Index extends Component {
                             alertColor={this.state.alertColor}
                         />
 
-                        <table className="table table-sm table-hover">
+                        <table className="table table-sm">
                             <thead >
                                 <tr id="cabecalho" style={{color:"white"}}>
                                     <th scope="col" >Email </th>

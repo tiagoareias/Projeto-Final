@@ -47,7 +47,6 @@ async getMusicFK(idVideo) {
     }
   });
   await response.json().then(resp => {
-    console.log(resp.response)
     let status = resp.status;
     switch (status) {
       case "URL não está presente na base de dados":
@@ -254,7 +253,7 @@ async listasReproducao() {
           setTimeout(this.redirecionar, 2000);
           break;
         default:
-          alert(this.state.alertText);
+          console.log(this.state.alertText);
       }
     });
   }
@@ -264,7 +263,6 @@ async listasReproducao() {
 
     var listaFK;
     var musicFK = this.state.dataMusicParaLista.id;
-    console.log(musicFK);
 
     this.state.dataListasReproducao.map((data2, index2) => {
       var listaChecked = document.getElementById("lista" + index2);
@@ -277,7 +275,6 @@ async listasReproducao() {
       listaFK: listaFK,
       musicFK: musicFK
     }
-    console.log(dadosEnviar)
     const response = await fetch(`http://localhost:8000/listmusic/add`, {
       method: 'POST',
       headers: {
@@ -357,7 +354,6 @@ async listasReproducao() {
       body: JSON.stringify(editFeed)
     });
     await response.json().then(resp => {
-      console.log(resp)
       var iconGosto = document.getElementById(idVideo+"G");
       var iconNaoGosto = document.getElementById(idVideo + "N");
       var textLike = document.getElementById(idVideo + "T");
@@ -517,11 +513,11 @@ async listasReproducao() {
                                       <div className="modal-header">
                                         <center>
                                         <h5 className="modal-title" id="exampleModalLabel">Listas de Reprodução</h5>
-                                        <p><AlertMsg2
+                                        <AlertMsg2
                                           text={this.state.alertText}
                                           isNotVisible={this.state.alertisNotVisible}
                                           alertColor={this.state.alertColor}
-                                        /></p>
+                                        />
                                         </center>
                                         
                                         <button type="button" className="close" data-dismiss="modal" aria-label="Close">

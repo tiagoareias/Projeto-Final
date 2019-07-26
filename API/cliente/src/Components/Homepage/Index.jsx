@@ -47,7 +47,6 @@ class Index extends Component {
       }
     });
     await response.json().then(resp => {
-      console.log(resp.response)
       let status = resp.status;
       switch (status) {
         case "URL não está presente na base de dados":
@@ -356,7 +355,8 @@ class Index extends Component {
 
   handleSubmit = async e => {
     e.preventDefault();
-
+    var botao = document.getElementById('idDoBotao');
+    botao.style.display = "none";
     //Objeto URL
     const urlInput = document.getElementById("urlInput").value;
     var userFK = null;
@@ -393,9 +393,11 @@ class Index extends Component {
             alertisNotVisible: false,
             alertColor: "success"
           });
+          
           setTimeout(() => {
             window.location = "/music/processing/get";
-          }, 2000);
+            botao.style.display = "block";
+          }, 3500);
 
           break;
         case "URL já existe na base de dados":
@@ -405,6 +407,7 @@ class Index extends Component {
             alertisNotVisible: false,
             alertColor: "warning"
           });
+          botao.style.display = "block";
           break;
         case "Foram feitos demasiados uploads nos últimos minutos! Volte a tentar mais tarde":
           this.setState({
@@ -412,9 +415,20 @@ class Index extends Component {
             alertisNotVisible: false,
             alertColor: "warning"
           });
+          botao.style.display = "block";
           break;
+          case "Erros na validação":
+              this.setState({ dataPost: resp.response });
+              this.setState({
+                  alertText: this.state.dataPost[0].msg,
+                  alertisNotVisible: false,
+                  alertColor: "warning"
+              });
+              botao.style.display = "block";
+              break;
         default:
-          alert(this.state.alertText);
+            botao.style.display = "block";
+          console.log(this.state.alertText);
       }
     });
   }
@@ -464,7 +478,7 @@ class Index extends Component {
           setTimeout(this.redirecionar, 2000);
           break;
         default:
-          alert(this.state.alertText);
+          console.log(this.state.alertText);
       }
     });
   }
@@ -611,30 +625,30 @@ class Index extends Component {
             <br></br>
             <div>
               <center>
-                <img className="imagemMER" src={logo2}></img>
+                <img className="imagemMER" src={logo2} alt=""></img>
               </center>
             </div>
             <div className="input-group mb-2 mr-sm-2">
               <div className="input-group-prepend">
                 <div className="input-group-text">URL</div>
               </div>
-              <input type="text" className="form-control py-0" id="urlInput" pattern="^(http(s)?:\/\/)?((w){3}.)?youtu(be|.be)?(\.com)?\/.+" placeholder=" Introduza o URL " required></input>
+              <input type="text" className="form-control py-0" id="urlInput" placeholder=" Introduza o URL " required></input>
               <div className="input-group-prepend">
-                <button className="input-group-text">Classificar</button>
+                <button className="input-group-text" id ="idDoBotao">Classificar</button>
               </div>
 
             </div>
           </form>
           <center>
             <div id="filterContainer">
-              <button id="filterMostarTudo" class="btn active" onClick={()=>{this.getLastVideosEmocao("MostrarTudo")}}> Mostrar últimas</button>
-              <button id={"filterFeliz"} class="btn" onClick={()=>{this.getLastVideosEmocao("Feliz")}}> Feliz</button>
-              <button id={"filterTenso"}class="btn" onClick={()=>{this.getLastVideosEmocao("Tenso")}}> Tenso</button>
-              <button id={"filterCalmo"} class="btn" onClick={()=>{this.getLastVideosEmocao("Calmo")}}> Calmo</button>
-              <button id={"filterTriste"} class="btn" onClick={()=>{this.getLastVideosEmocao("Triste")}}> Triste</button>
+              <button id="filterMostarTudo" className="btn active" onClick={()=>{this.getLastVideosEmocao("MostrarTudo")}}> Mostrar últimas</button>
+              <button id={"filterFeliz"} className="btn" onClick={()=>{this.getLastVideosEmocao("Feliz")}}> Feliz</button>
+              <button id={"filterTenso"}className="btn" onClick={()=>{this.getLastVideosEmocao("Tenso")}}> Tenso</button>
+              <button id={"filterCalmo"} className="btn" onClick={()=>{this.getLastVideosEmocao("Calmo")}}> Calmo</button>
+              <button id={"filterTriste"} className="btn" onClick={()=>{this.getLastVideosEmocao("Triste")}}> Triste</button>
             </div>
             {(this.state.dataGet.length===0) ? (
-            <h3 id="semMusicas"></h3>
+            <h3 id="semMusicas"> </h3>
           ):(
             <div></div>
           )}
@@ -706,11 +720,11 @@ class Index extends Component {
                                       <div className="modal-header">
                                         <center>
                                           <h5 className="modal-title" id="exampleModalLabel">Listas de Reprodução</h5>
-                                          <p><AlertMsg2
+                                          <AlertMsg2
                                             text={this.state.alertText}
                                             isNotVisible={this.state.alertisNotVisible}
                                             alertColor={this.state.alertColor}
-                                          /></p>
+                                          />
                                         </center>
 
                                         <button type="button" className="close" data-dismiss="modal" aria-label="Close">

@@ -72,7 +72,7 @@ body {
 
 .funkyradio input[type="radio"]:hover:not(:checked) ~ label,
 .funkyradio input[type="checkbox"]:hover:not(:checked) ~ label {
-  color: #888;
+  color:white;
 }
 
 .funkyradio input[type="radio"]:hover:not(:checked) ~ label:before,
@@ -102,7 +102,7 @@ body {
 
 .funkyradio-default input[type="radio"]:checked ~ label:before,
 .funkyradio-default input[type="checkbox"]:checked ~ label:before {
-  color: #333;
+  color:white;
   background-color: #ccc;
 }
 

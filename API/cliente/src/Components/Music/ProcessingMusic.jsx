@@ -1,9 +1,6 @@
 import React, { Component } from "react";
 import '../../CssComponents/index.css'
 import logo from '../../loading2.gif';
-import AlertMsg from '../Global/AlertMsg';
-import AlertMsg2 from '../Global/AlertMsg';
-var jwt = require('jsonwebtoken');
 
 class ProcessingMusic extends Component {
   constructor() {

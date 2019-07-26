@@ -13,8 +13,17 @@ exports.uploadVideo = async (req, res) => {
     //variável que guarda a query à base de dados
     var existsMusica;
     //validar url
-    //req.checkBody('url', 'URL is required or is not valid').isURL().notEmpty();
+    req.check('urlInput', 'URL é obrigatório ou tem o formato errado').notEmpty().matches(/^(http(s)?:\/\/)?((w){3}.)?youtu(be|.be)?(\.com)?\/.+/);
     //endereço do vídeo do youtube
+        //verificar erros 
+        var errors = req.validationErrors();
+        //se existir erros de validação
+        if (errors) {
+            serverResponse = { status: "Erros na validação", response: errors }
+            return res.send(serverResponse)
+        }
+        else {
+    
     const url = req.body.urlInput + "";
     //Returns a video ID from a YouTube URL.
     const idVideo = ytdl.getURLVideoID(url);
@@ -27,14 +36,7 @@ exports.uploadVideo = async (req, res) => {
         return res.send(serverResponse)
     }
 
-    //verificar erros 
-    var errors = req.validationErrors();
-    //se existir erros de validação
-    if (errors) {
-        serverResponse = { status: "Erros na validação", response: errors }
-        return res.send(errors)
-    }
-    else {
+
         if (url != null) {
             var nome;
             var dadosMusica = {};
